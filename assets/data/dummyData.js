@@ -1,6 +1,6 @@
 import moment from "moment"
 import "moment-timezone"
-import Constants from '../../constants/Constants.js'
+import Constants from '../../constants/Constants'
 
 const getNextDate = (date) => {
     return moment(date).add(1, 'days').format("YYYY-MM-DD")
@@ -8,16 +8,16 @@ const getNextDate = (date) => {
 
 //Dummy data includes 3 habits:
     //workout: 
-        //Complete Task
+        //Complete Habit
         //occurs M-F
         //Must be done between 8-10am
     //read:
-        //Progress Task
+        //Progress Habit
         //Goal 60 min
         //occurs M,W,F
         //Must be done before 11pm
     //chores:
-        //Subtask task (laundry and dishes)
+        //Subtask Habit (laundry and dishes)
         //occurs Sun,M,W,Th
 
 let dummyData = {}
@@ -39,7 +39,7 @@ for (i = 0; i < 100; i++) {
             completed: false,
             notes: '',
             type: Constants.COMPLETE,
-            taskInfo: {}
+            habitInfo: {}
         }
     }
     if (dow == 1 || dow == 3 || dow == 5) { //M,W,F,Sat
@@ -47,7 +47,7 @@ for (i = 0; i < 100; i++) {
             completed: false,
             notes: '',
             type: Constants.PROGRESS,
-            taskInfo: {
+            habitInfo: {
                 progress: 0,
                 goal: 60
             }
@@ -58,7 +58,7 @@ for (i = 0; i < 100; i++) {
             completed: false,
             notes: '',
             type: Constants.SUBTASK,
-            taskInfo: {
+            habitInfo: {
                 subtasks: {
                     laundry: false,
                     dishes: false
@@ -70,7 +70,7 @@ for (i = 0; i < 100; i++) {
 }
 
 dummyData.settings = {}
-dummyData.settings.taskSettings = {
+dummyData.settings.habitSettings = {
     workout: {
         startTime: "8:00",
         endTime: "10:00",
@@ -85,7 +85,7 @@ dummyData.settings.taskSettings = {
             false  //Sat
         ],
         type: Constants.COMPLETE,
-        taskInfo: {}
+        habitInfo: {}
     },
     read: {
         startTime: null,
@@ -101,7 +101,7 @@ dummyData.settings.taskSettings = {
             true   //Sat
         ],
         type: Constants.PROGRESS,
-        taskInfo: {
+        habitInfo: {
             unit: "min"
         }
     },
@@ -119,7 +119,7 @@ dummyData.settings.taskSettings = {
             false  //Sat
         ],
         type: Constants.SUBTASK,
-        taskInfo: {
+        habitInfo: {
             sequential: false
         }
     }
