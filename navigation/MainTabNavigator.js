@@ -7,9 +7,15 @@ import TabBarIcon from '../components/TabBarIcon';
 import CalendarHomeScreen from '../screens/CalendarHomeScreen';
 import MetricsHomeScreen from '../screens/MetricsHomeScreen';
 import SettingsHomeScreen from '../screens/SettingsHomeScreen';
+import HabitScreen from '../screens/HabitScreen';
+import AddHabitScreen from '../screens/AddHabitScreen';
+import MetricsSpecificHabitScreen from '../screens/MetricsSpecificHabitScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const CalendarStack = createStackNavigator({
     CalendarHome: CalendarHomeScreen,
+    Habit: HabitScreen,
+    AddHabit: AddHabitScreen
 });
 
 CalendarStack.navigationOptions = {
@@ -24,6 +30,8 @@ CalendarStack.navigationOptions = {
 
 const MetricsStack = createStackNavigator({
     MetricsHome: MetricsHomeScreen,
+    MetricsSpecificHabit: MetricsSpecificHabitScreen,
+    Habit: HabitScreen
 });
 
 MetricsStack.navigationOptions = {
@@ -38,6 +46,7 @@ MetricsStack.navigationOptions = {
 
 const SettingsStack = createStackNavigator({
     SettingsHome: SettingsHomeScreen,
+    Profile: ProfileScreen
 });
 
 SettingsStack.navigationOptions = {
