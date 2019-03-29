@@ -8,13 +8,13 @@ import {
     FlatList,
     StyleSheet,
 } from 'react-native';
-import {toggleProgressCompletion} from '../actions/actions';
+import {updateProgressAmount} from '../actions/actions';
 import {connect} from 'react-redux';
 
 const mapDispatchToProps = (dispatch) => {
     return {
         toggleProgessCompletion: (date, name, subtaskName) => {
-            dispatch(toggleProgressCompletion(date, name, subtaskName))
+            dispatch(updateProgressAmount(date, name, subtaskName))
         }
     }
 }
