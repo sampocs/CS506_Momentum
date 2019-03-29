@@ -18,8 +18,8 @@ import {connect} from 'react-redux';
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        toggleSingleCompletion: (completed) => {
-            dispatch(toggleSingleCompletion(completed))
+        toggleHabitCompletion: (completed) => {
+            dispatch(toggleHabitCompletion(completed))
         }
     }
 }
@@ -31,7 +31,7 @@ class Complete extends React.Component {
         if(complete){
            return <Button
             onPress={() => {
-                this.props.toggleSingleCompletion(completed);
+                this.props.toggleHabitCompletion(completed);
             }}
             title="COMPLETED"
             />
@@ -39,7 +39,7 @@ class Complete extends React.Component {
         else{
            return <Button
            onPress={() => {
-            this.props.toggleSingleCompletion(completed);
+            this.props.toggleHabitCompletion(completed);
            }}
            title="NOT COMPLETED"
            />
