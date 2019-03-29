@@ -20,6 +20,7 @@ const getNextDate = (date) => {
         //Subtask Habit (laundry and dishes)
         //occurs Sun,M,W,Th
 
+
 let dummyData = {}
 
 dummyData.calendarState = {
@@ -61,7 +62,7 @@ for (i = 0; i < 100; i++) {
             habitInfo: {
                 subtasks: {
                     laundry: false,
-                    dishes: false
+                    dishes: true
                 }
             }
         }
