@@ -5,6 +5,7 @@ import {
     StyleSheet
 } from 'react-native'
 import { connect } from 'react-redux';
+import HabitComponent from '../components/HabitComponent';
 
 const mapStateToProps = (state) => {
     return {
@@ -22,7 +23,9 @@ class CalendarHomeScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text> Calendar Home Screen </Text>
+                <HabitComponent habitName={'read'} date={'2019-03-27'}/>
+                <HabitComponent habitName={'workout'} date={'2019-03-27'}/>
+                <HabitComponent habitName={'chores'}date={'2019-03-27'}/>
             </View>
         )
     }
