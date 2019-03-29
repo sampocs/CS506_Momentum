@@ -5,6 +5,7 @@ import {
     StyleSheet
 } from 'react-native'
 import { connect } from 'react-redux';
+import MetricsHabitPreview from '../components/MetricsHabitPreview';
 
 const mapStateToProps = (state) => {
     return {
@@ -21,8 +22,13 @@ const mapDispatchToProps = (dispatch) => {
 class MetricsHomeScreen extends React.Component {
     render() {
         return (
-            <View style={styles.container}>
-                <Text> Metrics Home Screen </Text>
+            <View style = {styles.container}>
+                <Text>Metrics Home Screen</Text>
+                <View style = {styles.previews}>
+                    <MetricsHabitPreview habitName='Habit' streak='18'/>
+                    <MetricsHabitPreview habitName='Habit2' streak='14'/>
+                    <MetricsHabitPreview habitName='Habit3' streak='12'/>
+                </View>
             </View>
         )
     }
@@ -32,7 +38,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+    },
+    previews: {
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 30
     }
 })
 
