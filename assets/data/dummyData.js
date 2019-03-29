@@ -85,7 +85,8 @@ dummyData.settings.habitSettings = {
             false  //Sat
         ],
         type: Constants.COMPLETE,
-        habitInfo: {}
+        habitInfo: {},
+        icon: 'dumbbells'
     },
     read: {
         startTime: null,
@@ -103,7 +104,8 @@ dummyData.settings.habitSettings = {
         type: Constants.PROGRESS,
         habitInfo: {
             unit: "min"
-        }
+        },
+        icon: 'book'
     },
     chores: {
         startTime: null,
@@ -121,7 +123,8 @@ dummyData.settings.habitSettings = {
         type: Constants.SUBTASK,
         habitInfo: {
             sequential: false
-        }
+        },
+        icon: 'broom'
     }
 }
 

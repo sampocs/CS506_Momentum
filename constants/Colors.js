@@ -6,5 +6,8 @@ export default {
     tabIconSelected: tintColor,
     tabBar: '#fefefe',
     lightGreyText: '#CACFD2',
-    aqua: '#27ADA0'
+    aqua: '#27ADA0',
+    darkAqua: '#124F49',
+    lightRed: '#DC425A',
+    darkRed: '#782432'
 };
