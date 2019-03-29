@@ -5,4 +5,6 @@ export default {
     tabIconDefault: '#ccc',
     tabIconSelected: tintColor,
     tabBar: '#fefefe',
+    lightGreyText: '#CACFD2',
+    aqua: '#27ADA0'
 };
