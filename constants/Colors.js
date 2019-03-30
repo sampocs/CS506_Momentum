@@ -9,5 +9,7 @@ export default {
     aqua: '#27ADA0',
     darkAqua: '#124F49',
     lightRed: '#DC425A',
-    darkRed: '#782432'
+    darkRed: '#782432',
+    calendarBlue: '#3498DB',
+    iosBlue: '#007AFF',
 };

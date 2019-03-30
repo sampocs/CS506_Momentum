@@ -6,17 +6,19 @@ import {
     FlatList,
     TouchableOpacity,
     StyleSheet,
-    Button,
-    CheckBox1
 } from 'react-native';
-
+import Colors from '../constants/Colors'
+import Layout from '../constants/Layout'
+import Fonts from '../constants/Fonts'
 import { CheckBox } from 'react-native-elements';
 import {toggleSubtaskCompletion} from '../actions/actions';
 import {connect} from 'react-redux';
 
-//import { CheckBox } from 'react-native';
-//import CheckBox2 from 'native-base'
-
+const mapStateToProps = (state, ownProps) => {
+    return {
+        subtasks: state.history[ownProps.date][ownProps.habitName].habitInfo.subtasks
+    }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -27,84 +29,58 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 class Subtask extends React.Component {
-    state = {
-        checked: true,
-
-    }
-
-    checkBoxChange() {
-        this.setState({ checked: !this.state.checked });
-        console.log('checked value: ' + this.state.checked)
-    }
-
-    _renderItem = ({ item }) => (
-        <TouchableOpacity
-            onPress={() => {
-                // change checked boolean when clicked
-                this.setState({ checked: !this.state.checked });
-                console.log('checked value: ' + this.state.checked)
-            }}
-            style={styles.classContainer}
-        >
-
-            <CheckBox
-                title={item}
-                // style={this.props.subtasks[item] ? styles.checkBoxClicked: styles.checkBox}
-                checked={this.props.subtasks[item]}
-                onPress={() => {
-                    this.props.toggleSubtaskCompletion('2019-03-27', 'chores', item);
-                }}
-            ></CheckBox>
-            {/* onValueChange={()=> this.checkBoxChange()} */}
-        </TouchableOpacity>
-
-    );
-
-    _renderSeparator = () => {
-
-        return (
-            <View
-                style={styles.separatorComponent}
-            />
-        );
+    constructor(props) {
+        super(props);
+        this.state = {
+            subtasks: props.subtasks
+        }
     }
 
     render() {
+        let range = Array(this.props.subtasks.length).fill().map((x,i)=>i)
+    let subtasksList = range.map((index)=>{
+            return(
+            <CheckBox
+                key={index}
+                title={this.props.subtasks[index][0]}
+                checked={this.props.subtasks[index][1]}
+                onPress={() => {
+                    let newSubtasks = [this.props.subtasks]
+                    newSubtasks[index] = !this.props.subtasks[index]
+                    this.setState({ subtasks: newSubtasks})
+                    this.props.toggleSubtaskCompletion(this.props.date, this.props.habitName, index);
+                }}
+                containerStyle={styles.checkboxContainer}
+                textStyle={styles.checkboxText}
+                uncheckedColor={Colors.aqua}
+                checkedColor={Colors.aqua}
+            >
+            </CheckBox>
+            )
+        })
         return (
-            <FlatList
-                data={this.props.data}
-                renderItem={this._renderItem}
-                ItemSeparatorComponent={this._renderSeparator}
-            />
+            <View>
+                {subtasksList}
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    separatorComponent: {
-        backgroundColor: 'black',
-        height: 1
+    checkboxContainer: {
+        backgroundColor: 'white',
+        borderWidth: 0,
+        height: 50,
+        padding: 0,
+        width: Layout.window.width - 50,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    classContainer: {
-        flexDirection: 'row',
-        paddingVertical: 20,
+    checkboxText: {
+        color: Colors.aqua,
+        fontFamily: Fonts.AvenirNext,
+        fontSize: 20
     },
-    courseIdText: {
-        marginRight: 20
-    },
-    courseRatingText: {
-        textAlign: 'right',
-        flex: 1
-    },
-    checkBox: {
-        height: 10,
-        width: 10
-    },
-    checkBoxClicked: {
-        height: 10,
-        width: 10,
-        backgroundColor: 'pink'
-    }
 });
 
-export default connect(null, mapDispatchToProps)(Subtask);
+export default connect(mapStateToProps, mapDispatchToProps)(Subtask);

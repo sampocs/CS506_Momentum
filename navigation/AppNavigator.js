@@ -8,7 +8,6 @@ import HabitScreen from '../screens/HabitScreen';
 export default createAppContainer(createSwitchNavigator({
     //For development purposes, place your desired screen on top (rememeber to import the screen)
     //i.e. (Start: MetricsSpecificHabitScreen)
-    Start: HabitScreen,
     Auth: AuthenticationNavigator,
     Main: MainTabNavigator,
 }));

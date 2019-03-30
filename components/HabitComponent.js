@@ -10,7 +10,9 @@ import Fonts from '../constants/Fonts'
 import HabitIcon from './HabitIcon';
 import { connect } from 'react-redux'
 import CheckBoxCircle from './CheckBoxCircle';
-import { toggleHabitCompletion } from '../actions/actions';
+import { toggleCompleteCompletion, toggleProgressCompletion } from '../actions/actions';
+import { withNavigation } from 'react-navigation'
+import Constants from '../constants/Constants';
 
 const mapStateToProps = (state, ownProps) => {
     let habitName = ownProps.habitName
@@ -18,12 +20,14 @@ const mapStateToProps = (state, ownProps) => {
     let settings = state.settings.habitSettings[habitName]
     return {
         iconName: settings.icon,
-        data: state.history[date][habitName]
+        dataOnDate: state.history[date][habitName],
+        habitType: settings.type
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        toggleCompletion: (date, habitName) => dispatch(toggleHabitCompletion(date, habitName))
+        toggleCompleteCompletion: (date, habitName) => dispatch(toggleCompleteCompletion(date, habitName)),
+        toggleProgressCompletion: (date, habitName) => dispatch(toggleProgressCompletion(date, habitName))
     }
 }
 class HabitComponent extends React.Component {
@@ -31,13 +35,27 @@ class HabitComponent extends React.Component {
         super(props);
         this.state = {
             habitName: props.habitName,
-            completed: props.data.completed
+            completed: props.dataOnDate.completed
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.completed != this.props.completed) {
-            this.setState({ completed: this.props.completed })
+        if (prevProps.dataOnDate.completed != this.props.dataOnDate.completed) {
+            this.setState({ completed: this.props.dataOnDate.completed })
+        }
+    }
+
+    defaultCheckboxAction() {
+        switch (this.props.habitType) {
+            case (Constants.COMPLETE): {
+                this.props.toggleCompleteCompletion(this.props.date, this.props.habitName)
+            }
+            case (Constants.PROGRESS): {
+                this.props.toggleProgressCompletion(this.props.date, this.props.habitName)
+            }
+            case (Constants.SUBTASK): {
+
+            }
         }
     }
 
@@ -52,7 +70,12 @@ class HabitComponent extends React.Component {
                 </View>
                 <View style={styles.nameContainer}>
                     <TouchableOpacity
-                        onPress={() => {}}
+                        onPress={() => {
+                            this.props.navigation.push('Habit', {
+                                date: this.props.date,
+                                habitName: this.props.habitName
+                            })
+                        }}
                     >
                         <Text style={[
                             styles.nameText,
@@ -63,7 +86,7 @@ class HabitComponent extends React.Component {
                 <View style={styles.checkboxContainer}>
                     <TouchableOpacity
                         onPress={() => {
-                            this.props.toggleCompletion(this.props.date, this.props.habitName)
+                            this.defaultCheckboxAction();
                         }}
                         >
                         <CheckBoxCircle completed={this.state.completed} />
@@ -88,9 +111,9 @@ const styles = StyleSheet.create({
         width: '22.5%',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRightWidth: 2,
+        borderRightWidth: 1,
         borderColor: 'white',
-        height: '95%'
+        height: '90%'
     },
     nameContainer: {
         width: '55%',
@@ -101,9 +124,9 @@ const styles = StyleSheet.create({
         width: '22.5%',
         alignItems: 'center',
         justifyContent: 'center',
-        borderLeftWidth: 2,
+        borderLeftWidth: 1,
         borderColor: 'white',
-        height: '95%'
+        height: '90%'
     },
     nameText: {
         fontSize: 30,
@@ -111,4 +134,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(HabitComponent)
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(HabitComponent))
