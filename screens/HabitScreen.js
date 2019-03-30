@@ -2,21 +2,28 @@ import React from 'react'
 import {
     View,
     Text,
-    StyleSheet
+    StyleSheet,
+    ScrollView,
+    TextInput
 } from 'react-native'
 import { connect } from 'react-redux';
 import Subtask from '../components/Subtask';
 import Progress from '../components/Progress';
 import Complete from '../components/Complete';
 import SwitchType from '../constants/Constants';
+import Fonts from '../constants/Fonts';
+import Colors from '../constants/Colors';
+import { formatDate } from '../helpers/dateOperations';
+import Layout from '../constants/Layout';
 
 
 const mapStateToProps = (state, ownProps) => {
+    let props = ownProps.navigation.state.params
     return {
-          //  habits: state.history,
-           // habit: state.history[this.state.habitDate][this.state.habitName],
-          //  habitType: state.history[this.state.habitDate][this.state.habitName].habitType
-          habit: state.history['2019-03-27'].workout        
+        date: props.date,
+        habitName: props.habitName,
+        dataOnDate: state.history[props.date][props.habitName],
+        habitType: state.settings.habitSettings[props.habitName].type
     }
 }
 
@@ -28,7 +35,12 @@ const mapDispatchToProps = (dispatch) => {
 
 
 class HabitScreen extends React.Component {
-
+    constructor(props) {
+        super(props);
+        this.state = {
+            dataOnDate: props.dataOnDate
+        }
+    }
     state = {
         //remove after redux implementation
         subtaskName: 'Subtask Name',
@@ -36,38 +48,53 @@ class HabitScreen extends React.Component {
         number: 30,
         habitName: '',
         habitDate: ''
-      }
-
-    componentDidMount() {
-        console.log(this.props.habit)
-        console.log(this.props.habit.completed)
-        // may change based off of passed parameters
-        // this.setState({habitName: this.props.navigation.getParam('habitName')})
-        // this.setState({habitDate: this.props.navigation.getParam('habitDate')})
     }
 
-    renderType(habit) {
-        switch(habit.type) {
+    renderType(habitType) {
+        switch (habitType) {
             case SwitchType.COMPLETE:
-                return <Complete data={habit.completed}/>;
+                return <Complete date={this.props.date} habitName={this.props.habitName} />;
             case SwitchType.PROGRESS:
-                return <Progress data={habit}/>;
+                return <Progress date={this.props.date} habitName={this.props.habitName} />;
             case SwitchType.SUBTASK:
-                return <Subtask data={Object.keys(habit.habitInfo.subtasks)} subtasks={habit.habitInfo.subtasks} />;
-               //return <Subtask data={habit.habitInfor}/>;
+                return <Subtask date={this.props.date} habitName={this.props.habitName} />;
+        }
     }
-}
 
     render() {
         return (
-            
+
             <View style={styles.container}>
-                <Text>Habit Screen</Text>
-                <Text>Habit Name - Update</Text>
-                <Text>Date - Update</Text>
-                <View>
-                    {this.renderType(this.props.habit)}
+                <View style={{alignItems: 'center'}}>
+                    <Text style={styles.habitNameText}>{this.props.habitName}</Text>
+                    <Text style={styles.dateText}>{formatDate(this.props.date, "MMM D")}</Text>
                 </View>
+                <View>
+                    {this.renderType(this.props.habitType)}
+                </View>
+
+                <View style={[styles.bottomNoteContainer]}>
+                    <ScrollView
+                        contentContainerStyle={{ flexGrow: 1, }}
+                        keyboardShouldPersistTaps='handled'
+                    >
+                        <TextInput
+                            style={[
+                                styles.bottomNoteText,
+                            ]}
+                            placeholder={"Notes"}
+                            placeholderTextColor={Colors.greyBack}
+                            onChangeText={(text) => this.setState({ notes: text })}
+                            multiline={true}
+                            spellCheck={false}
+                            value={this.state.notes}
+                            onEndEditing={() => {
+                                //do redux stuff here
+                            }}
+                        />
+                    </ScrollView>
+                </View>
+
             </View>
         )
     }
@@ -77,10 +104,35 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-      //  justifyContent: 'center',
         paddingTop: 20,
         marginTop: 20,
-    }
+        justifyContent: 'space-between'
+    },
+    habitNameText: {
+        fontFamily: Fonts.AvenirNext,
+        color: Colors.aqua,
+        fontSize: 50,
+    },
+    dateText: {
+        fontFamily: Fonts.AvenirNext,
+        color: Colors.aqua,
+        fontSize: 25,
+        margin: 10
+    },
+    bottomNoteContainer: {
+        backgroundColor: Colors.lightGrey,
+        width: Layout.window.width - 20,
+        height: 180,
+        borderRadius: 5,
+        borderColor: Colors.aqua,
+        borderWidth: 5,
+        backgroundColor: 'white',
+        marginVertical: 10
+    },
+    bottomNoteText: {
+        fontFamily: Fonts.Verdana,
+        paddingHorizontal: 8
+    },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HabitScreen);

@@ -60,10 +60,7 @@ for (i = 0; i < 100; i++) {
             notes: '',
             type: Constants.SUBTASK,
             habitInfo: {
-                subtasks: {
-                    laundry: false,
-                    dishes: true
-                }
+                subtasks: [['laundry', false], ['dishes', false]]
             }
         }
     }
