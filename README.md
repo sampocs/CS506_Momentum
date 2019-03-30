@@ -1,6 +1,7 @@
 # CS506_Momentum
 Daily habit tracker
 
+The master branch contains the code we want to submit for iteration 1.
 Instructions on how to build and run the application:
 1.	Go to a directory of your choice.
 2.	In cmd, type “git clone https://github.com/sampocs/CS506_Momentum”
