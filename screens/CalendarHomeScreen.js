@@ -14,7 +14,7 @@ const mapStateToProps = (state) => {
     let currentSelectedDate = state.calendarState.currentSelectedDate
     return {
         currentSelectedDate: currentSelectedDate,
-        dataOnDate: state.history[currentSelectedDate]
+        dataOnDate: state.history.hasOwnProperty(currentSelectedDate) ? state.history[currentSelectedDate] : {}
     }
 }
 

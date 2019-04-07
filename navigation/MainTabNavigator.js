@@ -26,6 +26,7 @@ CalendarStack.navigationOptions = {
             name={'FontAwesome/calendar'}
         />
     ),
+    
 };
 
 const MetricsStack = createStackNavigator({

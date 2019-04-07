@@ -10,7 +10,11 @@ import Fonts from '../constants/Fonts'
 import HabitIcon from './HabitIcon';
 import { connect } from 'react-redux'
 import CheckBoxCircle from './CheckBoxCircle';
-import { toggleCompleteCompletion, toggleProgressCompletion } from '../actions/actions';
+import { 
+    toggleCompleteCompletion, 
+    toggleProgressCompletion,
+    toggleNextSubtaskCompletion
+} from '../actions/actions';
 import { withNavigation } from 'react-navigation'
 import Constants from '../constants/Constants';
 
@@ -27,7 +31,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         toggleCompleteCompletion: (date, habitName) => dispatch(toggleCompleteCompletion(date, habitName)),
-        toggleProgressCompletion: (date, habitName) => dispatch(toggleProgressCompletion(date, habitName))
+        toggleProgressCompletion: (date, habitName) => dispatch(toggleProgressCompletion(date, habitName)),
+        toggleNextSubtaskCompletion: (date, habitName) => dispatch(toggleNextSubtaskCompletion(date, habitName))
     }
 }
 class HabitComponent extends React.Component {
@@ -49,12 +54,15 @@ class HabitComponent extends React.Component {
         switch (this.props.habitType) {
             case (Constants.COMPLETE): {
                 this.props.toggleCompleteCompletion(this.props.date, this.props.habitName)
+                return;
             }
-            case (Constants.PROGRESS): {
+            case (Constants.PROGRESS): { 
                 this.props.toggleProgressCompletion(this.props.date, this.props.habitName)
+                return;
             }
             case (Constants.SUBTASK): {
-
+                this.props.toggleNextSubtaskCompletion(this.props.date, this.props.habitName)
+                return;
             }
         }
     }

@@ -39,7 +39,10 @@ class CalendarComponent extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.minimized != this.props.minimized || prevProps.todaySelected != this.props.todaySelected) {
-            this.setState({ minimized: this.props.minimized, todaySelected: this.props.currentDate === getCurrentDate() })
+            this.setState({ 
+                minimized: this.props.minimized, 
+                todaySelected: this.props.currentDate === getCurrentDate() 
+            })
         }
     }
 

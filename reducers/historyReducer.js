@@ -26,6 +26,8 @@ const historyReducer = (state = {}, action) => {
             newState[date][habitName].habitInfo = {...state[date][habitName].habitInfo}
             newState[date][habitName].habitInfo.subtasks = [...state[date][habitName].habitInfo.subtasks]
             newState[date][habitName].habitInfo.subtasks[index][1] = !state[date][habitName].habitInfo.subtasks[index][1]
+            let subtasks = newState[date][habitName].habitInfo.subtasks
+            newState[date][habitName].completed = (subtasks.filter((subtask) => !subtask[1]).length === 0) 
             return newState
         }
         case TOGGLE_NEXT_SUBTASK_COMPLETION: {
@@ -40,7 +42,6 @@ const historyReducer = (state = {}, action) => {
                 let subtask = subtasks[i]
                 let [subtaskName, status] = subtask
                 if (!status) {
-                    allComplet
                     newState[date][habitName].habitInfo.subtasks[i][1] = true
                     break;
                 }
