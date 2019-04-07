@@ -20,10 +20,13 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 class MetricsHomeScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Metrics'
+    }
+
     render() {
         return (
             <View style = {styles.container}>
-                <Text>Metrics Home Screen</Text>
                 <View style = {styles.previews}>
                     <MetricsHabitPreview habitName='Habit' streak='18'/>
                     <MetricsHabitPreview habitName='Habit2' streak='14'/>

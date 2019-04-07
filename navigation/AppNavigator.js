@@ -4,6 +4,7 @@ import MainTabNavigator from './MainTabNavigator';
 import AuthenticationNavigator from './AuthenticationNavigator'
 import CalendarHomeScreen from '../screens/CalendarHomeScreen';
 import HabitScreen from '../screens/HabitScreen';
+import AddHabitScreen from '../screens/AddHabitScreen';
 
 export default createAppContainer(createSwitchNavigator({
     //For development purposes, place your desired screen on top (rememeber to import the screen)
