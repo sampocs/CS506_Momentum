@@ -8,9 +8,9 @@ import {
 import Fonts from '../constants/Fonts';
 import Colors from '../constants/Colors';
 import { connect } from 'react-redux';
-import { getPreviewMetrics } from '../helpers/metricsOperations'
 import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import { withNavigation } from 'react-navigation'
+import { getPreviewMetrics } from '../helpers/metricsOperations'
 
 const mapStateToProps = (state) => {
     return {
@@ -37,21 +37,21 @@ class MetricsHabitPreview extends React.Component {
         }
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.setState({
             metrics: getPreviewMetrics(this.props.history, this.props.habitName),
             metricsLoaded: true
         })
     }
 
-//     componentDidUpdate(prevProps, prevState) {
-//         if (prevProps.history != this.props.history) {
-//             this.setState({
-//               //metrics: getPreviewMetrics(this.props.history, this.props.habitName),
-// //                metricsLoaded: true
-//             })
-//         }
-//     }
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.history != this.props.history) {
+            this.setState({
+                metrics: getPreviewMetrics(this.props.history, this.props.habitName),
+                metricsLoaded: true
+            })
+        }
+    }
 
     render() {
         let metrics = {}

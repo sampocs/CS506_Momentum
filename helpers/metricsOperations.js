@@ -14,7 +14,7 @@ const getAverage = (daysCompleted, totalDays) => {
     return `${Math.round(avg)}%`
 }
 export const getPreviewMetrics = (history, habitName) => {
-    console.log('here2')
+
     let currentDate = getCurrentDate()
     let startDate = getPreviousDay(currentDate)
 
@@ -22,48 +22,52 @@ export const getPreviewMetrics = (history, habitName) => {
     let monthAgo = getMonthAgo(startDate)
     let yearAgo = getYearAgo(startDate)
 
-    let date = startDate;
+    let weeklyTotalDays = 0
+    let monthlyTotalDays = 0
+    let yearlyTotalDays = 0
 
-    return metrics = {
-        weekly: {
-            totalDays: 0,
-            daysCompleted: 0
-        },
-        monthly: {
-            totalDays: 0,
-            daysCompleted: 0
-        },
-        yearly: {
-            totalDays: 0,
-            daysCompleted: 0
-        }
-    }
-    while (date >= yearAgo) {
-        console.log(date)
-        if (history.hasOwnProperty(date)) {
+    let weeklyCompletedDays = 0
+    let monthlyCompletedDays = 0
+    let yearlyCompletedDays = 0
+
+    let allDates = Object.keys(history).filter((date) => ((date >= yearAgo) && (date < currentDate)))
+    for (d in allDates) {
+        let date = allDates[d]
+        if (history.hasOwnProperty(date) && history[date].hasOwnProperty(habitName)) {
             let dataOnDate = history[date][habitName]
 
-            if (!history[date].hasOwnProperty(habitName)) {
-                continue;
-            }
-
             if (date >= weekAgo) {
-                metrics.weekly.totalDays++
-                metrics.weekly.daysCompleted += (dataOnDate.completed ? 1 : 0)
+                weeklyTotalDays++
+                weeklyCompletedDays += (dataOnDate.completed ? 1 : 0)
             }
             if (date >= monthAgo) {
-                metrics.monthly.totalDays++
-                metrics.monthly.daysCompleted += (dataOnDate.completed ? 1 : 0)
+                monthlyTotalDays++
+                monthlyCompletedDays += (dataOnDate.completed ? 1 : 0)
             }
-            if (date >= yearAgo) {
-                metrics.yearly.totalDays++
-                metrics.yearly.daysCompleted += (dataOnDate.completed ? 1 : 0)
-            }
+            yearlyTotalDays++
+            yearlyCompletedDays += (dataOnDate.completed ? 1 : 0)
         }
-        date = getPreviousDay(date)
     }
-    metrics.weekly.percentage = getAverage(metrics.weekly.daysCompleted, metrics.weekly.totalDays)
-    metrics.monthly.percentage = getAverage(metrics.monthly.daysCompleted, metrics.monthly.totalDays)
-    metrics.yearly.percentage = getAverage(metrics.yearly.daysCompleted, metrics.yearly.totalDays)
-    return metrics
+
+    let weeklyPercentage = getAverage(weeklyCompletedDays, weeklyTotalDays)
+    let monthlyPercentage = getAverage(monthlyCompletedDays, monthlyTotalDays)
+    let yearlyPercentage = getAverage(yearlyCompletedDays, yearlyTotalDays)
+
+    return {
+        weekly: {
+            totalDays: weeklyTotalDays,
+            daysCompleted: weeklyCompletedDays,
+            percentage: weeklyPercentage
+        },
+        monthly: {
+            totalDays: monthlyTotalDays,
+            daysCompleted: monthlyCompletedDays,
+            percentage: monthlyPercentage
+        },
+        yearly: {
+            totalDays: yearlyTotalDays,
+            daysCompleted: yearlyCompletedDays,
+            percentage: yearlyPercentage
+        }
+    }
 }
