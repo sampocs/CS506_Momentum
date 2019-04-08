@@ -13,6 +13,8 @@ export const SELECT_TODAY = 'SELECT_TODAY'
 export const ADD_HABIT_TO_SETTINGS = 'ADD_HABIT_TO_SETTINGS'
 export const ADD_HABIT_TO_HISTORY = 'ADD_HABIT_TO_HISTORY'
 export const UPDATE_NOTES = 'UPDATE_NOTES'
+export const UPDATE_EMAIL = 'UPDATE_EMAIL'
+export const UPDATE_FIREBASE_USER = 'UPDATE_FIREBASE_USER'
 
 
 //Action Creators
@@ -88,4 +90,14 @@ export const updateNote = (habitName, date, notes) => ({
     habitName,
     date,
     notes
+})
+
+export const updateEmail = (email) => ({
+    type: UPDATE_EMAIL,
+    email
+})
+
+export const updateFirebaseUser = (firebaseUser) => ({
+    type: UPDATE_FIREBASE_USER, 
+    firebaseUser
 })

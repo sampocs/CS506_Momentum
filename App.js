@@ -6,6 +6,12 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux';
 import mainReducer from './reducers/mainReducer.js'
 
+import firebase from 'firebase';
+import { firebaseConfig } from './firebaseConfig'
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
 const store = createStore(mainReducer)
 
 export default class App extends React.Component {
