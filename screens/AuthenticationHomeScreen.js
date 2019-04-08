@@ -50,7 +50,7 @@ class AuthenticationHomeScreen extends React.Component {
                 </TouchableOpacity>
             </View>
         )
-    }5
+    }
 }
 
 const styles = StyleSheet.create({

@@ -4,6 +4,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Feather from 'react-native-vector-icons/Feather'
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import Colors from '../constants/Colors'
 import Icons from '../constants/Icons'
 
@@ -13,7 +14,8 @@ export default class HabitIcon extends React.Component {
         FontAwesome: FontAwesome,
         MaterialCommunityIcons: MaterialCommunityIcons,
         Feather: Feather,
-        AntDesign: AntDesign
+        AntDesign: AntDesign,
+        EvilIcons: EvilIcons
     }
 
     render() {

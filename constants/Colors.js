@@ -12,4 +12,5 @@ export default {
     darkRed: '#782432',
     calendarBlue: '#3498DB',
     iosBlue: '#007AFF',
+    darkBlue: '#215777'
 };

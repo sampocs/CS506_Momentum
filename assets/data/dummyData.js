@@ -101,7 +101,8 @@ dummyData.settings.habitSettings = {
         ],
         type: Constants.PROGRESS,
         habitInfo: {
-            unit: "min"
+            unit: "min",
+            goal: 60
         },
         icon: 'book'
     },
@@ -120,7 +121,7 @@ dummyData.settings.habitSettings = {
         ],
         type: Constants.SUBTASK,
         habitInfo: {
-            sequential: false
+            subtasks: [['laundry', false], ['dishes', false]]
         },
         icon: 'broom'
     }

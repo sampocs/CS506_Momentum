@@ -8,6 +8,7 @@ import {
 import Colors from '../constants/Colors'
 import Layout from '../constants/Layout'
 import { connect } from 'react-redux'
+import { withNavigation } from 'react-navigation'
 import { getNextDate, getPreviousDay, getCurrentDate } from '../helpers/dateOperations'
 import { selectDate, selectToday, toggleMinimizeCal } from '../actions/actions'
 import { Calendar } from 'react-native-calendars'
@@ -39,9 +40,9 @@ class CalendarComponent extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.minimized != this.props.minimized || prevProps.todaySelected != this.props.todaySelected) {
-            this.setState({ 
-                minimized: this.props.minimized, 
-                todaySelected: this.props.currentDate === getCurrentDate() 
+            this.setState({
+                minimized: this.props.minimized,
+                todaySelected: this.props.currentDate === getCurrentDate()
             })
         }
     }
@@ -55,7 +56,7 @@ class CalendarComponent extends React.Component {
         let previousDate = getPreviousDay(currDate)
 
         return (
-            <View style={{width: Layout.window.width}}>
+            <View style={{ width: Layout.window.width }}>
                 <View style={styles.calendarContainer}>
                     {this.props.minimized ?
                         <Calendar
@@ -81,25 +82,50 @@ class CalendarComponent extends React.Component {
                             firstDay={0}
                         />}
                 </View>
+
                 <View style={styles.toggleButtonsContainer}>
-                    <View style={[
-                        styles.buttonContainer,
-                        this.state.minimized ? styles.toggleButtonOn : styles.toggleButtonOff]}>
-                        <TouchableOpacity onPress={this.props.onMinimizeClick}>
-                            <Text style={[
-                                styles.buttonText,
-                                this.state.minimized ? styles.toggleTextOn : styles.toggleTextOff]}> Minimize </Text>
-                        </TouchableOpacity>
+
+                    <View style={styles.thirdContainer}>
+                        <View style={[
+                            styles.buttonContainer,
+                            {alignSelf: 'flex-start'},
+                            this.state.minimized ? styles.toggleButtonOn : styles.toggleButtonOff]}>
+                            <TouchableOpacity onPress={this.props.onMinimizeClick}>
+                                <Text style={[
+                                    styles.buttonText,
+                                    this.state.minimized ? styles.toggleTextOn : styles.toggleTextOff]}> Minimize </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <View style={[
-                        styles.buttonContainer,
-                        this.state.todaySelected ? styles.toggleButtonOn : styles.toggleButtonOff]}>
-                        <TouchableOpacity onPress={this.props.onTodayClick}>
-                            <Text style={[
-                                styles.buttonText,
-                                this.state.todaySelected ? styles.toggleTextOn : styles.toggleTextOff]}>Today</Text>
-                        </TouchableOpacity>
+
+                    <View style={styles.thirdContainer}>
+                        <View style={[
+                            styles.buttonContainer,
+                            {alignSelf: 'center', marginLeft: 5},
+                            styles.toggleButtonOff]}>
+                            <TouchableOpacity onPress={() => {
+                                this.props.navigation.push('AddHabit')
+                             }}>
+                                <Text style={[
+                                    styles.buttonText,
+                                    styles.toggleTextOff]}> Add Habit </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
+
+                    <View style={styles.thirdContainer}>
+                        <View style={[
+                            styles.buttonContainer,
+                            {alignSelf: 'flex-end'},
+                            this.state.todaySelected ? styles.toggleButtonOn : styles.toggleButtonOff]}>
+                            <TouchableOpacity onPress={this.props.onTodayClick}>
+                                <Text style={[
+                                    styles.buttonText,
+                                    this.state.todaySelected ? styles.toggleTextOn : styles.toggleTextOff]}>Today</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
                 </View>
             </View>
         )
@@ -109,7 +135,7 @@ class CalendarComponent extends React.Component {
 const styles = StyleSheet.create({
     calendarContainer: {
         width: '100%',
-        borderTopWidth: 1,
+        borderTopWidth: 0,
         borderBottomWidth: 1,
         borderColor: Colors.lightGreyText
     },
@@ -120,10 +146,14 @@ const styles = StyleSheet.create({
         height: 37,
         width: '100%',
         alignItems: 'center',
-        borderBottomWidth: 1,
+        borderBottomWidth: 0,
         borderColor: Colors.lightGreyText,
-        paddingHorizontal: 15
+        paddingHorizontal: 10
     },
+    thirdContainer: {
+        width: '33%',
+        alignItems: 'center'
+    },  
     buttonContainer: {
         borderRadius: 5,
     },
@@ -146,5 +176,5 @@ const styles = StyleSheet.create({
     },
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(CalendarComponent)
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(CalendarComponent))
 

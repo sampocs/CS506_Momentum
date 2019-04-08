@@ -14,7 +14,7 @@ export default class TabBarIcon extends React.Component {
         MaterialCommunityIcons: MaterialCommunityIcons,
         Feather: Feather,
         AntDesign: AntDesign
-    }
+    } 
 
     render() {
         const [family, iconName] = this.props.name.split('/')
@@ -25,7 +25,7 @@ export default class TabBarIcon extends React.Component {
                 name={iconName}
                 size={26}
                 style={{ marginBottom: -3 }}
-                color={this.props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+                color={this.props.focused ? this.props.selectedColor : Colors.tabIconDefault}
             />
         );
     }

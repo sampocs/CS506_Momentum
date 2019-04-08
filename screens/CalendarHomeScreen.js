@@ -2,6 +2,8 @@ import React from 'react'
 import {
     View,
     StyleSheet,
+    SafeAreaView,
+    Text
 } from 'react-native'
 import { connect } from 'react-redux';
 import HabitComponent from '../components/HabitComponent';
@@ -9,6 +11,7 @@ import CalendarComponent from '../components/CalendarComponent';
 import { ScrollView } from 'react-native-gesture-handler';
 import Octicons from 'react-native-vector-icons/Octicons'
 import Colors from '../constants/Colors'
+import Fonts from '../constants/Fonts';
 
 const mapStateToProps = (state) => {
     let currentSelectedDate = state.calendarState.currentSelectedDate
@@ -19,24 +22,8 @@ const mapStateToProps = (state) => {
 }
 
 class CalendarHomeScreen extends React.Component {
-    static navigationOptions = ({navigation}) => ({
-        title: 'Momentum',
-        headerBackTitle: 'Calendar',
-        headerRight: navigation.state.params ? navigation.state.params.headerRight : null
-    })
-
-    componentDidMount() {
-        this.props.navigation.setParams({
-            headerRight: (
-                <Octicons
-                    name={'plus'}
-                    color={Colors.calendarBlue}
-                    style={{ marginRight: 20 }}
-                    size={35}
-                    onPress={() => this.props.navigation.push('AddHabit')}
-                />
-            )
-        })
+    static navigationOptions = {
+        header: null
     }
 
     render() {
@@ -47,15 +34,25 @@ class CalendarHomeScreen extends React.Component {
             )
         })
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <View style={styles.calendarContainer}>
                     <CalendarComponent />
                 </View>
 
-                <ScrollView style={styles.scrollContainer}>
-                    {habits}
-                </ScrollView>
-            </View>
+                <View style={styles.outsideScrollContainer}>
+                    <ScrollView
+                        style={styles.scrollContainer}
+                        scrollEnabled={habits.length != 0}
+                        >
+                        {habits.length != 0 ?
+                            habits :
+                            <View style={styles.noHabitContainer}>
+                                <Text style={styles.noHabitText}>There are no habits for today!</Text>
+                            </View>
+                        }
+                    </ScrollView>
+                </View>
+            </SafeAreaView>
         )
     }
 }
@@ -69,7 +66,24 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         width: '100%',
-        paddingVertical: 2
+        paddingVertical: 2,
+    },
+    outsideScrollContainer: {
+        shadowOffset: { width: 0, height: -3 },
+        shadowOpacity: 0.3,
+        shadowColor: '#444',
+        marginVertical: 5,
+        width: '100%',
+        height: '100%'
+    },
+    noHabitContainer: {
+        marginVertical: 25,
+        alignItems: 'center',
+    },
+    noHabitText: {
+        color: Colors.darkBlue,
+        fontFamily: Fonts.AvenirMedium,
+        fontSize: 22
     }
 })
 

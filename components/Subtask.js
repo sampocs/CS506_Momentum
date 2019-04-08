@@ -52,8 +52,8 @@ class Subtask extends React.Component {
                 }}
                 containerStyle={styles.checkboxContainer}
                 textStyle={styles.checkboxText}
-                uncheckedColor={Colors.aqua}
-                checkedColor={Colors.aqua}
+                uncheckedColor={Colors.calendarBlue}
+                checkedColor={Colors.calendarBlue}
             >
             </CheckBox>
             )
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     checkboxText: {
-        color: Colors.aqua,
+        color: Colors.calendarBlue,
         fontFamily: Fonts.AvenirNext,
         fontSize: 20
     },

@@ -17,7 +17,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         progress: state.history[ownProps.date][ownProps.habitName].habitInfo.progress.toString(),
         goal: state.history[ownProps.date][ownProps.habitName].habitInfo.goal.toString(),
-        completed: state.history[ownProps.date][ownProps.habitName].completed
+        completed: state.history[ownProps.date][ownProps.habitName].completed,
+        unit: state.settings.habitSettings[ownProps.habitName].habitInfo.unit
     }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -42,35 +43,61 @@ class Progress extends React.Component {
         if ((prevProps.completed != this.props.completed)
             || (prevProps.progress != this.props.progress)
             || (prevProps.goal != this.props.goal)) {
-                this.setState({ 
-                    completed: this.props.completed, 
-                    progress: this.props.progress,
-                    goal: this.props.goal
-                })
+            this.setState({
+                completed: this.props.completed,
+                progress: this.props.progress,
+                goal: this.props.goal
+            })
         }
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <TextInput
-                    placeholder="30"
-                    keyboardType={'numeric'}
-                    returnKeyType={'done'}
-                    placeholderTextColor={Colors.lightGreyText}
-                    maxLength={5}
-                    onChangeText={(text) => {
-                        this.setState({ progress: text })
-                    }}
-                    style={styles.inputFieldText}
-                    value={this.state.progress}
-                    onEndEditing={() => {
-                        this.props.updateProgressAmount(this.props.date, this.props.habitName, parseInt(this.state.progress))
-                    }}
-
-                ></TextInput>
-                <Text style={styles.inputFieldText}>/</Text>
-                <Text style={styles.inputFieldText}>{this.state.goal}</Text>
+                <View style={styles.inputFieldContainer}>
+                    <TextInput
+                        placeholder={''}
+                        keyboardType={'numeric'}
+                        returnKeyType={'done'}
+                        placeholderTextColor={Colors.lightGreyText}
+                        maxLength={5}
+                        onChangeText={(text) => {
+                            this.setState({ progress: text })
+                            this.setState({ completed: parseInt(text) >= parseInt(this.state.goal)})
+                        }}
+                        onFocus={() => {
+                            if (this.state.progress === '0') {
+                                this.setState({ progress: ''})
+                            }
+                        }}
+                        style={[
+                            styles.inputFieldText,
+                            {color: parseInt(this.state.progress) >= parseInt(this.state.goal) ? Colors.calendarBlue : Colors.lightGreyText}]}
+                        value={this.state.progress}
+                        onEndEditing={() => {
+                            if (this.state.progress === '') {
+                                this.setState({ progress: '0'})
+                                this.props.updateProgressAmount(this.props.date, this.props.habitName, 0)
+                            }
+                            else {
+                                this.props.updateProgressAmount(this.props.date, this.props.habitName, parseInt(this.state.progress))
+                            }
+                        }}
+                        onSubmitEditing={() => {
+                            if (this.state.progress === '') {
+                                this.setState({ progress: '0'})
+                                this.props.updateProgressAmount(this.props.date, this.props.habitName, 0)
+                            }
+                            else {
+                                this.props.updateProgressAmount(this.props.date, this.props.habitName, parseInt(this.state.progress))
+                            }
+                        }}
+                    >
+                    </TextInput>
+                </View>
+                <Text style={styles.goalText}>/</Text>
+                <Text style={styles.goalText}>{this.state.goal}</Text>
+                <Text style={styles.unitText}>{` ${this.props.unit}`}</Text>
                 {/* <ProgressBar.Bar  /> */}
             </View>
         );
@@ -79,21 +106,22 @@ class Progress extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
-        // justifyContent: 'center',
-        //  paddingTop: 20,
-        marginTop: 20,
-        borderRadius: 15,
-        borderWidth: 0.5,
-        borderColor: '#d6d7da',
-        width: 100
-
+        flexDirection: 'row',
+        alignItems: 'baseline',
     },
     inputFieldText: {
-        color: Colors.aqua,
-        fontSize: 40,
+        fontSize: 100,
+        fontFamily: Fonts.AvenirNext
+    },
+    goalText: {
+        color: Colors.calendarBlue,
+        fontSize: 50,
         fontFamily: Fonts.AvenirNext,
-        textAlign: 'center',
+    },
+    unitText: {
+        color: Colors.calendarBlue,
+        fontSize: 30,
+        fontFamily: Fonts.AvenirNext
     }
 })
 
