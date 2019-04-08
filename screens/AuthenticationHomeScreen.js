@@ -3,10 +3,17 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from 'react-native'
+import {
+    updateEmail,
+    updateFirebaseUser
+} from '../actions/actions'
 import { connect } from 'react-redux';
 import Colors from '../constants/Colors.js'
+import firebase from '@firebase/app';
+import '@firebase/auth'
 
 const mapStateToProps = (state) => {
     return {
@@ -16,7 +23,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        updateEmail: (email) => dispatch(updateEmail(email)),
+        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
     }
 }
 
@@ -27,10 +35,43 @@ class AuthenticationHomeScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            checkingLoggedIn: true
         }
     }
+
+    componentDidMount() {
+        this.checkIfLoggedIn()
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    checkIfLoggedIn() {
+        this.unsubscribe = firebase.auth().onAuthStateChanged(
+            (user) => {
+                if (user) {
+                    //Store username and email in redux
+                    this.props.updateFirebaseUser(user)
+                    this.props.updateEmail(user.email)
+
+                    this.props.navigation.navigate('Main')
+                }
+                else {
+                    this.setState({ checkingLoggedIn: false })
+                }
+            }
+        )
+    }
+
     render() {
+        if (this.state.checkingLoggedIn) {
+                return (
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <ActivityIndicator size="large" />
+                    </View>
+                )
+        }
         return (
             <View style={styles.container}>
                 <TouchableOpacity

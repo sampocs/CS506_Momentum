@@ -5,11 +5,19 @@ import {
     StyleSheet,
     TextInput,
     TouchableOpacity,
+    AlertIOS,
     KeyboardAvoidingView
 } from 'react-native'
 import { connect } from 'react-redux';
 import Colors from '../constants/Colors.js';
+import firebaseErrors from '../constants/FirebaseErrors'
+import {
+    updateEmail,
+    updateFirebaseUser
+} from '../actions/actions'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import firebase from '@firebase/app';
+import '@firebase/auth'
 
 const mapStateToProps = (state) => {
     return {
@@ -19,7 +27,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        updateEmail: (email) => dispatch(updateEmail(email)),
+        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
     }
 }
 
@@ -28,15 +37,78 @@ class SignUpScreen extends React.Component {
         header: null
     }
 
-    state = {
-        email: null,
-        username: null,
-        password: null,
-        repeatPassword: null
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            password: '',
+            repeatPassword: ''
+        }
     }
 
-    signUp = () => {
-        this.props.navigation.navigate('Main')
+    signUp() {
+        if (this.confirmFields()) {
+            this.signUpWithFirebase()
+        }
+    }
+
+    signUpWithFirebase() {
+        let strippedEmail = this.state.email.replace(/^\s+|\s+$/g, '').toLowerCase()
+        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(
+            ({ user }) => {
+                console.log("Successfully created an account.")
+
+                this.props.updateEmail(strippedEmail)
+                this.props.updateFirebaseUser(user)
+                
+                this.props.navigation.navigate('Main')
+            },
+            (error) => {
+                console.log("Error occured while creating an account.")
+                console.log(error)
+                if (error.code === firebaseErrors.DuplicateEmail) {
+                    AlertIOS.alert('', "The email address provided has an existing account.")
+                    this.clearFields()
+                }
+                else if (error.code === firebaseErrors.InvalidEmail) {
+                    AlertIOS.alert('', "Invalid email address.")
+                    this.clearFields();
+                }
+                else if (error.code === firebaseErrors.WeakPassword) {
+                    AlertIOS.alert('', "The password must be at least 6 characters.")
+                    this.clearFields(passwordsOnly = true)
+                }
+            }
+        )
+    }
+
+    confirmFields() {
+        if (this.state.email === '') {
+            AlertIOS.alert('', 'Please enter an email address!')
+            return false;
+        }
+        if (this.state.password === '') {
+            AlertIOS.alert('', "Please enter a password.")
+            return false
+        }
+        if (this.state.repeatPassword === '') {
+            AlertIOS.alert('', "Please re-enter your password.")
+            return false
+        }
+        if (this.state.password != this.state.repeatPassword) {
+            AlertIOS.alert("Passwords do not match.")
+            return false
+        }
+        return true
+    }
+
+    clearFields(passwordsOnly = false) {
+        if (passwordsOnly) {
+            this.setState({ password: '', repeatPassword: '' })
+        }
+        else {
+            this.setState({ email: '', password: '', repeatPassword: '' })
+        }
     }
 
     render() {
@@ -55,15 +127,16 @@ class SignUpScreen extends React.Component {
                 >
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Email or Username"
+                        placeholder="Email"
                         textContentType="emailAddress"
                         autoCapitalize="none"
                         autoCorrect={false}
                         keyboardType="email-address"
                         returnKeyType="next"
-                        ref="usernameInput"
-                        onChangeText={username => this.setState({ username })}
+                        ref="emailInput"
+                        onChangeText={text => this.setState({ email: text })}
                         onSubmitEditing={() => this.refs.passwordInput.focus()}
+                        value={this.state.email}
                     />
                     <TextInput
                         style={styles.textInput}
@@ -76,6 +149,7 @@ class SignUpScreen extends React.Component {
                         returnKeyType="next"
                         onChangeText={password => this.setState({ password })}
                         onSubmitEditing={() => this.refs.repeatPasswordInput.focus()}
+                        value={this.state.password}
                     />
                     <TextInput
                         style={styles.textInput}
@@ -88,6 +162,8 @@ class SignUpScreen extends React.Component {
                         returnKeyType="done"
                         onChangeText={repeatPassword => this.setState({ repeatPassword })}
                         onSubmitEditing={() => this.signUp()}
+                        value={this.state.repeatPassword}
+
                     />
                 </KeyboardAvoidingView>
                 <TouchableOpacity
@@ -126,7 +202,8 @@ const styles = StyleSheet.create({
         width: 200,
         textAlign: 'center',
         margin: 10,
-        padding: 5
+        padding: 5,
+        color: Colors.aqua
     }
 })
 

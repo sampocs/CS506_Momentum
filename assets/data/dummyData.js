@@ -126,6 +126,10 @@ dummyData.settings.habitSettings = {
         icon: 'broom'
     }
 }
+dummyData.settings.user = {
+    email: '',
+    firebaseUser: {}
+}
 
 
 

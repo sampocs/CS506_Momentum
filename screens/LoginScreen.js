@@ -5,11 +5,19 @@ import {
     StyleSheet,
     TextInput,
     TouchableOpacity,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
+    AlertIOS
 } from 'react-native'
 import { connect } from 'react-redux';
 import Colors from '../constants/Colors.js';
+import firebaseErrors from '../constants/FirebaseErrors'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import {
+    updateEmail,
+    updateFirebaseUser
+} from '../actions/actions'
+import firebase from '@firebase/app';
+import '@firebase/auth'
 
 const mapStateToProps = (state) => {
     return {
@@ -19,7 +27,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        updateEmail: (email) => dispatch(updateEmail(email)),
+        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
     }
 }
 
@@ -28,13 +37,68 @@ class LoginScreen extends React.Component {
         header: null
     }
     
-    state = {
-        username: null,
-        password: null
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            password: ''
+        }
     }
 
-    login = () => {
-        this.props.navigation.navigate('Main')
+    login() {
+        if (this.confirmFields()) {
+            this.loginWithFirebase()
+        }
+    }
+
+    loginWithFirebase() {
+        firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(
+            ({ user }) => {
+                console.log("Successfully logged in.")
+                //Set username/email in redux
+                this.props.updateEmail(user.email)
+                this.props.updateFirebaseUser(user)
+
+                //Navigate to profile screen as authenticated user
+                this.props.navigation.navigate('Main')
+            },
+            (error) => {
+                console.log('Login failed.')
+                if (error.code === firebaseErrors.UserNotFound) {
+                    AlertIOS.alert('', `No user found with the email ${this.state.email}.`)
+                    this.clearFields()
+                }
+                else if (error.code === firebaseErrors.WrongPassword) {
+                    AlertIOS.alert('', `Incorrect password for ${this.state.email}.`)
+                    this.clearFields(passwordsOnly = true)
+                }
+                else if (error.code === firebaseErrors.InvalidEmail) {
+                    AlertIOS.alert('', "Invalid email address.")
+                    this.clearFields();
+                }
+            }
+        )
+    }
+
+    confirmFields() {
+        if (this.state.email === '') {
+            AlertIOS.alert('', "Please enter a email.")
+            return false;
+        }
+        if (this.state.password === '') {
+            AlertIOS.alert('', "Please enter a password.")
+            return false
+        }
+        return true
+    }
+
+    clearFields(passwordsOnly = false) {
+        if (passwordsOnly) {
+            this.setState({ password: ''})
+        }
+        else {
+            this.setState({ email: '', password: ''})
+        }
     }
 
     render() {
@@ -53,13 +117,14 @@ class LoginScreen extends React.Component {
                 >
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Username"
-                        textContentType="username"
+                        placeholder="Email"
+                        textContentType="emailAddress"
                         autoCapitalize="none"
                         autoCorrect={false}
                         returnKeyType="next"
-                        onChangeText={username => this.setState({ username })}
+                        onChangeText={text => this.setState({ email: text })}
                         onSubmitEditing={() => this.refs.passwordInput.focus()}
+                        value={this.state.email}
                     />
                     <TextInput
                         style={styles.textInput}
@@ -72,6 +137,7 @@ class LoginScreen extends React.Component {
                         returnKeyType="done"
                         onChangeText={password => this.setState({ password })}
                         onSubmitEditing={() => this.login()}
+                        value={this.state.password}
                     />
                 </KeyboardAvoidingView>
                 <TouchableOpacity
@@ -110,7 +176,8 @@ const styles = StyleSheet.create({
         width: 200,
         textAlign: 'center',
         margin: 10,
-        padding: 5
+        padding: 5,
+        color: Colors.aqua
     }
 })
 

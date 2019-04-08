@@ -10,7 +10,6 @@ import MetricsHomeScreen from '../screens/MetricsHomeScreen';
 export default createAppContainer(createSwitchNavigator({
     //For development purposes, place your desired screen on top (rememeber to import the screen)
     //i.e. (Start: MetricsSpecificHabitScreen),
-    Start: MainTabNavigator,
     Auth: AuthenticationNavigator,
     Main: MainTabNavigator,
 }));
