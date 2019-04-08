@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
-    View, 
-    Text, 
+import {
+    View,
+    Text,
     StyleSheet,
     TouchableOpacity
 } from 'react-native'
@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import { withNavigation } from 'react-navigation'
 import { getPreviewMetrics } from '../helpers/metricsOperations'
+import Constants from '../constants/Constants'
 
 const mapStateToProps = (state) => {
     return {
@@ -24,23 +25,17 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-const WEEKLY = 'WEEKLY'
-const MONTHLY = 'MONTHLY'
-const YEARLY = 'YEARLY'
-
 class MetricsHabitPreview extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            metrics: {},
-            metricsLoaded: false
+            metrics: {}
         }
     }
 
     componentWillMount() {
         this.setState({
             metrics: getPreviewMetrics(this.props.history, this.props.habitName),
-            metricsLoaded: true
         })
     }
 
@@ -48,45 +43,36 @@ class MetricsHabitPreview extends React.Component {
         if (prevProps.history != this.props.history) {
             this.setState({
                 metrics: getPreviewMetrics(this.props.history, this.props.habitName),
-                metricsLoaded: true
             })
         }
     }
 
     render() {
         let metrics = {}
-        if (this.state.metricsLoaded) {
-            if (this.props.currentToggleSection === WEEKLY) {
-                metrics = this.state.metrics.weekly
-            }
-            else if (this.props.currentToggleSection === MONTHLY) {
-                metrics = this.state.metrics.monthly
-            }
-            else {
-                metrics = this.state.metrics.yearly
-            }
+        if (this.props.currentToggleSection === Constants.WEEKLY) {
+            metrics = this.state.metrics.weekly
+        }
+        else if (this.props.currentToggleSection === Constants.MONTHLY) {
+            metrics = this.state.metrics.monthly
+        }
+        else {
+            metrics = this.state.metrics.yearly
         }
 
         return (
-            <TouchableOpacity 
-            style={styles.container}
-            onPress={() => this.props.navigation.push('MetricsSpecificHabit')}
+            <TouchableOpacity
+                style={styles.container}
+                onPress={() => this.props.navigation.push('MetricsSpecificHabit')}
             >
                 <View style={styles.habitTextContainer}>
                     <Text style={styles.habitText}>{this.props.habitName}</Text>
                 </View>
-                {this.state.metricsLoaded ?
-                    <View style={styles.metricContainer}>
-                        <Text style={styles.metricTopText}>{metrics.percentage}</Text>
-                        <Text style={styles.metricBottomText}>
+                <View style={styles.metricContainer}>
+                    <Text style={styles.metricTopText}>{metrics.percentage}</Text>
+                    <Text style={styles.metricBottomText}>
                         {`(${metrics.daysCompleted}/${metrics.totalDays})`}
-                        </Text>
-                    </View>
-                    :
-                    <View style={styles.metricContainer}>
-                        <EvilIcons name={'spinner'} color={Colors.aqua} size={60} />
-                    </View>
-                }
+                    </Text>
+                </View>
 
             </TouchableOpacity>
         );

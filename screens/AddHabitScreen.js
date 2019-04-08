@@ -38,9 +38,6 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-const DAILY = 'DAILY'
-const WEEKLY = 'WEEKLY'
-
 class AddHabitScreen extends React.Component {
     static navigationOptions = {
         header: null
@@ -50,7 +47,7 @@ class AddHabitScreen extends React.Component {
         super(props);
         this.state = {
             habitName: '',
-            frequencyToggle: DAILY,
+            frequencyToggle: Constants.DAILY,
             daysOfWeek: [true, true, true, true, true, true, true],
             timeRangeChecked: false,
             beginTime: new Date(),
@@ -68,14 +65,14 @@ class AddHabitScreen extends React.Component {
 
     setFrequencyToggle(section) {
         const sectionMapping = {
-            LEFT: DAILY,
-            RIGHT: WEEKLY
+            LEFT: Constants.DAILY,
+            RIGHT: Constants.WEEKLY
         }
         this.setState({ frequencyToggle: sectionMapping[section] })
-        if (sectionMapping[section] === DAILY) {
+        if (sectionMapping[section] === Constants.DAILY) {
             this.setState({ daysOfWeek: [true, true, true, true, true, true, true] })
         }
-        if (sectionMapping[section] === WEEKLY) {
+        if (sectionMapping[section] === Constants.WEEKLY) {
             this.setState({ daysOfWeek: [false, false, false, false, false, false, false] })
 
         }
@@ -264,7 +261,7 @@ class AddHabitScreen extends React.Component {
                             daysOfWeek={this.state.daysOfWeek}
                             frequencyToggle={this.state.frequencyToggle}
                             setParentState={this.setDaysOfWeekToggle.bind(this)}
-                            clickable={this.state.frequencyToggle != DAILY}
+                            clickable={this.state.frequencyToggle != Constants.DAILY}
                         />
                     </View>
 

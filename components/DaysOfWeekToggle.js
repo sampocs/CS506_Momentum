@@ -8,9 +8,7 @@ import {
 import Colors from '../constants/Colors'
 import Fonts from '../constants/Fonts'
 import Layout from '../constants/Layout'
-
-const DAILY = 'DAILY'
-const WEEKLY = 'WEEKLY'
+import Constants from '../constants/Constants'
 
 export default class DaysOfWeekToggle extends React.Component {
     constructor(props) {
@@ -34,42 +32,42 @@ export default class DaysOfWeekToggle extends React.Component {
                     <View style={[
                         styles.backgroundLine, {
                             backgroundColor: 
-                            this.props.frequencyToggle === DAILY ? Colors.lightGreyText : Colors.calendarBlue
+                            this.props.frequencyToggle === Constants.DAILY ? Colors.lightGreyText : Colors.calendarBlue
                         }
                         ]}>
                     </View>
                     <View style={[
                         styles.backgroundLine, {
                             backgroundColor: 
-                            this.props.frequencyToggle === DAILY ? Colors.lightGreyText : Colors.calendarBlue
+                            this.props.frequencyToggle === Constants.DAILY ? Colors.lightGreyText : Colors.calendarBlue
                         }
                         ]}>
                     </View>
                     <View style={[
                         styles.backgroundLine, {
                             backgroundColor: 
-                            this.props.frequencyToggle === DAILY ? Colors.lightGreyText : Colors.calendarBlue
+                            this.props.frequencyToggle === Constants.DAILY ? Colors.lightGreyText : Colors.calendarBlue
                         }
                         ]}>
                     </View>
                     <View style={[
                         styles.backgroundLine, {
                             backgroundColor: 
-                            this.props.frequencyToggle === DAILY ? Colors.lightGreyText : Colors.calendarBlue
+                            this.props.frequencyToggle === Constants.DAILY ? Colors.lightGreyText : Colors.calendarBlue
                         }
                         ]}>
                     </View>
                     <View style={[
                         styles.backgroundLine, {
                             backgroundColor: 
-                            this.props.frequencyToggle === DAILY ? Colors.lightGreyText : Colors.calendarBlue
+                            this.props.frequencyToggle === Constants.DAILY ? Colors.lightGreyText : Colors.calendarBlue
                         }
                         ]}>
                     </View>
                     <View style={[
                         styles.backgroundLine, {
                             backgroundColor: 
-                            this.props.frequencyToggle === DAILY ? Colors.lightGreyText : Colors.calendarBlue
+                            this.props.frequencyToggle === Constants.DAILY ? Colors.lightGreyText : Colors.calendarBlue
                         }
                         ]}>
                     </View>
@@ -79,9 +77,9 @@ export default class DaysOfWeekToggle extends React.Component {
 
                 <TouchableOpacity style={[
                     styles.dayContainer,
-                    this.props.frequencyToggle === DAILY ? styles.disabledContainer :
+                    this.props.frequencyToggle === Constants.DAILY ? styles.disabledContainer :
                     (this.state.daysOfWeek[0] ? styles.toggleOnContainer : styles.toggleOffContainer),
-                    this.props.frequencyToggle === DAILY ? {borderColor: Colors.lightGreyText} : {}
+                    this.props.frequencyToggle === Constants.DAILY ? {borderColor: Colors.lightGreyText} : {}
                 ]}
                     onPress={() => {
                         let newDaysOfWeek = [...this.state.daysOfWeek]
@@ -102,9 +100,9 @@ export default class DaysOfWeekToggle extends React.Component {
 
                 <TouchableOpacity style={[
                     styles.dayContainer,
-                    this.props.frequencyToggle === DAILY ? styles.disabledContainer :
+                    this.props.frequencyToggle === Constants.DAILY ? styles.disabledContainer :
                     (this.state.daysOfWeek[1] ? styles.toggleOnContainer : styles.toggleOffContainer),
-                    this.props.frequencyToggle === DAILY ? {borderColor: Colors.lightGreyText} : {}
+                    this.props.frequencyToggle === Constants.DAILY ? {borderColor: Colors.lightGreyText} : {}
                 ]}
                 onPress={() => {
                     let newDaysOfWeek = [...this.state.daysOfWeek]
@@ -124,9 +122,9 @@ export default class DaysOfWeekToggle extends React.Component {
 
                 <TouchableOpacity style={[
                     styles.dayContainer,
-                    this.props.frequencyToggle === DAILY ? styles.disabledContainer :
+                    this.props.frequencyToggle === Constants.DAILY ? styles.disabledContainer :
                     (this.state.daysOfWeek[2] ? styles.toggleOnContainer : styles.toggleOffContainer),
-                    this.props.frequencyToggle === DAILY ? {borderColor: Colors.lightGreyText} : {}
+                    this.props.frequencyToggle === Constants.DAILY ? {borderColor: Colors.lightGreyText} : {}
                 ]}
                 onPress={() => {
                     let newDaysOfWeek = [...this.state.daysOfWeek]
@@ -147,9 +145,9 @@ export default class DaysOfWeekToggle extends React.Component {
 
                 <TouchableOpacity style={[
                     styles.dayContainer,
-                    this.props.frequencyToggle === DAILY ? styles.disabledContainer :
+                    this.props.frequencyToggle === Constants.DAILY ? styles.disabledContainer :
                     (this.state.daysOfWeek[3] ? styles.toggleOnContainer : styles.toggleOffContainer),
-                    this.props.frequencyToggle === DAILY ? {borderColor: Colors.lightGreyText} : {}
+                    this.props.frequencyToggle === Constants.DAILY ? {borderColor: Colors.lightGreyText} : {}
                 ]}
                 onPress={() => {
                     let newDaysOfWeek = [...this.state.daysOfWeek]
@@ -169,9 +167,9 @@ export default class DaysOfWeekToggle extends React.Component {
 
                 <TouchableOpacity style={[
                     styles.dayContainer,
-                    this.props.frequencyToggle === DAILY ? styles.disabledContainer :
+                    this.props.frequencyToggle === Constants.DAILY ? styles.disabledContainer :
                     (this.state.daysOfWeek[4] ? styles.toggleOnContainer : styles.toggleOffContainer),
-                    this.props.frequencyToggle === DAILY ? {borderColor: Colors.lightGreyText} : {}
+                    this.props.frequencyToggle === Constants.DAILY ? {borderColor: Colors.lightGreyText} : {}
                 ]}
                 onPress={() => {
                     let newDaysOfWeek = [...this.state.daysOfWeek]
@@ -191,9 +189,9 @@ export default class DaysOfWeekToggle extends React.Component {
 
                 <TouchableOpacity style={[
                     styles.dayContainer,
-                    this.props.frequencyToggle === DAILY ? styles.disabledContainer :
+                    this.props.frequencyToggle === Constants.DAILY ? styles.disabledContainer :
                     (this.state.daysOfWeek[5] ? styles.toggleOnContainer : styles.toggleOffContainer),
-                    this.props.frequencyToggle === DAILY ? {borderColor: Colors.lightGreyText} : {}
+                    this.props.frequencyToggle === Constants.DAILY ? {borderColor: Colors.lightGreyText} : {}
                 ]}
                 onPress={() => {
                     let newDaysOfWeek = [...this.state.daysOfWeek]
@@ -213,9 +211,9 @@ export default class DaysOfWeekToggle extends React.Component {
 
                 <TouchableOpacity style={[
                     styles.dayContainer,
-                    this.props.frequencyToggle === DAILY ? styles.disabledContainer :
+                    this.props.frequencyToggle === Constants.DAILY ? styles.disabledContainer :
                     (this.state.daysOfWeek[6] ? styles.toggleOnContainer : styles.toggleOffContainer),
-                    this.props.frequencyToggle === DAILY ? {borderColor: Colors.lightGreyText} : {}
+                    this.props.frequencyToggle === Constants.DAILY ? {borderColor: Colors.lightGreyText} : {}
                 ]}
                 onPress={() => {
                     let newDaysOfWeek = [...this.state.daysOfWeek]

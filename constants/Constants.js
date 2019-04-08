@@ -1,5 +1,9 @@
 export default {
     COMPLETE: 'COMPLETE',
     PROGRESS: 'PROGRESS',
-    SUBTASK: 'SUBTASK'
+    SUBTASK: 'SUBTASK',
+    DAILY: 'DAILY',
+    WEEKLY: 'WEEKLY',
+    MONTHLY: 'MONTLY',
+    YEARLY: 'YEARLY'
 }

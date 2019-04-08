@@ -12,6 +12,8 @@ import MetricsHabitPreview from '../components/MetricsHabitPreview';
 import TriToggle from '../components/TriToggle'
 import Fonts from '../constants/Fonts';
 import Colors from '../constants/Colors';
+import Constants from '../constants/Constants'
+
 
 const mapStateToProps = (state) => {
     return {
@@ -25,10 +27,6 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-const WEEKLY = 'WEEKLY'
-const MONTHLY = 'MONTHLY'
-const YEARLY = 'YEARLY'
-
 class MetricsHomeScreen extends React.Component {
     static navigationOptions = {
         header: null
@@ -37,15 +35,15 @@ class MetricsHomeScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentToggleSection: WEEKLY
+            currentToggleSection: Constants.WEEKLY
         }
     }
 
     setToggleState(section) {
         let mapping = {
-            LEFT: WEEKLY,
-            MIDDLE: MONTHLY,
-            RIGHT: YEARLY
+            LEFT: Constants.WEEKLY,
+            MIDDLE: Constants.MONTHLY,
+            RIGHT: Constants.YEARLY
         }
         this.setState({ currentToggleSection: mapping[section] })
     }
