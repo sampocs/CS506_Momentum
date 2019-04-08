@@ -20,12 +20,19 @@ export default class DayMonthYearToggle extends React.Component {
     }
     render() {
         return (
-            <View style={styles.container}>
+            <View style={[styles.container,
+                {borderColor: this.props.color}]}>
 
                 <TouchableOpacity style={[
                     styles.halfContainer,
                     styles.leftContainer,
-                    this.state.currentPosition === LEFT ? styles.toggleOnContainer : styles.toggleOffContainer,
+                    this.state.currentPosition === LEFT ? {
+                        backgroundColor: this.props.color,
+                        borderColor: this.props.color
+                    } : {
+                        backgroundColor: 'white',
+                        borderColor: 'white'
+                    },
                 ]}
                     onPress={() => {
                         this.setState({ currentPosition: LEFT })
@@ -34,7 +41,11 @@ export default class DayMonthYearToggle extends React.Component {
                 >
                     <Text style={[
                         styles.text,
-                        this.state.currentPosition === LEFT ? styles.toggleOnText : styles.toggleOffText
+                        this.state.currentPosition === LEFT ? {
+                            color: 'white'
+                        } : {
+                            color: this.props.color
+                        }
                     ]}>
                         {this.props.labels[0]}
                     </Text>
@@ -43,7 +54,13 @@ export default class DayMonthYearToggle extends React.Component {
                 <TouchableOpacity style={[
                     styles.halfContainer,
                     styles.rightContainer,
-                    this.state.currentPosition === RIGHT ? styles.toggleOnContainer : styles.toggleOffContainer
+                    this.state.currentPosition === RIGHT ? {
+                        backgroundColor: this.props.color,
+                        borderColor: this.props.color
+                    } : {
+                        backgroundColor: 'white',
+                        borderColor: 'white'
+                    },
                 ]}
                     onPress={() => {
                         this.setState({ currentPosition: RIGHT })
@@ -51,8 +68,11 @@ export default class DayMonthYearToggle extends React.Component {
                     }}>
                     <Text style={[
                         styles.text,
-                        this.state.currentPosition === RIGHT ? styles.toggleOnText : styles.toggleOffText
-                    ]}>
+                        this.state.currentPosition === RIGHT ? {
+                            color: 'white'
+                        } : {
+                            color: this.props.color
+                        }                    ]}>
                         {this.props.labels[1]}
                     </Text>
                 </TouchableOpacity>
@@ -72,7 +92,6 @@ const styles = StyleSheet.create({
         width: Layout.window.width - 50,
         backgroundColor: 'white',
         borderWidth: borderWidth,
-        borderColor: Colors.aqua,
         borderRadius: 5
     },
     halfContainer: {
@@ -90,20 +109,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
         fontFamily: Fonts.AvenirNext
-    },
-    toggleOnContainer: {
-        backgroundColor: Colors.aqua,
-        borderColor: Colors.aqua
-    },
-    toggleOffContainer: {
-        backgroundColor: 'white',
-        borderColor: 'white'
-    },
-    toggleOnText: {
-        color: 'white'
-    },
-    toggleOffText: {
-        color: Colors.aqua
     }
-
 })

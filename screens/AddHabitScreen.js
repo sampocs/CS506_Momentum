@@ -15,23 +15,28 @@ import Colors from '../constants/Colors'
 import Fonts from '../constants/Fonts'
 import { CheckBox } from 'react-native-elements'
 import DualToggle from '../components/DualToggle'
-import DaysOfWeekToggle from './DaysOfWeekToggle';
-import Layout from '../constants/Layout';
+import DaysOfWeekToggle from '../components/DaysOfWeekToggle';
+import {
+    addHabitToHistory,
+    addHabitToSettings
+} from '../actions/actions'
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Constants from '../constants/Constants';
+import { formatDate } from '../helpers/dateOperations';
 
 const mapStateToProps = (state) => {
     return {
-
+        currentHabits: Object.keys(state.settings.habitSettings)
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        addHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
+        addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
     }
 }
-
 
 const DAILY = 'DAILY'
 const WEEKLY = 'WEEKLY'
@@ -51,12 +56,13 @@ class AddHabitScreen extends React.Component {
             beginTime: new Date(),
             endTime: new Date(),
             goal: '',
-            units: '',
+            unit: '',
             includeMeasurementsChecked: false,
             includeSubtasksChecked: false,
             strictOrderChecked: false,
             disappearWhenCompleted: false,
             subtasks: [],
+            icon: 'spinner'
         }
     }
 
@@ -104,7 +110,7 @@ class AddHabitScreen extends React.Component {
                     <TouchableOpacity
                         onPress={() => this.removeSubtask(i)}
                     >
-                        <Ionicons size={30} color={Colors.aqua} name={'ios-trash'}/>
+                        <Ionicons size={30} color={Colors.calendarBlue} name={'ios-trash'}/>
                     </TouchableOpacity>
                 </View>
             )
@@ -120,7 +126,99 @@ class AddHabitScreen extends React.Component {
     }
 
     addHabit = () => {
+        if (!this.fieldsCompleted(alertUser=true)) {
+            return;
+        }
+
+        let habitSettings = {
+            startTime: formatDate(this.state.beginTime, "YYYY-MM-DD") ,
+            endTime: formatDate(this.state.endTime, "YYYY-MM-DD"),
+            disappearWhenCompleted: this.state.disappearWhenCompleted,
+            daysOfWeek: this.state.daysOfWeek,
+            icon: this.state.icon
+        }
+        let habitHistory = {
+            completed: false,
+            notes: ''
+        }
+        if (this.state.includeMeasurementsChecked) {
+            habitSettings.type = Constants.PROGRESS
+            habitSettings.habitInfo = {
+                unit: this.state.unit,
+                goal: parseInt(this.state.goal)
+            }
+
+            habitHistory.type = Constants.PROGRESS
+            habitHistory.habitInfo = {
+                progress: 0,
+                goal: parseInt(this.state.goal)
+            }
+        }
+        else if (this.state.includeSubtasksChecked) {
+            habitSettings.type = Constants.SUBTASK 
+            habitSettings.habitInfo = {
+                subtasks: this.state.subtasks
+            }
+
+            habitHistory.type = Constants.SUBTASK
+            habitHistory.habitInfo = {
+                subtasks: this.state.subtasks.map((subtask) => [subtask, false])
+            }
+        }
+        else {
+            habitSettings.type = Constants.COMPLETE
+            habitSettings.habitInfo = {}
+
+            habitHistory.type = Constants.COMPLETE
+            habitHistory.habitInfo = {}
+        }
+        this.props.addHabitToSettings(this.state.habitName, habitSettings)
+        this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
+
         this.props.navigation.navigate('CalendarHome')
+    }
+
+    fieldsCompleted(alertUser=false) {
+        if (this.state.habitName === '') {
+            if (alertUser) {
+                AlertIOS.alert(
+                    '',
+                    'Please enter a habit name!'
+                )
+            }
+            return false
+        }
+        if (this.state.includeMeasurementsChecked && this.state.goal === '') {
+            if (alertUser) {
+                AlertIOS.alert(
+                    '',
+                    'Please enter a measurable goal amount!'
+                )
+            }
+            return false
+        }
+        if (this.state.includeSubtasksChecked && this.state.subtasks.length === 0) {
+            if (alertUser) {
+                AlertIOS.alert(
+                    '',
+                    "Please enter at least one subtask!"
+                )
+            }
+            return false
+        }
+        for (i in this.props.currentHabits) {
+            let habit = this.props.currentHabits[i]
+            if (this.state.habitName.toLowerCase() === habit.toLowerCase()) {
+                if (alertUser) {
+                    AlertIOS.alert(
+                        "Duplicate Habit",
+                        "You've already added this habit!"
+                    )
+                }
+                return false
+            }
+        }
+        return true;
     }
 
     render() {
@@ -155,6 +253,7 @@ class AddHabitScreen extends React.Component {
                     {/*|||||||||||||||||||   DAYS     |||||||||||||||||*/}
                     <View style={styles.dailyWeeklyToggle}>
                         <DualToggle
+                            color={Colors.calendarBlue}
                             labels={['Daily', 'Weekly']}
                             setParentState={this.setFrequencyToggle.bind(this)}
                         />
@@ -163,6 +262,7 @@ class AddHabitScreen extends React.Component {
                     <View style={styles.daysOfWeekToggle}>
                         <DaysOfWeekToggle
                             daysOfWeek={this.state.daysOfWeek}
+                            frequencyToggle={this.state.frequencyToggle}
                             setParentState={this.setDaysOfWeekToggle.bind(this)}
                             clickable={this.state.frequencyToggle != DAILY}
                         />
@@ -178,13 +278,13 @@ class AddHabitScreen extends React.Component {
                                 checked={this.state.timeRangeChecked}
                                 onPress={() => {
                                     this.setState({
-                                        timeRangeChecked: !this.state.timeRangeChecked,
+                                        timeRangeChecked: !this.state.timeRangeChecked
                                     })
                                 }}
                                 containerStyle={styles.checkboxContainer}
                                 textStyle={styles.checkboxText}
-                                uncheckedColor={Colors.aqua}
-                                checkedColor={Colors.aqua}
+                                uncheckedColor={Colors.calendarBlue}
+                                checkedColor={Colors.calendarBlue}
                                 size={40}
                             >
                             </CheckBox>
@@ -222,16 +322,18 @@ class AddHabitScreen extends React.Component {
                                 onPress={() => {
                                     let checked = !this.state.includeMeasurementsChecked
                                     if (!checked) {
-                                        this.setState({ goal: '', units: '' })
+                                        this.setState({ goal: '', unit: '' })
                                     }
                                     this.setState({
                                         includeMeasurementsChecked: checked,
+                                        includeSubtasksChecked: false,
+                                        subtasks: []
                                     })
                                 }}
                                 containerStyle={styles.checkboxContainer}
                                 textStyle={styles.checkboxText}
-                                uncheckedColor={Colors.aqua}
-                                checkedColor={Colors.aqua}
+                                uncheckedColor={Colors.calendarBlue}
+                                checkedColor={Colors.calendarBlue}
                                 size={40}
                             >
                             </CheckBox>
@@ -262,13 +364,13 @@ class AddHabitScreen extends React.Component {
                                         placeholder={'Units'}
                                         placeholderTextColor={Colors.lightGreyText}
                                         onChangeText={(text) => {
-                                            this.setState({ units: text })
+                                            this.setState({ unit: text })
                                         }}
                                         returnKeyType={'done'}
                                         autoCorrect={false}
                                         autoCapitalize={'none'}
                                         selectTextOnFocus={true}
-                                        value={this.state.units}
+                                        value={this.state.unit}
                                         editable={this.state.includeMeasurementsChecked}
                                     />
                                 </View>
@@ -285,12 +387,15 @@ class AddHabitScreen extends React.Component {
                                     onPress={() => {
                                         this.setState({
                                             includeSubtasksChecked: !this.state.includeSubtasksChecked,
+                                            includeMeasurementsChecked: false,
+                                            goal: '',
+                                            unit: ''
                                         })
                                     }}
                                     containerStyle={styles.checkboxContainer}
                                     textStyle={styles.checkboxText}
-                                    uncheckedColor={Colors.aqua}
-                                    checkedColor={Colors.aqua}
+                                    uncheckedColor={Colors.calendarBlue}
+                                    checkedColor={Colors.calendarBlue}
                                     size={40}
                                 />
                                 {
@@ -298,7 +403,7 @@ class AddHabitScreen extends React.Component {
                                     <TouchableOpacity
                                         onPress={() => this.addSubtask()}
                                     >
-                                        <Octicons name={'plus'} color={Colors.aqua} size={35}/>
+                                        <Octicons name={'plus'} color={Colors.calendarBlue} size={35}/>
                                     </TouchableOpacity>
                                 }
                             </View>
@@ -310,6 +415,7 @@ class AddHabitScreen extends React.Component {
 
                     <View style={styles.completionActionToggle}>
                         <DualToggle
+                            color={Colors.calendarBlue}
                             labels={['Change Color', 'Disappear']}
                             setParentState={this.setCompletionActionToggle.bind(this)}
                         />
@@ -317,7 +423,8 @@ class AddHabitScreen extends React.Component {
                 </ScrollView>
                 <View style={styles.addButtonContainer}>
                         <TouchableOpacity
-                            style={styles.addButton}
+                            style={[styles.addButton,
+                            {backgroundColor: this.fieldsCompleted() ? Colors.calendarBlue : Colors.lightGreyText}]}
                             onPress={() => this.addHabit()}
                         >
                             <Text style={styles.addButtonText}> ADD </Text>
@@ -338,7 +445,7 @@ const styles = StyleSheet.create({
     },
     cancelButtonText: {
         fontSize: 18,
-        color: Colors.aqua
+        color: Colors.calendarBlue
     },
     scrollviewContainer: {
         flex: 1,
@@ -347,12 +454,12 @@ const styles = StyleSheet.create({
     habitNameContainer: {
         margin: 20,
         alignItems: 'center',
-        borderBottomColor: Colors.aqua,
+        borderBottomColor: Colors.calendarBlue,
         borderBottomWidth: 3,
         paddingBottom: 3
     },
     habitName: {
-        color: Colors.aqua,
+        color: Colors.calendarBlue,
         fontSize: 27,
         fontFamily: Fonts.AvenirNext,
         textAlign: 'center',
@@ -368,7 +475,7 @@ const styles = StyleSheet.create({
         padding: 0,
     },
     checkboxText: {
-        color: Colors.aqua,
+        color: Colors.calendarBlue,
         fontFamily: Fonts.AvenirNext,
         fontSize: 20
     },
@@ -391,7 +498,7 @@ const styles = StyleSheet.create({
     },
     timeRangeFieldsText: {
         fontSize: 18,
-        color: Colors.aqua
+        color: Colors.calendarBlue
     },
     measurementsCheckbox: {
 
@@ -404,13 +511,13 @@ const styles = StyleSheet.create({
     },
     measurementFields: {
         alignItems: 'center',
-        borderBottomColor: Colors.aqua,
+        borderBottomColor: Colors.calendarBlue,
         borderBottomWidth: 3,
         paddingBottom: 3,
         marginHorizontal: 10
     },
     fieldText: {
-        color: Colors.aqua,
+        color: Colors.calendarBlue,
         fontSize: 20,
         fontFamily: Fonts.AvenirNext,
         textAlign: 'center',
@@ -431,7 +538,7 @@ const styles = StyleSheet.create({
     subtaskTitleText: {
         fontSize: 20,
         fontWeight: '500',
-        color: Colors.aqua
+        color: Colors.calendarBlue
     },
     completionActionToggle: {
 
@@ -446,7 +553,6 @@ const styles = StyleSheet.create({
     },
     addButton: {
         marginVertical: 15,
-        backgroundColor: Colors.aqua,
         height: 60,
         width: 200,
         borderRadius: 80,

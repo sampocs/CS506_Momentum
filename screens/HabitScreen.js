@@ -4,7 +4,9 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-    TextInput
+    TextInput,
+    Keyboard,
+    TouchableWithoutFeedback
 } from 'react-native'
 import { connect } from 'react-redux';
 import Subtask from '../components/Subtask';
@@ -15,6 +17,7 @@ import Fonts from '../constants/Fonts';
 import Colors from '../constants/Colors';
 import { formatDate } from '../helpers/dateOperations';
 import Layout from '../constants/Layout';
+import { updateNote } from '../actions/actions'
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -23,13 +26,13 @@ const mapStateToProps = (state, ownProps) => {
         date: props.date,
         habitName: props.habitName,
         dataOnDate: state.history[props.date][props.habitName],
-        habitType: state.settings.habitSettings[props.habitName].type
+        habitType: state.settings.habitSettings[props.habitName].type,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        updateNote: (habitName, date, notes) => dispatch(updateNote(habitName, date, notes))
     }
 }
 
@@ -40,14 +43,6 @@ class HabitScreen extends React.Component {
         this.state = {
             dataOnDate: props.dataOnDate
         }
-    }
-    state = {
-        //remove after redux implementation
-        subtaskName: 'Subtask Name',
-        completed: 'false',
-        number: 30,
-        habitName: '',
-        habitDate: ''
     }
 
     renderType(habitType) {
@@ -61,73 +56,103 @@ class HabitScreen extends React.Component {
         }
     }
 
+    scrollDown() {
+        this.scroller.scrollTo({ x: 0, y: 0, animated: true })
+    }
+
+    scrollUp() {
+        this.scroller.scrollTo({ x: 0, y: 250, animated: true })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.dataOnDate != this.props.dataOnDate) {
+            this.setState({ dataOnDate: this.props.dataOnDate })
+        }
+    }
+
     render() {
         return (
+            <TouchableWithoutFeedback onPress={() => {
+                this.scrollDown();
+                Keyboard.dismiss();
+            }}>
+                <ScrollView
+                    style={styles.scrollContainer}
+                    scrollEnabled={false}
+                    contentContainerStyle={styles.scrollContentContainer}
+                    ref={(scroller) => this.scroller = scroller}>
 
-            <View style={styles.container}>
-                <View style={{alignItems: 'center'}}>
-                    <Text style={styles.habitNameText}>{this.props.habitName}</Text>
-                    <Text style={styles.dateText}>{formatDate(this.props.date, "MMM D")}</Text>
-                </View>
-                <View>
-                    {this.renderType(this.props.habitType)}
-                </View>
+                    <View style={{ alignItems: 'center' }}>
+                        <Text style={styles.habitNameText}>{this.props.habitName}</Text>
+                        <Text style={styles.dateText}>{formatDate(this.props.date, "MMM D")}</Text>
+                    </View>
 
-                <View style={[styles.bottomNoteContainer]}>
-                    <ScrollView
-                        contentContainerStyle={{ flexGrow: 1, }}
-                        keyboardShouldPersistTaps='handled'
-                    >
-                        <TextInput
-                            style={[
-                                styles.bottomNoteText,
-                            ]}
-                            placeholder={"Notes"}
-                            placeholderTextColor={Colors.greyBack}
-                            onChangeText={(text) => this.setState({ notes: text })}
-                            multiline={true}
-                            spellCheck={false}
-                            value={this.state.notes}
-                            onEndEditing={() => {
-                                //do redux stuff here
-                            }}
-                        />
-                    </ScrollView>
-                </View>
+                    <View style={{ alignItems: 'center' }}>
+                        {this.renderType(this.props.habitType)}
+                    </View>
 
-            </View>
+                    <View style={[styles.bottomNoteContainer]}>
+                        <ScrollView
+                            contentContainerStyle={{ flexGrow: 1, }}
+                            keyboardShouldPersistTaps='handled'
+                        >
+                            <TextInput
+                                style={[
+                                    styles.bottomNoteText,
+                                ]}
+                                placeholder={"Notes"}
+                                placeholderTextColor={Colors.greyBack}
+                                onChangeText={(text) => this.setState({ notes: text })}
+                                multiline={true}
+                                spellCheck={false}
+                                value={this.state.notes}
+                                onEndEditing={() => {
+                                    this.props.updateNote(this.props.habitName, this.props.date, this.state.dataOnDate.notes)
+                                }}
+                                onSubmitEditing={() => {
+                                    this.props.updateNote(this.props.habitName, this.props.date, this.state.dataOnDate.notes)
+                                }}
+                                onFocus={() => this.scrollUp()}
+                            />
+                        </ScrollView>
+                    </View>
+                </ScrollView>
+            </TouchableWithoutFeedback>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
+    scrollContainer: {
         flex: 1,
-        alignItems: 'center',
         paddingTop: 20,
-        marginTop: 20,
-        justifyContent: 'space-between'
+    },
+    scrollContentContainer: {
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        height: '100%'
     },
     habitNameText: {
         fontFamily: Fonts.AvenirNext,
-        color: Colors.aqua,
+        color: Colors.calendarBlue,
         fontSize: 50,
     },
     dateText: {
         fontFamily: Fonts.AvenirNext,
-        color: Colors.aqua,
+        color: Colors.calendarBlue,
         fontSize: 25,
         margin: 10
     },
     bottomNoteContainer: {
         backgroundColor: Colors.lightGrey,
         width: Layout.window.width - 20,
-        height: 180,
+        height: 200,
         borderRadius: 5,
-        borderColor: Colors.aqua,
+        borderColor: Colors.calendarBlue,
         borderWidth: 5,
         backgroundColor: 'white',
-        marginVertical: 10
+        marginVertical: 10,
     },
     bottomNoteText: {
         fontFamily: Fonts.Verdana,

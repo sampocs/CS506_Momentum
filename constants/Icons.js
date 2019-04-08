@@ -19,5 +19,12 @@ export default {
         style: {
 
         }
+    },
+    spinner: {
+        iconName: 'EvilIcons/spinner-3',
+        size: 50,
+        style: {
+            
+        }
     }
 }

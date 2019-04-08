@@ -10,6 +10,9 @@ export const UPDATE_PROGRESS_AMOUNT = 'UPDATE_PROGRESS_AMOUNT'
 export const INCREMEMNT_PROGRESS_AMOUNT = 'INCREMENT_PROGRESS_AMOUNT'
 export const SELECT_DATE = 'SELECT_DATE'
 export const SELECT_TODAY = 'SELECT_TODAY'
+export const ADD_HABIT_TO_SETTINGS = 'ADD_HABIT_TO_SETTINGS'
+export const ADD_HABIT_TO_HISTORY = 'ADD_HABIT_TO_HISTORY'
+export const UPDATE_NOTES = 'UPDATE_NOTES'
 
 
 //Action Creators
@@ -64,4 +67,25 @@ export const selectDate = (date) => ({
 export const selectToday = () => ({
     type: SELECT_TODAY,  
     date: getCurrentDate()
+})
+
+export const addHabitToSettings = (habitName, habitSettings) => ({
+    type: ADD_HABIT_TO_SETTINGS,
+    habitName,
+    habitSettings
+})
+
+export const addHabitToHistory = (habitName, habitHistory, daysOfWeek) => ({
+    type: ADD_HABIT_TO_HISTORY,
+    habitName,
+    habitHistory,
+    daysOfWeek,
+    currentDate: getCurrentDate()
+})
+
+export const updateNote = (habitName, date, notes) => ({
+    type: UPDATE_NOTES,
+    habitName,
+    date,
+    notes
 })

@@ -68,6 +68,17 @@ class HabitComponent extends React.Component {
     }
 
     render() {
+        let displayName = this.props.habitName
+        if (this.props.habitType === Constants.SUBTASK) {
+            let subtasks = this.props.dataOnDate.habitInfo.subtasks
+            for (i in subtasks) {
+                let subtask = subtasks[i]
+                if (!subtask[1]) {
+                    displayName = subtask[0]
+                    break;
+                }
+            }
+        }
         return (
             <View style={[
                 styles.container,
@@ -88,7 +99,7 @@ class HabitComponent extends React.Component {
                         <Text style={[
                             styles.nameText,
                             { color: this.state.completed ? Colors.darkAqua : Colors.darkRed }
-                        ]}> {this.props.habitName} </Text>
+                        ]}> {displayName} </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.checkboxContainer}>

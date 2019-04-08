@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
+import TabBarLabel from '../components/TabBarLabel';
 
 import CalendarHomeScreen from '../screens/CalendarHomeScreen';
 import MetricsHomeScreen from '../screens/MetricsHomeScreen';
@@ -11,6 +12,7 @@ import HabitScreen from '../screens/HabitScreen';
 import AddHabitScreen from '../screens/AddHabitScreen';
 import MetricsSpecificHabitScreen from '../screens/MetricsSpecificHabitScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import Colors from '../constants/Colors';
 
 const CalendarStack = createStackNavigator({
     CalendarHome: CalendarHomeScreen,
@@ -19,11 +21,18 @@ const CalendarStack = createStackNavigator({
 });
 
 CalendarStack.navigationOptions = {
-    tabBarLabel: 'Calendar',
+    tabBarLabel: ({focused}) => (
+        <TabBarLabel 
+            focused={focused}
+            selectedColor={Colors.calendarBlue}
+            title={'Calendar'}
+        />
+    ),  
     tabBarIcon: ({ focused }) => (
         <TabBarIcon
             focused={focused}
             name={'FontAwesome/calendar'}
+            selectedColor={Colors.calendarBlue}
         />
     ),
     
@@ -32,15 +41,22 @@ CalendarStack.navigationOptions = {
 const MetricsStack = createStackNavigator({
     MetricsHome: MetricsHomeScreen,
     MetricsSpecificHabit: MetricsSpecificHabitScreen,
-    Habit: HabitScreen
+    Habit: HabitScreen,
 });
 
 MetricsStack.navigationOptions = {
-    tabBarLabel: 'Metrics',
+    tabBarLabel: ({focused}) => (
+        <TabBarLabel 
+            focused={focused}
+            selectedColor={Colors.aqua}
+            title={'Metrics'}
+        />
+    ),  
     tabBarIcon: ({ focused }) => (
         <TabBarIcon
             focused={focused}
             name={'Ionicons/ios-pulse'}
+            selectedColor={Colors.aqua}
         />
     ),
 };
@@ -51,11 +67,18 @@ const SettingsStack = createStackNavigator({
 });
 
 SettingsStack.navigationOptions = {
-    tabBarLabel: 'Settings',
+    tabBarLabel: ({focused}) => (
+        <TabBarLabel 
+            focused={focused}
+            selectedColor={Colors.darkBlue}
+            title={'Settings'}
+        />
+    ),  
     tabBarIcon: ({ focused }) => (
         <TabBarIcon
             focused={focused}
             name={'Ionicons/ios-settings'}
+            selectedColor={Colors.darkBlue}
         />
     ),
 };
@@ -63,5 +86,5 @@ SettingsStack.navigationOptions = {
 export default createBottomTabNavigator({
     CalendarStack,
     MetricsStack,
-    SettingsStack,
+    SettingsStack
 });
