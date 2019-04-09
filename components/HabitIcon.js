@@ -15,7 +15,7 @@ export default class HabitIcon extends React.Component {
         MaterialCommunityIcons: MaterialCommunityIcons,
         Feather: Feather,
         AntDesign: AntDesign,
-        EvilIcons: EvilIcons
+        EvilIcons: EvilIcons,
     }
 
     render() {
@@ -29,7 +29,7 @@ export default class HabitIcon extends React.Component {
                 name={iconName}
                 size={icon.size}
                 style={icon.style}
-                color={this.props.completed ? Colors.darkAqua : Colors.darkRed}
+                color={this.props.color ? this.props.color : (this.props.completed ? Colors.darkAqua : Colors.darkRed)}
             />
         )
     }

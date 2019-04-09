@@ -8,7 +8,10 @@ import {
     DatePickerIOS,
     TouchableOpacity,
     SafeAreaView,
-    AlertIOS
+    AlertIOS,
+    Modal,
+    FlatList,
+    Dimensions,
 } from 'react-native'
 import { connect } from 'react-redux';
 import Colors from '../constants/Colors'
@@ -24,6 +27,11 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from '../constants/Constants';
 import { formatDate } from '../helpers/dateOperations';
+import Icons from '../constants/Icons';
+import HabitIcon from '../components/HabitIcon';
+
+const NUM_COLUMNS = 4;
+const { width } = Dimensions.get('window');
 
 const mapStateToProps = (state) => {
     return {
@@ -59,7 +67,10 @@ class AddHabitScreen extends React.Component {
             strictOrderChecked: false,
             disappearWhenCompleted: false,
             subtasks: [],
-            icon: 'spinner'
+            icon: 'spinner',
+            modalVisible: false,
+            iconChosen: false,
+            addingHabit: false
         }
     }
 
@@ -74,7 +85,6 @@ class AddHabitScreen extends React.Component {
         }
         if (sectionMapping[section] === Constants.WEEKLY) {
             this.setState({ daysOfWeek: [false, false, false, false, false, false, false] })
-
         }
     }
 
@@ -92,22 +102,22 @@ class AddHabitScreen extends React.Component {
 
     removeSubtask = (index) => {
         var subtasks = this.state.subtasks;
-        subtasks.splice(index,1)
+        subtasks.splice(index, 1)
         this.setState({ subtasks })
     }
 
     subtasks = () => {
         return this.state.subtasks.map((task, i) => {
             return (
-                <View 
+                <View
                     key={i}
                     style={styles.subtaskContainer}
                 >
-                    <Text style={styles.subtaskTitleText}>{task}</Text>
+                    <Text style={styles.subtaskTitleText} ellipsizeMode={'tail'}>{task}</Text>
                     <TouchableOpacity
                         onPress={() => this.removeSubtask(i)}
                     >
-                        <Ionicons size={30} color={Colors.calendarBlue} name={'ios-trash'}/>
+                        <Ionicons size={30} color={Colors.calendarBlue} name={'ios-trash'} />
                     </TouchableOpacity>
                 </View>
             )
@@ -123,12 +133,13 @@ class AddHabitScreen extends React.Component {
     }
 
     addHabit = () => {
-        if (!this.fieldsCompleted(alertUser=true)) {
+        this.setState({addingHabit: true})
+        if (!this.fieldsCompleted(alertUser = true)) {
             return;
         }
 
         let habitSettings = {
-            startTime: formatDate(this.state.beginTime, "YYYY-MM-DD") ,
+            startTime: formatDate(this.state.beginTime, "YYYY-MM-DD"),
             endTime: formatDate(this.state.endTime, "YYYY-MM-DD"),
             disappearWhenCompleted: this.state.disappearWhenCompleted,
             daysOfWeek: this.state.daysOfWeek,
@@ -152,11 +163,10 @@ class AddHabitScreen extends React.Component {
             }
         }
         else if (this.state.includeSubtasksChecked) {
-            habitSettings.type = Constants.SUBTASK 
+            habitSettings.type = Constants.SUBTASK
             habitSettings.habitInfo = {
                 subtasks: this.state.subtasks
             }
-
             habitHistory.type = Constants.SUBTASK
             habitHistory.habitInfo = {
                 subtasks: this.state.subtasks.map((subtask) => [subtask, false])
@@ -165,17 +175,15 @@ class AddHabitScreen extends React.Component {
         else {
             habitSettings.type = Constants.COMPLETE
             habitSettings.habitInfo = {}
-
             habitHistory.type = Constants.COMPLETE
             habitHistory.habitInfo = {}
         }
         this.props.addHabitToSettings(this.state.habitName, habitSettings)
         this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
-
         this.props.navigation.navigate('CalendarHome')
     }
 
-    fieldsCompleted(alertUser=false) {
+    fieldsCompleted(alertUser = false) {
         if (this.state.habitName === '') {
             if (alertUser) {
                 AlertIOS.alert(
@@ -218,6 +226,12 @@ class AddHabitScreen extends React.Component {
         return true;
     }
 
+    renderSeparator = () => {
+        return (
+            <View style={styles.separatorComponent} />
+        );
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -228,7 +242,7 @@ class AddHabitScreen extends React.Component {
                         <Text style={styles.cancelButtonText}>Cancel</Text>
                     </TouchableOpacity>
                 </View>
-                <ScrollView 
+                <ScrollView
                     style={styles.scrollviewContainer}
                     showsVerticalScrollIndicator={false}
                 >
@@ -268,50 +282,51 @@ class AddHabitScreen extends React.Component {
                     <View style={styles.optionsContainer}>
 
                         {/*||||||||||||||   TIME RANGE   |||||||||||||||||*/}
-
-                        <View style={styles.timeRangeCheckbox}>
-                            <CheckBox
-                                title={'Include a Time Range'}
-                                checked={this.state.timeRangeChecked}
-                                onPress={() => {
-                                    this.setState({
-                                        timeRangeChecked: !this.state.timeRangeChecked
-                                    })
-                                }}
-                                containerStyle={styles.checkboxContainer}
-                                textStyle={styles.checkboxText}
-                                uncheckedColor={Colors.calendarBlue}
-                                checkedColor={Colors.calendarBlue}
-                                size={40}
-                            >
-                            </CheckBox>
-                            {
-                                this.state.timeRangeChecked &&
-                                <View style={styles.timeRangeFieldsContainer}>
-                                    <View style={styles.timeRangePickerContainer}>
-                                        <Text style={styles.timeRangeFieldsText}>After</Text>
-                                        <DatePickerIOS
-                                            mode={"time"}
-                                            minuteInterval={10}
-                                            onDateChange={(time) => this.setState({beginTime: time})}
-                                            date={this.state.beginTime}
-                                        />
+                        {
+                            false &&
+                            <View style={styles.timeRangeCheckbox}>
+                                <CheckBox
+                                    title={'Include a Time Range'}
+                                    checked={this.state.timeRangeChecked}
+                                    onPress={() => {
+                                        this.setState({
+                                            timeRangeChecked: !this.state.timeRangeChecked
+                                        })
+                                    }}
+                                    containerStyle={styles.checkboxContainer}
+                                    textStyle={styles.checkboxText}
+                                    uncheckedColor={Colors.calendarBlue}
+                                    checkedColor={Colors.calendarBlue}
+                                    size={40}
+                                >
+                                </CheckBox>
+                                {
+                                    this.state.timeRangeChecked &&
+                                    <View style={styles.timeRangeFieldsContainer}>
+                                        <View style={styles.timeRangePickerContainer}>
+                                            <Text style={styles.timeRangeFieldsText}>After</Text>
+                                            <DatePickerIOS
+                                                mode={"time"}
+                                                minuteInterval={10}
+                                                onDateChange={(time) => this.setState({ beginTime: time })}
+                                                date={this.state.beginTime}
+                                            />
+                                        </View>
+                                        <View style={styles.timeRangePickerContainer}>
+                                            <Text style={styles.timeRangeFieldsText}>Before</Text>
+                                            <DatePickerIOS
+                                                mode={"time"}
+                                                minuteInterval={10}
+                                                onDateChange={(time) => this.setState({ endTime: time })}
+                                                date={this.state.endTime}
+                                            />
+                                        </View>
                                     </View>
-                                    <View style={styles.timeRangePickerContainer}>
-                                        <Text style={styles.timeRangeFieldsText}>Before</Text>
-                                        <DatePickerIOS
-                                            mode={"time"}
-                                            minuteInterval={10}
-                                            onDateChange={(time) => this.setState({endTime: time})}
-                                            date={this.state.endTime}
-                                        />
-                                    </View>
-                                </View>
-                            }
-                        </View>
+                                }
+                            </View>
+                        }
 
                         {/* ||||||||||||||    MEASUREMENTS   ||||||||||||||*/}
-
                         <View style={styles.measurementsCheckbox}>
                             <CheckBox
                                 title={'Include a Measurements'}
@@ -375,7 +390,6 @@ class AddHabitScreen extends React.Component {
                         }
 
                         {/*||||||||||||||||   SUBTASKS   |||||||||||||||||*/}
-
                         <View style={styles.subtasksContainer}>
                             <View style={styles.subtasksCheckbox}>
                                 <CheckBox
@@ -400,16 +414,15 @@ class AddHabitScreen extends React.Component {
                                     <TouchableOpacity
                                         onPress={() => this.addSubtask()}
                                     >
-                                        <Octicons name={'plus'} color={Colors.calendarBlue} size={35}/>
+                                        <Octicons name={'plus'} color={Colors.calendarBlue} size={35} />
                                     </TouchableOpacity>
                                 }
                             </View>
-                            {this.subtasks()}
+                            {this.state.includeSubtasksChecked && this.subtasks()}
                         </View>
                     </View>
 
                     {/*||||||||||||   COMPLETE ACTION   |||||||||||||||*/}
-
                     <View style={styles.completionActionToggle}>
                         <DualToggle
                             color={Colors.calendarBlue}
@@ -417,16 +430,74 @@ class AddHabitScreen extends React.Component {
                             setParentState={this.setCompletionActionToggle.bind(this)}
                         />
                     </View>
-                </ScrollView>
-                <View style={styles.addButtonContainer}>
+
+                    {/*||||||||||||   ICON MODAL SCREEN   |||||||||||||||*/}
+                    <View style={styles.chooseIconButtonContainer}>
                         <TouchableOpacity
-                            style={[styles.addButton,
-                            {backgroundColor: this.fieldsCompleted() ? Colors.calendarBlue : Colors.lightGreyText}]}
-                            onPress={() => this.addHabit()}
+                            style={[styles.addButton, { backgroundColor: Colors.calendarBlue }]}
+                            onPress={() => this.setState({ modalVisible: true })}
                         >
-                            <Text style={styles.addButtonText}> ADD </Text>
+                            {
+                                this.state.iconChosen && <HabitIcon icon={this.state.icon} completed={false} color={'white'} />
+                            }
+                            {
+                                !this.state.iconChosen && <Text style={styles.addButtonText}>Choose Icon</Text>
+                            }
                         </TouchableOpacity>
                     </View>
+
+                    <Modal
+                        animationType="slide"
+                        transparent={false}
+                        visible={this.state.modalVisible}
+                        onRequestClose={() => {
+                            Alert.alert('Modal has been closed.');
+                        }}>
+                        <SafeAreaView style={styles.modalContainer}>
+                            <View style={styles.cancelButtonContainer}>
+                                <TouchableOpacity
+                                    onPress={() => this.setState({ modalVisible: false })}
+                                >
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.outsideScrollContainer}>
+                                <ScrollView style={styles.iconScrollView}>
+                                    <FlatList
+                                        data={Object.keys(Icons)}
+                                        renderItem={({ item, separators, index }) => (
+                                            <View style={[styles.iconContainer, (index % NUM_COLUMNS != NUM_COLUMNS - 1) ? { borderRightColor: Colors.calendarBlue, borderRightWidth: 1 } : {}]}>
+                                                <TouchableOpacity
+                                                    onShowUnderlay={separators.highlight}
+                                                    onHideUnderlay={separators.unhighlight}
+                                                    onPress={() => { this.setState({ icon: item }); this.setState({ modalVisible: false }); this.setState({ iconChosen: true }) }}
+                                                >
+                                                    <HabitIcon icon={item} completed={false} color={(this.state.icon == item) ? Colors.calendarBlue : 'black'} />
+                                                </TouchableOpacity>
+                                            </View>
+                                        )}
+                                        keyExtractor={(key) => key}
+                                        horizontal={false}
+                                        numColumns={NUM_COLUMNS}
+                                        ItemSeparatorComponent={this.renderSeparator}
+
+                                    />
+                                </ScrollView>
+                            </View>
+                        </SafeAreaView>
+                    </Modal>
+                </ScrollView>
+
+                {/*||||||||||||   ADD HABIT BUTTON   |||||||||||||||*/}
+                <View style={styles.addButtonContainer}>
+                    <TouchableOpacity
+                        style={[styles.addButton,
+                        { backgroundColor: this.fieldsCompleted() ? Colors.calendarBlue : Colors.lightGreyText }]}
+                        onPress={() => this.addHabit()}
+                    >
+                        <Text style={styles.addButtonText}>Add Habit</Text>
+                    </TouchableOpacity>
+                </View>
             </SafeAreaView>
         )
     }
@@ -477,18 +548,16 @@ const styles = StyleSheet.create({
         fontSize: 20
     },
     dailyWeeklyToggle: {
-        marginVertical: 10
+        marginVertical: 10,
+        alignSelf: 'center'
     },
     daysOfWeekToggle: {
         marginVertical: 10,
         alignItems: 'center'
     },
-    timeRangeCheckbox: {
-
-    },
     timeRangeFieldsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
+        justifyContent: 'space-between',
     },
     timeRangePickerContainer: {
         width: 150
@@ -497,21 +566,16 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: Colors.calendarBlue
     },
-    measurementsCheckbox: {
-
-    },
     measurementFieldsContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 10
+        paddingVertical: 15
     },
     measurementFields: {
         alignItems: 'center',
         borderBottomColor: Colors.calendarBlue,
         borderBottomWidth: 3,
         paddingBottom: 3,
-        marginHorizontal: 10
+        marginRight: 10
     },
     fieldText: {
         color: Colors.calendarBlue,
@@ -538,13 +602,13 @@ const styles = StyleSheet.create({
         color: Colors.calendarBlue
     },
     completionActionToggle: {
-
+        alignSelf: 'center'
     },
     addButtonContainer: {
         alignItems: 'center',
         width: '100%',
         backgroundColor: '#fff',
-        shadowOffset: {width: 0, height: -5},
+        shadowOffset: { width: 0, height: -5 },
         shadowOpacity: 0.1,
         shadowColor: '#444'
     },
@@ -560,7 +624,53 @@ const styles = StyleSheet.create({
         color: 'white',
         fontFamily: Fonts.AvenirNext,
         fontSize: 20
-    }
+    },
+    chooseIconButtonContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 10
+    },
+    chooseIconButton: {
+        marginVertical: 15,
+        borderWidth: 3,
+        borderColor: Colors.aqua,
+        height: 60,
+        width: 200,
+        borderRadius: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    modalContainer: {
+        flex: 1,
+        alignItems: 'center'
+    },
+    iconContainer: {
+        width: width / NUM_COLUMNS,
+        height: 75,
+        marginVertical: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    separatorComponent: {
+        height: 1,
+        backgroundColor: Colors.calendarBlue,
+        marginHorizontal: 5
+    },
+    iconScrollView: {
+        flex: 1,
+        backgroundColor: 'white',
+        width: '100%',
+        paddingVertical: 2,
+    },
+    outsideScrollContainer: {
+        shadowOffset: { width: 0, height: -3 },
+        shadowOpacity: 0.3,
+        shadowColor: '#444',
+        marginVertical: 5,
+        width: '100%',
+        height: '100%',
+    },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddHabitScreen);

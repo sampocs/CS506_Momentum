@@ -15,6 +15,8 @@ import { connect } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Colors from '../constants/Colors';
 
+var {height} = Dimensions.get('window');
+
 const mapStateToProps = (state, ownProps) => {
     return {
         completed: state.history[ownProps.date][ownProps.habitName].completed
@@ -49,7 +51,7 @@ class Complete extends React.Component {
                     onPress={() => this.props.toggleCompleteCompletion(this.props.date, this.props.habitName)}>
                     <Ionicons
                         name={'md-checkbox'}
-                        size={250}
+                        size={(height < 600) ? 150: 250}
                         color={this.state.completed ? Colors.aqua : Colors.lightRed}>
                     </Ionicons>
                 </TouchableOpacity>
