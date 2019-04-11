@@ -38,7 +38,7 @@ class Subtask extends React.Component {
 
     render() {
         let range = Array(this.props.subtasks.length).fill().map((x,i)=>i)
-    let subtasksList = range.map((index)=>{
+        let subtasksList = range.map((index)=>{
             return(
             <CheckBox
                 key={index}

@@ -14,7 +14,6 @@ import firebaseErrors from '../constants/FirebaseErrors'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
     updateEmail,
-    updateFirebaseUser
 } from '../actions/actions'
 import firebase from '@firebase/app';
 import '@firebase/auth'
@@ -28,7 +27,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         updateEmail: (email) => dispatch(updateEmail(email)),
-        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
     }
 }
 
@@ -57,7 +55,6 @@ class LoginScreen extends React.Component {
                 console.log("Successfully logged in.")
                 //Set username/email in redux
                 this.props.updateEmail(user.email)
-                this.props.updateFirebaseUser(user)
 
                 //Navigate to profile screen as authenticated user
                 this.props.navigation.navigate('Main')

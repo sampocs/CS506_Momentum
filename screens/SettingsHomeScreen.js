@@ -8,7 +8,6 @@ import {
 import { connect } from 'react-redux';
 import {
     updateEmail,
-    updateFirebaseUser
 } from '../actions/actions'
 import Colors from '../constants/Colors';
 import firebase from '@firebase/app';
@@ -23,7 +22,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         updateEmail: (email) => dispatch(updateEmail(email)),
-        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
     }
 }
 
@@ -36,7 +34,6 @@ class SettingsHomeScreen extends React.Component {
         firebase.auth().signOut()
         console.log("Signed Out")
         this.props.updateEmail('')
-        this.props.updateFirebaseUser({})
         this.props.navigation.navigate('Auth')
     }
 

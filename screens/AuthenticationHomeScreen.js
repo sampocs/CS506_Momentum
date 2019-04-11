@@ -8,7 +8,6 @@ import {
 } from 'react-native'
 import {
     updateEmail,
-    updateFirebaseUser
 } from '../actions/actions'
 import { connect } from 'react-redux';
 import Colors from '../constants/Colors.js'
@@ -24,7 +23,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         updateEmail: (email) => dispatch(updateEmail(email)),
-        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
     }
 }
 
@@ -52,7 +50,6 @@ class AuthenticationHomeScreen extends React.Component {
             (user) => {
                 if (user) {
                     //Store username and email in redux
-                    this.props.updateFirebaseUser(user)
                     this.props.updateEmail(user.email)
 
                     this.props.navigation.navigate('Main')

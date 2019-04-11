@@ -18,13 +18,6 @@ const settingsReducer = (state = {}, action) => {
             newState.user.email = email
             return newState
         }
-        case UPDATE_FIREBASE_USER: {
-            let {firebaseUser} = action
-            let newState = {...state}
-            newState.user = {...state.user}
-            newState.user.firebaseUser = firebaseUser
-            return newState
-        }
     }
     return state
 }
