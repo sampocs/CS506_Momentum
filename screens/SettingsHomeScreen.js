@@ -16,7 +16,8 @@ import '@firebase/auth'
 
 const mapStateToProps = (state) => {
     return {
-        user: state.settings.user
+        user: state.settings.user,
+        currentHabits: Object.keys(state.settings.habitSettings)
     }
 }
 
@@ -29,7 +30,8 @@ const mapDispatchToProps = (dispatch) => {
 
 class SettingsHomeScreen extends React.Component {
     static navigationOptions = {
-        title: 'Settings'
+        title: 'Settings',
+        edit: 'EditExistingHabit'
     }
 
     signOut() {
@@ -43,6 +45,18 @@ class SettingsHomeScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
+               
+               <View style={styles.modifyButtonContainer}>
+                    <TouchableOpacity
+                        onPress={() => {
+                        this.props.navigation.navigate('EditExistingHabit')
+                        }}
+                    >
+                        <Text style={styles.logoutButtonText}>
+                        Modify/Remove Existing Habits
+                        </Text>
+                    </TouchableOpacity>
+                </View> 
                 <View style={styles.logoutButtonContainer}>
                     <TouchableOpacity
                         onPress={() => {
@@ -78,6 +92,12 @@ const styles = StyleSheet.create({
     logoutButtonText: {
         color: Colors.darkBlue,
         fontSize: 40
+    },
+    modifyButtonContainer: {
+        position: 'absolute',
+        alignItems: 'center',
+        marginTop: 50,
+      //  borderBottom: 'black'
     }
 })
 
