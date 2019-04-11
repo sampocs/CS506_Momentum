@@ -13,7 +13,6 @@ import Colors from '../constants/Colors.js';
 import firebaseErrors from '../constants/FirebaseErrors'
 import {
     updateEmail,
-    updateFirebaseUser
 } from '../actions/actions'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import firebase from '@firebase/app';
@@ -28,7 +27,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         updateEmail: (email) => dispatch(updateEmail(email)),
-        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
     }
 }
 
@@ -59,7 +57,6 @@ class SignUpScreen extends React.Component {
                 console.log("Successfully created an account.")
 
                 this.props.updateEmail(strippedEmail)
-                this.props.updateFirebaseUser(user)
                 
                 this.props.navigation.navigate('Main')
             },

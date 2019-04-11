@@ -127,8 +127,7 @@ dummyData.settings.habitSettings = {
     }
 }
 dummyData.settings.user = {
-    email: '',
-    firebaseUser: {}
+    email: ''
 }
 
 

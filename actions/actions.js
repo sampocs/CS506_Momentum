@@ -96,8 +96,3 @@ export const updateEmail = (email) => ({
     type: UPDATE_EMAIL,
     email
 })
-
-export const updateFirebaseUser = (firebaseUser) => ({
-    type: UPDATE_FIREBASE_USER, 
-    firebaseUser
-})
