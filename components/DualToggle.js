@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         width: Layout.window.width - 50,
         backgroundColor: 'white',
         borderWidth: borderWidth,
-        borderRadius: 5
+        borderRadius: 5,
     },
     halfContainer: {
         height: barHeight - (2 * borderWidth),

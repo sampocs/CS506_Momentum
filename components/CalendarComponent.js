@@ -3,7 +3,8 @@ import {
     View,
     Text,
     TouchableOpacity,
-    StyleSheet
+    StyleSheet,
+    Dimensions
 } from 'react-native'
 import Colors from '../constants/Colors'
 import Layout from '../constants/Layout'
@@ -12,6 +13,8 @@ import { withNavigation } from 'react-navigation'
 import { getNextDate, getPreviousDay, getCurrentDate } from '../helpers/dateOperations'
 import { selectDate, selectToday, toggleMinimizeCal } from '../actions/actions'
 import { Calendar } from 'react-native-calendars'
+
+var { width } = Dimensions.get('window');
 
 const mapStateToProps = (state) => {
     return {
@@ -62,7 +65,7 @@ class CalendarComponent extends React.Component {
                         <Calendar
                             current={currDate}
                             markedDates={markedDates}
-                            style={{ height: 40 }}
+                            style={{ height: 40, margin: -10 }}
                             monthFormat={"MMM d"}
                             onDayPress={(date) => { this.props.onDayPress(date.dateString) }}
                             hideExtraDays={true}
@@ -108,7 +111,7 @@ class CalendarComponent extends React.Component {
                              }}>
                                 <Text style={[
                                     styles.buttonText,
-                                    styles.toggleTextOff]}> Add Habit </Text>
+                                    styles.toggleTextOff, (width < 350) ? {fontSize: 15}: {}]}> Add Habit </Text>
                             </TouchableOpacity>
                         </View>
                     </View>

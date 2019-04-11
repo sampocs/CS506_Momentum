@@ -6,7 +6,8 @@ import {
     ScrollView,
     TextInput,
     Keyboard,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    TouchableOpacity
 } from 'react-native'
 import { connect } from 'react-redux';
 import Subtask from '../components/Subtask';
@@ -17,7 +18,8 @@ import Fonts from '../constants/Fonts';
 import Colors from '../constants/Colors';
 import { formatDate } from '../helpers/dateOperations';
 import Layout from '../constants/Layout';
-import { updateNote } from '../actions/actions'
+import { updateNote } from '../actions/actions';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -43,6 +45,10 @@ class HabitScreen extends React.Component {
         this.state = {
             dataOnDate: props.dataOnDate
         }
+    }
+
+    static navigationOptions = {
+        header: null
     }
 
     renderType(habitType) {
@@ -82,12 +88,20 @@ class HabitScreen extends React.Component {
                     contentContainerStyle={styles.scrollContentContainer}
                     ref={(scroller) => this.scroller = scroller}>
 
+                    <View style={styles.backButtonContainer}>
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.pop()}
+                        >
+                            <Ionicons name='ios-arrow-back' size={30} />
+                        </TouchableOpacity>
+                    </View>
+
                     <View style={{ alignItems: 'center' }}>
                         <Text style={styles.habitNameText}>{this.props.habitName}</Text>
                         <Text style={styles.dateText}>{formatDate(this.props.date, "MMM D")}</Text>
                     </View>
 
-                    <View style={{ alignItems: 'center' }}>
+                    <View style={{ alignItems: 'center', flex:1, width:'100%' }}>
                         {this.renderType(this.props.habitType)}
                     </View>
 
@@ -132,6 +146,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
         height: '100%'
+    },
+    backButtonContainer: {
+        position: 'absolute',
+        top: 20,
+        left: 20
     },
     habitNameText: {
         fontFamily: Fonts.AvenirNext,
