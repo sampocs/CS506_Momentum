@@ -60,7 +60,7 @@ class SettingsHomeScreen extends React.Component {
                         }}
                     >
                         <Text style={styles.logoutButtonText}>
-                        Modify/Remove Existing Habits
+                        Edit Existing Habits >
                         </Text>
                     </TouchableOpacity>
                 </View> 
@@ -103,8 +103,9 @@ const styles = StyleSheet.create({
     modifyButtonContainer: {
         position: 'absolute',
         alignItems: 'center',
-        marginTop: 50,
-      //  borderBottom: 'black'
+        width: '100%',
+        top: 100,
+        marginTop: 10
     }
 })
 

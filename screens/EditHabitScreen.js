@@ -29,7 +29,9 @@ import Constants from '../constants/Constants';
 import { formatDate } from '../helpers/dateOperations';
 import Icons from '../constants/Icons';
 import HabitIcon from '../components/HabitIcon';
-import type from '../constants/Constants'
+import Type from '../constants/Constants'
+import moment from 'moment'
+
 
 const NUM_COLUMNS = 4;
 const { width } = Dimensions.get('window');
@@ -46,6 +48,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        // 
+        // updateHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
+      //  updateHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
        // addHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
       //  addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
     }
@@ -55,29 +60,72 @@ class EditHabitScreen extends React.Component {
     static navigationOptions = {
         header: null
     }
-
     constructor(props) {
         super(props);
         this.state = {
             habitName: this.props.habitName,
             habits: this.props.currentHabits,
-            // frequencyToggle: Constants.DAILY,
+            frequencyToggle: '',// Constants.DAILY,
             daysOfWeek: [true, true, true, true, true, true, true],
+            prevStartTime: this.toDateObject(this.props.habit.startTime),
+            prevEndTime: this.toDateObject(this.props.habit.endTime),
+            prevTimeRange: this.checkForPrevStartOrEndTime(this.props.habit.startTime,this.props.habit.endTime),
+            prevSubtasks: this.checkForPrevSubtasks(this.props.habit.type),
+            prevMeasurements: this.checkForPrevMearsurements(this.props.habit.type),
             // timeRangeChecked: false,
-            // beginTime: new Date(),
-            // endTime: new Date(),
-            // goal: '',
-            // unit: '',
-            // includeMeasurementsChecked: false,
-            // includeSubtasksChecked: false,
+            beginTime: new Date(),
+            endTime: new Date(),
+            goal: this.props.habit.habitInfo.goal,
+            unit: this.props.habit.habitInfo.unit,
+            includeMeasurementsChecked: this.checkForPrevMearsurements(this.props.habit.type),
+            includeSubtasksChecked: this.checkForPrevSubtasks(this.props.habit.type),
             // strictOrderChecked: false,
-            // disappearWhenCompleted: false,
-            // subtasks: [],
-            // icon: this.state.habit[this.state.habitName].icon,
-             modalVisible: false,
-             iconChosen: true,
+            disappearWhenCompleted: this.props.habit.disappearWhenCompleted,
+            subtasks: this.props.habit.habitInfo.subtasks ? this.props.habit.habitInfo.subtasks : [] ,
+            icon: this.props.habit.icon,
+            modalVisible: false,
+            iconChosen: true,
 
             // addingHabit: false
+        }
+    }
+    
+    toDateObject(timeToConvert) {
+        
+        const today= new Date();
+
+        if(timeToConvert != null){
+            // fullDate = Tue Dec 12 2017 11:18:30 GMT+0530 (IST) {}
+            const time = timeToConvert;
+            const d = moment(today).format('L'); // d = "12/12/2017"
+            const date = moment(d +' '+ time).format();
+
+            return moment(date).toDate();
+        }
+        return today;
+    }
+
+    checkForPrevStartOrEndTime(start, end) {
+        if(start == null && end == null) {
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    checkForPrevSubtasks(type) {
+        if (type == Type.SUBTASK) {
+            return true;
+        }else {
+            return false;
+        }
+    } 
+    
+    checkForPrevMearsurements(type){
+        if(type == Type.PROGRESS){
+            return true;
+        }else{
+            return false;
         }
     }
 
@@ -100,155 +148,163 @@ class EditHabitScreen extends React.Component {
         this.setState({ daysOfWeek: daysOfWeek })
     }
 
-    // setCompletionActionToggle(section) {
-    //     const sectionMapping = {
-    //         LEFT: false,
-    //         RIGHT: true
-    //     }
-    //     this.setState({ disappearWhenCompleted: sectionMapping[section] })
-    // }
-
-    // removeSubtask = (index) => {
-    //     var subtasks = this.state.subtasks;
-    //     subtasks.splice(index, 1)
-    //     this.setState({ subtasks })
-    // }
-
-    // subtasks = () => {
-    //     return this.state.subtasks.map((task, i) => {
-    //         return (
-    //             <View
-    //                 key={i}
-    //                 style={styles.subtaskContainer}
-    //             >
-    //                 <Text style={styles.subtaskTitleText} ellipsizeMode={'tail'}>{task}</Text>
-    //                 <TouchableOpacity
-    //                     onPress={() => this.removeSubtask(i)}
-    //                 >
-    //                     <Ionicons size={30} color={Colors.calendarBlue} name={'ios-trash'} />
-    //                 </TouchableOpacity>
-    //             </View>
-    //         )
-    //     })
-    // }
-
-    updateSubtask = () => {
-
-
+    setCompletionActionToggle(section) {
+        const sectionMapping = {
+            LEFT: false,
+            RIGHT: true
+        }
+        this.setState({ disappearWhenCompleted: sectionMapping[section] })
     }
-    // addSubtask = () => {
-    //     AlertIOS.prompt('Enter a subtask name', null, (text) => {
-    //         var subtasks = this.state.subtasks;
-    //         subtasks.push(text)
-    //         this.setState({ subtasks })
-    //     });
-    // }
+
+    removeSubtask = (index) => {
+        var subtasks = this.state.subtasks;
+        subtasks.splice(index, 1)
+        this.setState({ subtasks })
+    }
+
+    subtasks = () => {
+        return this.state.subtasks.map((task, i) => {
+            return (
+                <View
+                    key={i}
+                    style={styles.subtaskContainer}
+                >
+                    <Text style={styles.subtaskTitleText} ellipsizeMode={'tail'}>{task}</Text>
+                    <TouchableOpacity
+                        onPress={() => this.removeSubtask(i)}
+                    >
+                        <Ionicons size={30} color={Colors.calendarBlue} name={'ios-trash'} />
+                    </TouchableOpacity>
+                </View>
+            )
+        })
+    }
+
+    addSubtask = () => {
+        AlertIOS.prompt('Enter a subtask name', null, (text) => {
+            var subtasks = this.state.subtasks;
+            subtasks.push(text)
+            this.setState({ subtasks })
+        });
+    }
 
     updateHabit() {
         console.log(this.props.habit)
+        console.log(this.props.habit.disappearWhenCompleted)
+        console.log(this.state.endTime)
+        console.log(this.state.goal)
+        console.log(this.state.subtasks)
+        console.log(this.state.includeSubtasksChecked)
     }
 
-    // addHabit = () => {
-    //     this.setState({addingHabit: true})
-    //     if (!this.fieldsCompleted(alertUser = true)) {
-    //         return;
-    //     }
+    addHabit = () => {
+        this.setState({addingHabit: true})
+        if (!this.fieldsCompleted(alertUser = true)) {
+            return;
+        }
 
-    //     let habitSettings = {
-    //         startTime: formatDate(this.state.beginTime, "YYYY-MM-DD"),
-    //         endTime: formatDate(this.state.endTime, "YYYY-MM-DD"),
-    //         disappearWhenCompleted: this.state.disappearWhenCompleted,
-    //         daysOfWeek: this.state.daysOfWeek,
-    //         icon: this.state.icon
-    //     }
-    //     let habitHistory = {
-    //         completed: false,
-    //         notes: ''
-    //     }
-    //     if (this.state.includeMeasurementsChecked) {
-    //         habitSettings.type = Constants.PROGRESS
-    //         habitSettings.habitInfo = {
-    //             unit: this.state.unit,
-    //             goal: parseInt(this.state.goal)
-    //         }
+        let habitSettings = {
+            startTime: formatDate(this.state.beginTime, "YYYY-MM-DD"),
+            endTime: formatDate(this.state.endTime, "YYYY-MM-DD"),
+            disappearWhenCompleted: this.state.disappearWhenCompleted,
+            daysOfWeek: this.state.daysOfWeek,
+            icon: this.state.icon
+        }
+        let habitHistory = {
+            completed: false,
+            notes: ''
+        }
+        if (this.state.includeMeasurementsChecked) {
+            habitSettings.type = Constants.PROGRESS
+            habitSettings.habitInfo = {
+                unit: this.state.unit,
+                goal: parseInt(this.state.goal)
+            }
 
-    //         habitHistory.type = Constants.PROGRESS
-    //         habitHistory.habitInfo = {
-    //             progress: 0,
-    //             goal: parseInt(this.state.goal)
-    //         }
-    //     }
-    //     else if (this.state.includeSubtasksChecked) {
-    //         habitSettings.type = Constants.SUBTASK
-    //         habitSettings.habitInfo = {
-    //             subtasks: this.state.subtasks
-    //         }
-    //         habitHistory.type = Constants.SUBTASK
-    //         habitHistory.habitInfo = {
-    //             subtasks: this.state.subtasks.map((subtask) => [subtask, false])
-    //         }
-    //     }
-    //     else {
-    //         habitSettings.type = Constants.COMPLETE
-    //         habitSettings.habitInfo = {}
-    //         habitHistory.type = Constants.COMPLETE
-    //         habitHistory.habitInfo = {}
-    //     }
-    //     // this.props.addHabitToSettings(this.state.habitName, habitSettings)
-    //     // this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
-    //     // this.props.navigation.navigate('CalendarHome')
-    // }
+            habitHistory.type = Constants.PROGRESS
+            habitHistory.habitInfo = {
+                progress: 0,
+                goal: parseInt(this.state.goal)
+            }
+        }
+        else if (this.state.includeSubtasksChecked) {
+            habitSettings.type = Constants.SUBTASK
+            habitSettings.habitInfo = {
+                subtasks: this.state.subtasks
+            }
+            habitHistory.type = Constants.SUBTASK
+            habitHistory.habitInfo = {
+                subtasks: this.state.subtasks.map((subtask) => [subtask, false])
+            }
+        }
+        else {
+            habitSettings.type = Constants.COMPLETE
+            habitSettings.habitInfo = {}
+            habitHistory.type = Constants.COMPLETE
+            habitHistory.habitInfo = {}
+        }
+        this.props.addHabitToSettings(this.state.habitName, habitSettings)
+        this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
+        this.props.navigation.navigate('CalendarHome')
+    }
 
-    // fieldsCompleted(alertUser = false) {
-    //     if (this.state.habitName === '') {
-    //         if (alertUser) {
-    //             AlertIOS.alert(
-    //                 '',
-    //                 'Please enter a habit name!'
-    //             )
-    //         }
-    //         return false
-    //     }
-    //     if (this.state.includeMeasurementsChecked && this.state.goal === '') {
-    //         if (alertUser) {
-    //             AlertIOS.alert(
-    //                 '',
-    //                 'Please enter a measurable goal amount!'
-    //             )
-    //         }
-    //         return false
-    //     }
-    //     if (this.state.includeSubtasksChecked && this.state.subtasks.length === 0) {
-    //         if (alertUser) {
-    //             AlertIOS.alert(
-    //                 '',
-    //                 "Please enter at least one subtask!"
-    //             )
-    //         }
-    //         return false
-    //     }
-    //     for (i in this.props.currentHabits) {
-    //         let habit = this.props.currentHabits[i]
-    //         if (this.state.habitName.toLowerCase() === habit.toLowerCase()) {
-    //             if (alertUser) {
-    //                 AlertIOS.alert(
-    //                     "Duplicate Habit",
-    //                     "You've already added this habit!"
-    //                 )
-    //             }
-    //             return false
-    //         }
-    //     }
-    //     return true;
-    // }
+   // use to delete the old versin of the habit
+    deletePast() {
 
-    // renderSeparator = () => {
-    //     return (
-    //         <View style={styles.separatorComponent} />
-    //     );
-    // }
+    }
+
+
+    fieldsCompleted(alertUser = false) {
+        if (this.state.habitName === '') {
+            if (alertUser) {
+                AlertIOS.alert(
+                    '',
+                    'Please enter a habit name!'
+                )
+            }
+            return false
+        }
+        if (this.state.includeMeasurementsChecked && this.state.goal === '') {
+            if (alertUser) {
+                AlertIOS.alert(
+                    '',
+                    'Please enter a measurable goal amount!'
+                )
+            }
+            return false
+        }
+        if (this.state.includeSubtasksChecked && this.state.subtasks.length === 0) {
+            if (alertUser) {
+                AlertIOS.alert(
+                    '',
+                    "Please enter at least one subtask!"
+                )
+            }
+            return false
+        }
+        for (i in this.props.currentHabits) {
+            let habit = this.props.currentHabits[i]
+            if (this.state.habitName.toLowerCase() === habit.toLowerCase()) {
+                if (alertUser) {
+                    AlertIOS.alert(
+                        "Duplicate Habit",
+                        "You've already added this habit!"
+                    )
+                }
+                return false
+            }
+        }
+        return true;
+    }
+
+    renderSeparator = () => {
+        return (
+            <View style={styles.separatorComponent} />
+        );
+    }
 
     render() {
+
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.cancelButtonContainer}>
@@ -267,14 +323,13 @@ class EditHabitScreen extends React.Component {
                     <View style={styles.habitNameContainer}>
                         <TextInput
                             style={styles.habitName}
-                            placeholder={this.state.habitName}
                             onChangeText={(text) => {
                                 console.log(this.props.habit)
                                 this.setState({ habitName: text })
                             }}
                             returnKeyType={'done'}
                             selectTextOnFocus={true}
-                            // value={this.props.habit}
+                            value={this.state.habitName}
                         />
                     </View>
 
@@ -285,19 +340,20 @@ class EditHabitScreen extends React.Component {
                             daysOfWeek={this.props.habit.daysOfWeek}
                             //frequencyToggle={this.state.frequencyToggle}
                             //setParentState={this.setDaysOfWeekToggle.bind(this)}
-                            //clickable={this.state.frequencyToggle != Constants.DAILY}
+                            // change this logic? 
+                            clickable={this.state.frequencyToggle != Constants.DAILY}
                         />
                     </View>
 
-                    {/* <View style={styles.optionsContainer}> */}
+                     <View style={styles.optionsContainer}>
 
                         {/*||||||||||||||   TIME RANGE   |||||||||||||||||*/}
-                        {/* {
-                            false &&
+                         {
+                           false &&
                             <View style={styles.timeRangeCheckbox}>
                                 <CheckBox
-                                    title={'Include a Time Range'}
-                                    checked={this.state.timeRangeChecked}
+                                    title={this.state.prevTimeRange ?  'Update Time Range': 'Include a Time Range'}
+                                    checked={this.state.prevTimeRange}
                                     onPress={() => {
                                         this.setState({
                                             timeRangeChecked: !this.state.timeRangeChecked
@@ -319,7 +375,8 @@ class EditHabitScreen extends React.Component {
                                                 mode={"time"}
                                                 minuteInterval={10}
                                                 onDateChange={(time) => this.setState({ beginTime: time })}
-                                                date={this.state.beginTime}
+                                                date={this.state.prevStartTime}
+                                                //date={this.state.beginTime}
                                             />
                                         </View>
                                         <View style={styles.timeRangePickerContainer}>
@@ -328,18 +385,19 @@ class EditHabitScreen extends React.Component {
                                                 mode={"time"}
                                                 minuteInterval={10}
                                                 onDateChange={(time) => this.setState({ endTime: time })}
-                                                date={this.state.endTime}
+                                                date={this.state.prevEndTime}
+                                                //date={this.state.endTime}
                                             />
                                         </View>
                                     </View>
                                 }
                             </View>
-                        } */}
+                        } 
 
                         {/* ||||||||||||||    MEASUREMENTS   ||||||||||||||*/}
-                        {/* <View style={styles.measurementsCheckbox}>
+                        <View style={styles.measurementsCheckbox}>
                             <CheckBox
-                                title={'Include a Measurements'}
+                                title={this.state.prevMeasurements ? 'Update Measurements' : 'Include a Measurements'}
                                 checked={this.state.includeMeasurementsChecked}
                                 onPress={() => {
                                     let checked = !this.state.includeMeasurementsChecked
@@ -349,7 +407,6 @@ class EditHabitScreen extends React.Component {
                                     this.setState({
                                         includeMeasurementsChecked: checked,
                                         includeSubtasksChecked: false,
-                                        subtasks: []
                                     })
                                 }}
                                 containerStyle={styles.checkboxContainer}
@@ -376,7 +433,7 @@ class EditHabitScreen extends React.Component {
                                         maxLength={5}
                                         returnKeyType={'done'}
                                         selectTextOnFocus={true}
-                                        value={this.state.goal}
+                                        value={this.state.goal!=null ? this.state.goal.toString() : null }
                                         editable={this.state.includeMeasurementsChecked}
                                     />
                                 </View>
@@ -397,14 +454,14 @@ class EditHabitScreen extends React.Component {
                                     />
                                 </View>
                             </View>
-                        } */}
+                        } 
 
                         {/*||||||||||||||||   SUBTASKS   |||||||||||||||||*/}
                         <View style={styles.subtasksContainer}>
                             <View style={styles.subtasksCheckbox}>
                                 <CheckBox
-                                    title={'Subtasks'}
-                                    checked={this.props.habit.type == type.SUBTASK}
+                                    title={this.state.prevSubtasks ? 'Update Subtasks' : 'Include Subtasks'}
+                                    checked={this.state.includeSubtasksChecked}
                                     onPress={() => {
                                         this.setState({
                                             includeSubtasksChecked: !this.state.includeSubtasksChecked,
@@ -422,22 +479,23 @@ class EditHabitScreen extends React.Component {
                                 {
                                     this.state.includeSubtasksChecked &&
                                     <TouchableOpacity
-                                        onPress={() => this.updateSubtask()}
+                                        onPress={() => this.addSubtask()}
                                     >
                                         <Octicons name={'plus'} color={Colors.calendarBlue} size={35} />
                                     </TouchableOpacity>
                                 }
                             </View>
-                            {/* {this.state.includeSubtasksChecked && this.subtasks()} */}
+                            {this.state.includeSubtasksChecked && this.subtasks()}
                         </View>
-                    {/* </View> */}
+                    </View> 
 
                     {/*||||||||||||   COMPLETE ACTION   |||||||||||||||*/}
                     <View style={styles.completionActionToggle}>
                         <DualToggle
                             color={Colors.calendarBlue}
                             labels={['Change Color', 'Disappear']}
-                            setParentState={this.props.habit.disappearWhenCompleted}
+                            value={this.state.disappearWhenCompleted ? 'RIGHT' : 'LEFT'}
+                            setParentState={this.setCompletionActionToggle.bind(this)}
                         />
                     </View> 
 
@@ -451,7 +509,7 @@ class EditHabitScreen extends React.Component {
                                 }}
                         >
                             {
-                                this.state.iconChosen && <HabitIcon icon={this.props.habit.icon} completed={false} color={'white'} />
+                                this.state.iconChosen && <HabitIcon icon={this.state.icon} completed={false} color={'white'} />
                             }
                             {
                                 !this.state.iconChosen && <Text style={styles.addButtonText}>Choose Icon</Text>
@@ -501,12 +559,16 @@ class EditHabitScreen extends React.Component {
                     </Modal>
                 </ScrollView>
 
-                {/*||||||||||||   ADD HABIT BUTTON   |||||||||||||||*/}
+                {/*||||||||||||   Update HABIT BUTTON   |||||||||||||||*/}
                 <View style={styles.addButtonContainer}>
                     <TouchableOpacity
                         style={[styles.addButton,
                         { backgroundColor: Colors.calendarBlue }]}
-                        onPress={() => this.updateHabit()}
+                        // Add code for deleting past information
+                        onPress={() => 
+                            this.updateHabit()
+                            // this.deletePast()
+                        }
                     >
                         <Text style={styles.addButtonText}>Update</Text>
                     </TouchableOpacity>

@@ -339,7 +339,6 @@ class AddHabitScreen extends React.Component {
                                     this.setState({
                                         includeMeasurementsChecked: checked,
                                         includeSubtasksChecked: false,
-                                        subtasks: []
                                     })
                                 }}
                                 containerStyle={styles.checkboxContainer}

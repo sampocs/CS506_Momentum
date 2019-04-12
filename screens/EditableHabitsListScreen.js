@@ -48,7 +48,7 @@ class EditableHabitsListScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View>
-                    <Text style={styles.logoutButtonText}>Modify a Habit</Text>
+                    <Text style={styles.title}>Modify a Habit</Text>
                     <View style={styles.topSpacing}></View>
                     <SettingsEditableHabitComponent habits={this.props.currentHabits}/>
                     {/* <Text style={styles.test}>{this.props.currentHabits[0]}</Text> */}
@@ -73,14 +73,15 @@ const styles = StyleSheet.create({
         bottom: 20,
         marginTop: 10
     },
-    logoutButtonText: {
+    title: {
         color: Colors.darkBlue,
         fontSize: 40,
         position: 'absolute',
         alignItems: 'center',
         marginTop: 30,
-        left: 80,
-        align: 'center'
+        left: 100,
+        align: 'center',
+        width: '100%',
     },
     backButtonContainer: {
         position: 'absolute',

@@ -9,13 +9,15 @@ import Colors from '../constants/Colors'
 import Layout from '../constants/Layout'
 import Fonts from '../constants/Fonts';
 
+
 const LEFT = 'LEFT'
 const RIGHT = 'RIGHT'
+
 export default class DayMonthYearToggle extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPosition: LEFT
+            currentPosition: this.props.value
         }
     }
     render() {
@@ -35,6 +37,7 @@ export default class DayMonthYearToggle extends React.Component {
                     },
                 ]}
                     onPress={() => {
+                        console.log(this.state.currentPosition)
                         this.setState({ currentPosition: LEFT })
                         this.props.setParentState(LEFT)
                     }}

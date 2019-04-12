@@ -68,7 +68,7 @@ class SettingsEditableHabitComponent extends React.Component {
                                 onPress: () => console.log('Cancel Pressed'),
                                 style: 'cancel',
                             },
-                            {text: 'Yes', onPress: () => console.log('OK Pressed')},
+                            {text: 'Yes', onPress: () => console.log('Need delete reducer')},
                             ],
                             // {cancelable: false},
                         );
