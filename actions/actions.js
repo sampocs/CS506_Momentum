@@ -13,8 +13,12 @@ export const SELECT_TODAY = 'SELECT_TODAY'
 export const ADD_HABIT_TO_SETTINGS = 'ADD_HABIT_TO_SETTINGS'
 export const ADD_HABIT_TO_HISTORY = 'ADD_HABIT_TO_HISTORY'
 export const UPDATE_NOTES = 'UPDATE_NOTES'
-export const UPDATE_EMAIL = 'UPDATE_EMAIL'
-export const UPDATE_FIREBASE_USER = 'UPDATE_FIREBASE_USER'
+export const RESTORE_HISTORY_FROM_FIREBASE = 'RESTORE_HISTORY_FROM_FIREBASE'
+export const RESTORE_SETTINGS_FROM_FIREBASE = 'RESTORE_SETTINGS_FROM_FIREBASE'
+export const CLEAR_USER_DATA = 'CLEAR_USER_DATA'
+export const DELETE_HABIT_FROM_PAST = 'DELETE_HABIT_FROM_PAST'
+export const DELETE_HABIT_FROM_FUTURE = 'DELETE_HABIT_FROM_FUTURE'
+export const DELETE_HABIT_FROM_SETTINGS = 'DELETE_HABIT_FROM_SETTINGS'
 
 
 //Action Creators
@@ -92,7 +96,34 @@ export const updateNote = (habitName, date, notes) => ({
     notes
 })
 
-export const updateEmail = (email) => ({
-    type: UPDATE_EMAIL,
-    email
+export const restoreHistoryFromFirebase = (history) => ({
+    type: RESTORE_HISTORY_FROM_FIREBASE,
+    history
+})
+
+export const restoreSettingsFromFirebase = (settings) => ({
+    type: RESTORE_SETTINGS_FROM_FIREBASE,
+    settings
+})
+
+export const clearUserData = () => ({
+    type: CLEAR_USER_DATA
+})
+
+export const deleteHabitFromPast = (habitName, startDate) => ({
+    type: DELETE_HABIT_FROM_PAST,
+    habitName,
+    currentDate: getCurrentDate(),
+    startDate
+})
+
+export const deleteHabitFromFuture = (habitName) => ({
+    type: DELETE_HABIT_FROM_FUTURE,
+    habitName,
+    currentDate: getCurrentDate()
+})
+
+export const deleteHabitFromSettings = (habitName) => ({
+    type: DELETE_HABIT_FROM_SETTINGS,
+    habitName
 })

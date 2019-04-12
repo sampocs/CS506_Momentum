@@ -7,7 +7,7 @@ import {
     ActivityIndicator
 } from 'react-native'
 import {
-    updateEmail,
+
 } from '../actions/actions'
 import { connect } from 'react-redux';
 import Colors from '../constants/Colors.js'
@@ -22,7 +22,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateEmail: (email) => dispatch(updateEmail(email)),
+
     }
 }
 
@@ -49,9 +49,6 @@ class AuthenticationHomeScreen extends React.Component {
         this.unsubscribe = firebase.auth().onAuthStateChanged(
             (user) => {
                 if (user) {
-                    //Store username and email in redux
-                    this.props.updateEmail(user.email)
-
                     this.props.navigation.navigate('Main')
                 }
                 else {

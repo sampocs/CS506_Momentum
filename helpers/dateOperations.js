@@ -1,5 +1,6 @@
 import moment from "moment"
 import "moment-timezone"
+import { HISTORY_FUTURE_DAYS } from '../constants/Constants'
 
 export const getCurrentDate = () => {
     return moment(new Date()).format("YYYY-MM-DD")
@@ -24,4 +25,8 @@ export const getMonthAgo = (date) => {
 }
 export const getYearAgo = (date) => {
     return moment(date).subtract(365, 'days').format('YYYY-MM-DD')
+}
+
+export const getEndDate = (date) => {
+    return moment(date).add(HISTORY_FUTURE_DAYS, 'days').format("YYYY-MM-DD")
 }

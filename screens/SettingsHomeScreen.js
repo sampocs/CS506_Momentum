@@ -6,22 +6,20 @@ import {
     TouchableOpacity
 } from 'react-native'
 import { connect } from 'react-redux';
-import {
-    updateEmail,
-} from '../actions/actions'
+import { clearUserData } from '../actions/actions'
 import Colors from '../constants/Colors';
 import firebase from '@firebase/app';
 import '@firebase/auth'
 
 const mapStateToProps = (state) => {
     return {
-        user: state.settings.user
+
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateEmail: (email) => dispatch(updateEmail(email)),
+        clearUserData: () => dispatch(clearUserData())
     }
 }
 
@@ -31,10 +29,22 @@ class SettingsHomeScreen extends React.Component {
     }
 
     signOut() {
-        firebase.auth().signOut()
-        console.log("Signed Out")
-        this.props.updateEmail('')
-        this.props.navigation.navigate('Auth')
+        firebase.auth().signOut().then(
+            () => {
+                console.log("Signed Out")
+
+                //Reset data in redux
+                this.props.clearUserData()
+        
+                this.props.navigation.navigate('Auth')
+            },
+            (error) => {
+                console.log("Unable to sign out.")
+                console.log(error)
+            }
+
+        )
+
     }
 
     render() {
@@ -43,16 +53,16 @@ class SettingsHomeScreen extends React.Component {
                 <View style={styles.logoutButtonContainer}>
                     <TouchableOpacity
                         onPress={() => {
-                            if (this.props.user.email === '') {
-                                this.props.navigation.navigate('Auth')
+                            if (firebase.auth().currentUser) {
+                                this.signOut()
                             }
                             else {
-                                this.signOut()
+                                this.props.navigation.navigate('Auth')
                             }
                         }}
                     >
                         <Text style={styles.logoutButtonText}>
-                        {this.props.user.email === '' ? 'Login/Sign Up' : 'Sign Out'}
+                        {firebase.auth().currentUser ? 'Sign Out' : 'Link Account'}
                         </Text>
                     </TouchableOpacity>
                 </View>
