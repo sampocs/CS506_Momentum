@@ -1,5 +1,5 @@
 import {
-    ADD_HABIT_TO_SETTINGS, UPDATE_EMAIL, UPDATE_FIREBASE_USER
+    ADD_HABIT_TO_SETTINGS, RESTORE_SETTINGS_FROM_FIREBASE, DELETE_HABIT_FROM_SETTINGS
 } from '../actions/actions'
 
 const settingsReducer = (state = {}, action) => {
@@ -11,11 +11,15 @@ const settingsReducer = (state = {}, action) => {
             newState.habitSettings[habitName] = habitSettings
             return newState
         }
-        case UPDATE_EMAIL: {
-            let {email} = action
+        case RESTORE_SETTINGS_FROM_FIREBASE: {
+            let { settings } = action
+            return settings
+        }
+        case DELETE_HABIT_FROM_SETTINGS: {
+            let { habitName } = action
             let newState = {...state}
-            newState.user = {...state.user}
-            newState.user.email = email
+            newState.habitSettings = {...state.habitSettings}
+            delete newState.habitSettings[habitName]
             return newState
         }
     }
