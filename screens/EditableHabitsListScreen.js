@@ -3,7 +3,8 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    SafeAreaView
 } from 'react-native'
 import { connect } from 'react-redux';
 import {
@@ -13,11 +14,10 @@ import {
 import Colors from '../constants/Colors';
 import firebase from '@firebase/app';
 import '@firebase/auth'
-import SettingsHabitComponent from '../components/SettingsHabitComponent';
+import SettingsEditableHabitComponent from '../components/SettingsEditableHabitComponent';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Fonts from '../constants/Fonts';
 import { withNavigation } from 'react-navigation'
-
 
 const mapStateToProps = (state) => {
     return {
@@ -32,26 +32,29 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-class EditExistingHabits extends React.Component {
+class EditableHabitsListScreen extends React.Component {
+    static navigationOptions = {
+        header: null
+    }
 
     render() {
         return (
-            <View>
+            <SafeAreaView style={styles.container}>
                 <View style={styles.backButtonContainer}>
                     <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('SettingsHome')}
+                        onPress={() => this.props.navigation.pop()}
                     >
-                        <Ionicons name='ios-arrow-back' size={30} />
+                        <Ionicons name='ios-arrow-back' size={40} />
                     </TouchableOpacity>
                 </View>
                 <View>
-                    <Text style={styles.logoutButtonText}>MODIFY SCREEN</Text>
+                    <Text style={styles.logoutButtonText}>Modify a Habit</Text>
                     <View style={styles.topSpacing}></View>
-                    <SettingsHabitComponent habits={this.props.currentHabits}/>
+                    <SettingsEditableHabitComponent habits={this.props.currentHabits}/>
                     {/* <Text style={styles.test}>{this.props.currentHabits[0]}</Text> */}
                     
                 </View>
-           </View>
+           </SafeAreaView>
           
         )
     }
@@ -60,6 +63,8 @@ class EditExistingHabits extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
+        alignContent: 'center'
     },
     logoutButtonContainer: {
         position: 'absolute',
@@ -79,13 +84,12 @@ const styles = StyleSheet.create({
     },
     backButtonContainer: {
         position: 'absolute',
-        top: 20,
+        top: 70,
         left: 20
     },
     topSpacing: {
         marginTop:100,
     }
-
 })
 
-export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(EditExistingHabits));
+export default connect(mapStateToProps, mapDispatchToProps)(EditableHabitsListScreen);

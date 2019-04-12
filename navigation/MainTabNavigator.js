@@ -13,7 +13,8 @@ import AddHabitScreen from '../screens/AddHabitScreen';
 import MetricsSpecificHabitScreen from '../screens/MetricsSpecificHabitScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import Colors from '../constants/Colors';
-import EditExistingHabitsScreen from '../screens/EditExistingHabitsScreen';
+import EditHabitScreen from '../screens/EditHabitScreen';
+import EditableHabitsListScreen from '../screens/EditableHabitsListScreen';
 
 const CalendarStack = createStackNavigator({
     CalendarHome: CalendarHomeScreen,
@@ -65,7 +66,8 @@ MetricsStack.navigationOptions = {
 const SettingsStack = createStackNavigator({
     SettingsHome: SettingsHomeScreen,
     Profile: ProfileScreen,
-    EditHabit: EditExistingHabitsScreen
+    HabitList: EditableHabitsListScreen,
+    EditHabit: EditHabitScreen
 });
 
 SettingsStack.navigationOptions = {

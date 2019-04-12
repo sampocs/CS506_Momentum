@@ -18,6 +18,7 @@ import { withNavigation } from 'react-navigation'
 
 const mapStateToProps = (state) => {
     return {
+        currentHabits: state.settings.habitSettings,
         // iconName: settings.icon,
         // dataOnDate: state.history[date][habitName],
         // habitType: settings.type
@@ -29,12 +30,12 @@ const mapDispatchToProps = (dispatch) => {
        
     }
 }
-class SettingsHabitComponent extends React.Component {
+class SettingsEditableHabitComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             dataOnDate: props.dataOnDate,
-            habits: ''
+            habits: this.props.habits
         }
     }
     _renderItem = ({ item }) => (
@@ -49,9 +50,9 @@ class SettingsHabitComponent extends React.Component {
             </View>
             <View style={styles.metricContainer}>
                 <Button  
-                    onPress={() => {
-                                // this.props.navigation.push('AddHabit')
-
+                   onPress={() => {
+                    this.props.navigation.navigate('EditHabit', {habitName: item, habitObject: this.props.currentHabits[item] })
+                    console.log('item:' + item)
                     }}
                     title='Edit'
                     color='white'
@@ -124,4 +125,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(SettingsHabitComponent));
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(SettingsEditableHabitComponent));

@@ -6,7 +6,6 @@ import CalendarHomeScreen from '../screens/CalendarHomeScreen';
 import HabitScreen from '../screens/HabitScreen';
 import AddHabitScreen from '../screens/AddHabitScreen';
 import MetricsHomeScreen from '../screens/MetricsHomeScreen';
-import EditExistingHabit from '../screens/EditExistingHabitsScreen';
 import SettingsHomeScreen from '../screens/SettingsHomeScreen';
 
 export default createAppContainer(createSwitchNavigator({
@@ -16,7 +15,4 @@ export default createAppContainer(createSwitchNavigator({
     Start: SettingsHomeScreen,
     Auth: AuthenticationNavigator,
     Main: MainTabNavigator,
-    EditExistingHabit: {
-        screen: EditExistingHabit,
-      },
 }));

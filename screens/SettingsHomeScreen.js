@@ -49,7 +49,7 @@ class SettingsHomeScreen extends React.Component {
                <View style={styles.modifyButtonContainer}>
                     <TouchableOpacity
                         onPress={() => {
-                        this.props.navigation.navigate('EditExistingHabit')
+                        this.props.navigation.navigate('HabitList')
                         }}
                     >
                         <Text style={styles.logoutButtonText}>
