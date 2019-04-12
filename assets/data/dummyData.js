@@ -6,19 +6,21 @@ const getNextDate = (date) => {
     return moment(date).add(1, 'days').format("YYYY-MM-DD")
 }
 
-//Dummy data includes 3 habits:
-    //workout: 
-        //Complete Habit
-        //occurs M-F
-        //Must be done between 8-10am
-    //read:
-        //Progress Habit
-        //Goal 60 min
-        //occurs M,W,F
-        //Must be done before 11pm
-    //chores:
-        //Subtask Habit (laundry and dishes)
-        //occurs Sun,M,W,Th
+/*
+Dummy data includes 3 habits:
+    workout: 
+        Complete Habit
+        occurs M-F
+        Must be done between 8-10am
+    read:
+        Progress Habit
+        Goal 60 min
+        occurs M,W,F
+        Must be done before 11pm
+    chores:
+        Subtask Habit (laundry and dishes)
+        occurs Sun,M,W,Th
+*/
 
 
 let dummyData = {}
@@ -127,10 +129,8 @@ dummyData.settings.habitSettings = {
     }
 }
 dummyData.settings.user = {
-    email: '',
-    firebaseUser: {}
+    startDate: '2019-03-01',
+    lastDate: '2021-01-01'
 }
-
-
 
 export default dummyData;

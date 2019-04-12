@@ -5,14 +5,36 @@ import AppNavigator from './navigation/AppNavigator';
 import { createStore } from 'redux'
 import { Provider } from 'react-redux';
 import mainReducer from './reducers/mainReducer.js'
-
-import firebase from 'firebase';
+import {
+    emailToFirebaseRef
+} from './helpers/miscHelpers'
+import firebase from '@firebase/app'
+import '@firebase/database'
+import '@firebase/auth'
 import { firebaseConfig } from './firebaseConfig'
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
 const store = createStore(mainReducer)
+
+store.subscribe(() => {
+    let state = store.getState()
+    let user = firebase.auth().currentUser
+    if (user) {
+        let emailRef = emailToFirebaseRef(user.email)
+        firebase.database().ref('users/' + emailRef).set({
+            history: state.history,
+            settings: state.settings
+        }).then(
+            () => {},
+            (error) => {
+                console.log('Error updating firebase.')
+                console.log(error)
+            }
+        );
+    }
+})
 
 export default class App extends React.Component {
     render() {

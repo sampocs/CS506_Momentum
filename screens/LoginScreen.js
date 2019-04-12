@@ -13,11 +13,13 @@ import Colors from '../constants/Colors.js';
 import firebaseErrors from '../constants/FirebaseErrors'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
-    updateEmail,
-    updateFirebaseUser
+    restoreHistoryFromFirebase,
+    restoreSettingsFromFirebase
 } from '../actions/actions'
 import firebase from '@firebase/app';
 import '@firebase/auth'
+import { emailToFirebaseRef } from '../helpers/miscHelpers.js';
+import { ALL_DATES_LIST } from '../constants/Constants.js';
 
 const mapStateToProps = (state) => {
     return {
@@ -27,8 +29,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateEmail: (email) => dispatch(updateEmail(email)),
-        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
+        restoreData: (history, settings) => {
+            dispatch(restoreHistoryFromFirebase(history));
+            dispatch(restoreSettingsFromFirebase(settings))
+        }
     }
 }
 
@@ -55,12 +59,35 @@ class LoginScreen extends React.Component {
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(
             ({ user }) => {
                 console.log("Successfully logged in.")
-                //Set username/email in redux
-                this.props.updateEmail(user.email)
-                this.props.updateFirebaseUser(user)
 
                 //Navigate to profile screen as authenticated user
                 this.props.navigation.navigate('Main')
+
+                //Pull data from firebase
+                let emailRef = emailToFirebaseRef(user.email)
+
+                firebase.database().ref('users/' + emailRef).once('value').then(
+                    (snapshot) => {
+                        let userData = snapshot.val()
+                        let history = userData.hasOwnProperty('history') ? userData.history : {}
+                        let settings = userData.hasOwnProperty('settings') ? userData.settings : {}
+
+                        let startDate = settings.user.startDate
+                        let lastDate = settings.user.lastDate
+                        let dateRange = ALL_DATES_LIST.filter((date) => (date >= startDate && date <= lastDate))
+
+                        for (i in dateRange) {
+                            let date = dateRange[i]
+                            history[date] = history.hasOwnProperty(date) ? history[date] : {}
+                        }
+
+                        settings.habitSettings = settings.hasOwnProperty('habitSettings') ? settings.habitSettings : {}
+
+                        this.props.restoreData(history, settings)
+                        console.log('Data restored.')
+                    }
+                )
+
             },
             (error) => {
                 console.log('Login failed.')

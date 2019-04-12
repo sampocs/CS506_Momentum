@@ -6,9 +6,13 @@ import {
     UPDATE_PROGRESS_AMOUNT,
     INCREMEMNT_PROGRESS_AMOUNT,
     ADD_HABIT_TO_HISTORY,
-    UPDATE_NOTES
+    UPDATE_NOTES,
+    RESTORE_HISTORY_FROM_FIREBASE,
+    DELETE_HABIT_FROM_FUTURE,
+    DELETE_HABIT_FROM_PAST
 } from '../actions/actions'
-import { getNextDate, getDayOfWeek } from '../helpers/dateOperations';
+import { getNextDate, getDayOfWeek, getEndDate } from '../helpers/dateOperations';
+import { HISTORY_FUTURE_DAYS, ALL_DATES_LIST } from '../constants/Constants';
 
 const historyReducer = (state = {}, action) => {
     switch (action.type) {
@@ -84,14 +88,15 @@ const historyReducer = (state = {}, action) => {
         case ADD_HABIT_TO_HISTORY: {
             let {habitName, habitHistory, daysOfWeek, currentDate} = action
             let newState = {...state}
-            let date = currentDate
-            for (i = 0; i < 365; i++) {
+            let endDate = getEndDate(currentDate)
+            let dateRange = ALL_DATES_LIST.filter((date) => (date >= currentDate && date <= endDate))
+            for (i in dateRange) {
+                let date = dateRange[i]
                 let dow = getDayOfWeek(date)
                 if (daysOfWeek[dow]) {
                     newState[date] = {...state[date]}
                     newState[date][habitName] = habitHistory
                 }
-                date = getNextDate(date)
             }
             return newState
         }
@@ -101,6 +106,37 @@ const historyReducer = (state = {}, action) => {
             newState[date] = {...state[date]}
             newState[date][habitName] = {...state[date][habitName]}
             newState[date][habitName].notes = notes
+            return newState
+        }
+        case RESTORE_HISTORY_FROM_FIREBASE: {
+            let { history } = action
+            return history
+        }
+        case DELETE_HABIT_FROM_FUTURE: {
+            let { habitName, currentDate } = action
+            let newState = {...state}
+            let endDate = getEndDate(currentDate)
+            let dateRange = ALL_DATES_LIST.filter((date) => (date >= currentDate && date <= endDate))
+            for (i in dateRange) {
+                let date = dateRange[i]
+                newState[date] = {...state[date]}
+                if (newState[date].hasOwnProperty(habitName)) {
+                    delete newState[date][habitName]
+                }
+            }
+            return newState
+        }
+        case DELETE_HABIT_FROM_PAST: {
+            let { habitName, currentDate, startDate } = action 
+            let newState = {...state}
+            let dateRange = ALL_DATES_LIST.filter((date) => (date >= startDate && date <= currentDate))
+            for (i in dateRange) {
+                let date = dateRange[i]
+                newState[date] = {...state[date]}
+                if (newState[date].hasOwnProperty(habitName)) {
+                    delete newState[date][habitName]
+                }
+            }
             return newState
         }
     }

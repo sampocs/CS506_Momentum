@@ -12,23 +12,22 @@ import { connect } from 'react-redux';
 import Colors from '../constants/Colors.js';
 import firebaseErrors from '../constants/FirebaseErrors'
 import {
-    updateEmail,
-    updateFirebaseUser
-} from '../actions/actions'
+    emailToFirebaseRef
+} from '../helpers/miscHelpers'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import firebase from '@firebase/app';
 import '@firebase/auth'
 
 const mapStateToProps = (state) => {
     return {
-
+        history: state.history,
+        settings: state.settings
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateEmail: (email) => dispatch(updateEmail(email)),
-        updateFirebaseUser: (firebaseUser) => dispatch(updateFirebaseUser(firebaseUser))
+
     }
 }
 
@@ -54,13 +53,26 @@ class SignUpScreen extends React.Component {
 
     signUpWithFirebase() {
         let strippedEmail = this.state.email.replace(/^\s+|\s+$/g, '').toLowerCase()
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(
+        firebase.auth().createUserWithEmailAndPassword(strippedEmail, this.state.password).then(
             ({ user }) => {
                 console.log("Successfully created an account.")
 
-                this.props.updateEmail(strippedEmail)
-                this.props.updateFirebaseUser(user)
-                
+                //Write current data to firebase
+                let emailRef = emailToFirebaseRef(user.email)
+                firebase.database().ref('users/' + emailRef).set({
+                    history: this.props.history,
+                    settings: this.props.settings
+                }).then(
+                    () => {
+                        console.log('Pushed data firebase.')
+                    },
+                    (error) => {
+                        console.log('Error pushing data to firebase.')
+                        console.log(error)
+                    }
+                );
+
+
                 this.props.navigation.navigate('Main')
             },
             (error) => {
