@@ -12,9 +12,9 @@ Instructions on how to build and run the application:
 7.	The application should now be running, complete with all tests enabled.
 
 Website version:
-The website folder contains the files specific to the website.
+The website_new folder contains the files specific to the website.
 Instructions on how to build and run the website:
-1. Open the website folder.
+1. Open the website_new folder.
 2. In cmd, type "npm start". Ensure you have npm installed before doing this step.
 3. It should return a URL which renders the website and connections. By default, it is localhost:3000
 4. If it doesn't automatically open this address in an Internet browser, navigate to this address.
