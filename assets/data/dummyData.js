@@ -72,8 +72,6 @@ for (i = 0; i < 100; i++) {
 dummyData.settings = {}
 dummyData.settings.habitSettings = {
     workout: {
-        startTime: "8:00",
-        endTime: "10:00",
         disappearWhenCompleted: true,
         daysOfWeek: [
             false, //Sun
@@ -89,8 +87,6 @@ dummyData.settings.habitSettings = {
         icon: 'dumbbells'
     },
     read: {
-        startTime: null,
-        endTime: "23:00",
         disappearWhenCompleted: false,
         daysOfWeek: [
             false, //Sun
@@ -109,8 +105,6 @@ dummyData.settings.habitSettings = {
         icon: 'book'
     },
     chores: {
-        startTime: null,
-        endTime: null,
         disappearWhenCompleted: false,
         daysOfWeek: [
             true,  //Sun
