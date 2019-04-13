@@ -4,7 +4,7 @@ import {
     TOGGLE_NEXT_SUBTASK_COMPLETION,
     TOGGLE_PROGRESS_COMPLETION,
     UPDATE_PROGRESS_AMOUNT,
-    INCREMEMNT_PROGRESS_AMOUNT,
+    INCREMENT_PROGRESS_AMOUNT,
     ADD_HABIT_TO_HISTORY,
     UPDATE_NOTES,
     RESTORE_HISTORY_FROM_FIREBASE,
@@ -77,12 +77,14 @@ const historyReducer = (state = {}, action) => {
             newState[date][habitName].completed = (amount >= state[date][habitName].habitInfo.goal)
             return newState
         }
-        case INCREMEMNT_PROGRESS_AMOUNT: {
+        case INCREMENT_PROGRESS_AMOUNT: {
             let {date, habitName, amount} = action
             let newState = {...state}
             newState[date] = {...state[date]}
             newState[date][habitName] = {...state[date][habitName]}
-            newState[date][habitName].amount = state[date][habitName].amount + amount
+            newState[date][habitName].habitInfo = {...state[date][habitName].habitInfo}
+            newState[date][habitName].habitInfo.progress = state[date][habitName].habitInfo.progress + amount
+            newState[date][habitName].completed = (newState[date][habitName].habitInfo.progress >= state[date][habitName].habitInfo.goal)
             return newState
         }
         case ADD_HABIT_TO_HISTORY: {

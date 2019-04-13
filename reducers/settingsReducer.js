@@ -1,5 +1,7 @@
 import {
-    ADD_HABIT_TO_SETTINGS, RESTORE_SETTINGS_FROM_FIREBASE, DELETE_HABIT_FROM_SETTINGS
+    ADD_HABIT_TO_SETTINGS, 
+    RESTORE_SETTINGS_FROM_FIREBASE, 
+    DELETE_HABIT_FROM_SETTINGS
 } from '../actions/actions'
 
 const settingsReducer = (state = {}, action) => {
