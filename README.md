@@ -3,7 +3,7 @@ Daily habit tracker
 
 The master branch contains the code we want to submit for iteration 1.
 Instructions on how to build and run the application:
-1.	Go to the `releases` on the main page of the repository
+1.	Click on the `releases` tab on the main page of the repository
 2.	Click on the `Iteration 2` release
 3.	Download the source code and unzip
 4.	Navigate to the root directory of the downloaded folder
