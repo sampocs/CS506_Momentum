@@ -80,7 +80,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 30,
         left: 100,
-        align: 'center',
         width: '100%',
     },
     backButtonContainer: {
