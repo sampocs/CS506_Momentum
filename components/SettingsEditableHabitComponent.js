@@ -9,6 +9,11 @@ import {
     Button,
     Alert
 } from 'react-native'
+import {
+    deleteHabitFromPast,
+    deleteHabitFromFuture,
+    deleteHabitFromSettings
+} from '../actions/actions'
 import Colors from '../constants/Colors'
 import Fonts from '../constants/Fonts';
 import { connect } from 'react-redux';
@@ -27,7 +32,9 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-       
+        deleteHabitFromPast: (habitName, startDate) => dispatch(deleteHabitFromPast(habitName, startDate)),
+        deleteHabitFromFuture: (habitName) => dispatch(deleteHabitFromFuture(habitName)),
+        deleteHabitFromSettings:(habitName) => dispatch(deleteHabitFromSettings(habitName)),
     }
 }
 class SettingsEditableHabitComponent extends React.Component {
@@ -61,14 +68,31 @@ class SettingsEditableHabitComponent extends React.Component {
                     onPress={() => {
                         Alert.alert(
                             'Delete Habit',
-                            'Are you sure you want to permanently delete this habit?',
+                            'Are you sure you want to delete this habit?',
                             [
                             {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
+                                text: 'Yes, stop future tracking of this habit',
+                                onPress: () => { 
+                                    this.props.deleteHabitFromFuture(item)
+                                    this.props.deleteHabitFromSettings(item)
+                                    // this causes errors in the past calendar
+                                    },
                                 style: 'cancel',
                             },
-                            {text: 'Yes', onPress: () => console.log('Need delete reducer')},
+                            {   
+                                text: 'Yes, delete all history of this habit', 
+                                onPress: () => {
+                                    this.props.deleteHabitFromFuture(item)
+                                    //this.props.deleteHabitFromPast(item) // how to get the date?
+                                    this.props.deleteHabitFromSettings(item)
+                                }
+                            },
+                            {
+                                text: 'Cancel',
+                                onPress: () => console.log(this.props.currentHabits[item].startTime),
+                                style: 'cancel',
+                            },
+                            
                             ],
                             // {cancelable: false},
                         );

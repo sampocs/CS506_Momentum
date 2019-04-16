@@ -21,7 +21,10 @@ import DualToggle from '../components/DualToggle'
 import DaysOfWeekToggle from '../components/DaysOfWeekToggle';
 import {
     addHabitToHistory,
-    addHabitToSettings
+    addHabitToSettings,
+    deleteHabitFromPast,
+    deleteHabitFromFuture,
+    deleteHabitFromSettings
 } from '../actions/actions'
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -43,15 +46,14 @@ const mapStateToProps = (state, ownProps) => {
         habitName: props.habitName,
         habit: props.habitObject,
         currentHabits: props.habits,
-        currentHabits2: state.settings.habitSettings
+       // currentHabits: state.settings.habitSettings
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // 
-        // updateHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
-      //  updateHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
+        deleteHabitFromFuture: (habitName) => dispatch(deleteHabitFromFuture(habitName)),
+        deleteHabitFromSettings:(habitName) => dispatch(deleteHabitFromSettings(habitName)),
         addHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
         addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
     }
@@ -67,9 +69,10 @@ class EditHabitScreen extends React.Component {
             habitName: this.props.habitName,
            // habits: this.props.currentHabits,
             daysOfWeek: [true, true, true, true, true, true, true],
-            prevStartTime: this.toDateObject(this.props.habit.startTime),
-            prevEndTime: this.toDateObject(this.props.habit.endTime),
-            prevTimeRange: this.checkForPrevStartOrEndTime(this.props.habit.startTime,this.props.habit.endTime),
+            // -all commented out because used for time range-
+            // prevStartTime: this.toDateObject(this.props.habit.startTime),
+            // prevEndTime: this.toDateObject(this.props.habit.endTime),
+            // prevTimeRange: this.checkForPrevStartOrEndTime(this.props.habit.startTime,this.props.habit.endTime),
             prevSubtasks: this.checkForPrevSubtasks(this.props.habit.type),
             prevMeasurements: this.checkForPrevMearsurements(this.props.habit.type),
             // timeRangeChecked: false,
@@ -79,54 +82,50 @@ class EditHabitScreen extends React.Component {
             unit: this.props.habit.habitInfo.unit,
             includeMeasurementsChecked: this.checkForPrevMearsurements(this.props.habit.type),
             includeSubtasksChecked: this.checkForPrevSubtasks(this.props.habit.type),
-            // strictOrderChecked: false,
             disappearWhenCompleted: this.props.habit.disappearWhenCompleted,
             subtasks: this.props.habit.habitInfo.subtasks ? this.props.habit.habitInfo.subtasks : [] ,
             icon: this.props.habit.icon,
             modalVisible: false,
             iconChosen: true,
-            // addingHabit: false
+            addingHabit: false
         }
     }
     
-    // used for time range
-    toDateObject(timeToConvert) {
-        const today= new Date();
-        if(timeToConvert != null){
-            // fullDate = Tue Dec 12 2017 11:18:30 GMT+0530 (IST) {}
-            const time = timeToConvert;
-            const d = moment(today).format('L'); // d = "12/12/2017"
-            const date = moment(d +' '+ time).format();
+    // // used for time range
+    // toDateObject(timeToConvert) {
+    //     const today= new Date();
+    //     if(timeToConvert != null){
+    //         // fullDate = Tue Dec 12 2017 11:18:30 GMT+0530 (IST) {}
+    //         const time = timeToConvert;
+    //         const d = moment(today).format('L'); // d = "12/12/2017"
+    //         const date = moment(d +' '+ time).format();
 
-            return moment(date).toDate();
-        }
-        return today;
-    }
+    //         return moment(date).toDate();
+    //     }
+    //     return today;
+    // }
 
     checkForPrevStartOrEndTime(start, end) {
         if(start == null && end == null) {
             return false;
-        }else{
-            return true;
         }
+        return true;
     }
 
     checkForPrevSubtasks(type) {
         if (type == Type.SUBTASK) {
             return true;
-        }else {
-            return false;
         }
+        return false;
     } 
     
     checkForPrevMearsurements(type){
         if(type == Type.PROGRESS){
             return true;
-        }else{
-            return false;
         }
+        return false;
+    
     }
-
 
     setDaysOfWeekToggle(daysOfWeek) {
         this.setState({ daysOfWeek: daysOfWeek })
@@ -172,17 +171,15 @@ class EditHabitScreen extends React.Component {
         });
     }
 
-    updateHabit() {
-        console.log(this.props.habit)
-        console.log(this.props.habit.disappearWhenCompleted)
-        console.log(this.state.endTime)
-        console.log(this.state.goal)
-        console.log(this.state.subtasks)
-        console.log(this.state.includeSubtasksChecked)
-        console.log('stateName:' + this.state.habitName.toLowerCase());
-        console.log('stateHabit:' + this.props.currentHabits2);
-
-    }
+    // updateHabit() {
+    //     console.log(this.props.habit)
+    //     console.log(this.props.habit.disappearWhenCompleted)
+    //     console.log(this.state.endTime)
+    //     console.log(this.state.goal)
+    //     console.log(this.state.subtasks)
+    //     console.log(this.state.includeSubtasksChecked)
+    //     console.log('stateName:' + this.state.habitName.toLowerCase());
+    // }
 
     addHabit = () => {
         this.setState({addingHabit: true})
@@ -230,8 +227,11 @@ class EditHabitScreen extends React.Component {
             habitHistory.type = Constants.COMPLETE
             habitHistory.habitInfo = {}
         }
-        // this.props.deleteHabitFromFuture()
-        // this.props.deleteHabitFromSettings()
+        // first remove old habit
+        console.log("HERE____________")
+        this.props.deleteHabitFromFuture(this.state.habitName)
+        this.props.deleteHabitFromSettings(this.state.habitName)
+        // add updated habit
         this.props.addHabitToSettings(this.state.habitName, habitSettings)
         this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
         this.props.navigation.navigate('CalendarHome')
@@ -330,7 +330,7 @@ class EditHabitScreen extends React.Component {
                      <View style={styles.optionsContainer}>
 
                         {/*||||||||||||||   TIME RANGE   |||||||||||||||||*/}
-                         {
+                         {/* {
                            false &&
                             <View style={styles.timeRangeCheckbox}>
                                 <CheckBox
@@ -374,7 +374,7 @@ class EditHabitScreen extends React.Component {
                                     </View>
                                 }
                             </View>
-                        } 
+                        }  */}
 
                         {/* ||||||||||||||    MEASUREMENTS   ||||||||||||||*/}
                         <View style={styles.measurementsCheckbox}>
@@ -552,7 +552,6 @@ class EditHabitScreen extends React.Component {
                         // Add code for deleting past information
                         onPress={() => 
                             this.addHabit()
-                            // this.deletePast()
                         }
                     >
                         <Text style={styles.addButtonText}>Update</Text>
