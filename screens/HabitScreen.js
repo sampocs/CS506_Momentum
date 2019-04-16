@@ -96,12 +96,12 @@ class HabitScreen extends React.Component {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={{ alignItems: 'center' }}>
+                    <View style={{ alignItems: 'center', paddingTop: 30 }}>
                         <Text style={styles.habitNameText}>{this.props.habitName}</Text>
                         <Text style={styles.dateText}>{formatDate(this.props.date, "MMM D")}</Text>
                     </View>
 
-                    <View style={{ alignItems: 'center', flex:1, width:'100%' }}>
+                    <View style={{ alignItems: 'center', flex:1, width:'100%', justifyContent: 'center' }}>
                         {this.renderType(this.props.habitType)}
                     </View>
 
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     },
     backButtonContainer: {
         position: 'absolute',
-        top: 20,
+        top: 50,
         left: 20
     },
     habitNameText: {
