@@ -42,7 +42,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         habitName: props.habitName,
         habit: props.habitObject,
-        currentHabits: state.settings.habitSettings,
+        currentHabits: props.habits,
+        currentHabits2: state.settings.habitSettings
     }
 }
 
@@ -51,8 +52,8 @@ const mapDispatchToProps = (dispatch) => {
         // 
         // updateHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
       //  updateHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
-       // addHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
-      //  addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
+        addHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
+        addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
     }
 }
 
@@ -64,8 +65,7 @@ class EditHabitScreen extends React.Component {
         super(props);
         this.state = {
             habitName: this.props.habitName,
-            habits: this.props.currentHabits,
-            frequencyToggle: '',// Constants.DAILY,
+           // habits: this.props.currentHabits,
             daysOfWeek: [true, true, true, true, true, true, true],
             prevStartTime: this.toDateObject(this.props.habit.startTime),
             prevEndTime: this.toDateObject(this.props.habit.endTime),
@@ -85,15 +85,13 @@ class EditHabitScreen extends React.Component {
             icon: this.props.habit.icon,
             modalVisible: false,
             iconChosen: true,
-
             // addingHabit: false
         }
     }
     
+    // used for time range
     toDateObject(timeToConvert) {
-        
         const today= new Date();
-
         if(timeToConvert != null){
             // fullDate = Tue Dec 12 2017 11:18:30 GMT+0530 (IST) {}
             const time = timeToConvert;
@@ -129,20 +127,6 @@ class EditHabitScreen extends React.Component {
         }
     }
 
-
-    // setFrequencyToggle(section) {
-    //     const sectionMapping = {
-    //         LEFT: Constants.DAILY,
-    //         RIGHT: Constants.WEEKLY
-    //     }
-    //     this.setState({ frequencyToggle: sectionMapping[section] })
-    //     if (sectionMapping[section] === Constants.DAILY) {
-    //         this.setState({ daysOfWeek: [true, true, true, true, true, true, true] })
-    //     }
-    //     if (sectionMapping[section] === Constants.WEEKLY) {
-    //         this.setState({ daysOfWeek: [false, false, false, false, false, false, false] })
-    //     }
-    // }
 
     setDaysOfWeekToggle(daysOfWeek) {
         this.setState({ daysOfWeek: daysOfWeek })
@@ -195,6 +179,9 @@ class EditHabitScreen extends React.Component {
         console.log(this.state.goal)
         console.log(this.state.subtasks)
         console.log(this.state.includeSubtasksChecked)
+        console.log('stateName:' + this.state.habitName.toLowerCase());
+        console.log('stateHabit:' + this.props.currentHabits2);
+
     }
 
     addHabit = () => {
@@ -243,18 +230,14 @@ class EditHabitScreen extends React.Component {
             habitHistory.type = Constants.COMPLETE
             habitHistory.habitInfo = {}
         }
+        // this.props.deleteHabitFromFuture()
+        // this.props.deleteHabitFromSettings()
         this.props.addHabitToSettings(this.state.habitName, habitSettings)
         this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
         this.props.navigation.navigate('CalendarHome')
     }
 
-   // use to delete the old versin of the habit
-    deletePast() {
-
-    }
-
-
-    fieldsCompleted(alertUser = false) {
+     fieldsCompleted(alertUser = false) {
         if (this.state.habitName === '') {
             if (alertUser) {
                 AlertIOS.alert(
@@ -282,8 +265,9 @@ class EditHabitScreen extends React.Component {
             }
             return false
         }
-        for (i in this.props.currentHabits) {
-            let habit = this.props.currentHabits[i]
+        for (i in this.state.habits) {
+            let habit = this.state.habits[i];
+            console.log('HABIT' + habit)
             if (this.state.habitName.toLowerCase() === habit.toLowerCase()) {
                 if (alertUser) {
                     AlertIOS.alert(
@@ -338,10 +322,8 @@ class EditHabitScreen extends React.Component {
                     <View style={styles.daysOfWeekToggle}>
                         <DaysOfWeekToggle
                             daysOfWeek={this.props.habit.daysOfWeek}
-                            //frequencyToggle={this.state.frequencyToggle}
-                            //setParentState={this.setDaysOfWeekToggle.bind(this)}
-                            // change this logic? 
-                            clickable={this.state.frequencyToggle != Constants.DAILY}
+                            setParentState={this.setDaysOfWeekToggle.bind(this)}
+                            clickable={true}
                         />
                     </View>
 
@@ -397,13 +379,16 @@ class EditHabitScreen extends React.Component {
                         {/* ||||||||||||||    MEASUREMENTS   ||||||||||||||*/}
                         <View style={styles.measurementsCheckbox}>
                             <CheckBox
-                                title={this.state.prevMeasurements ? 'Update Measurements' : 'Include a Measurements'}
+                                title={this.state.prevMeasurements ? 'Update Measurements' : 'Include a Measurement'}
                                 checked={this.state.includeMeasurementsChecked}
                                 onPress={() => {
                                     let checked = !this.state.includeMeasurementsChecked
-                                    if (!checked) {
-                                        this.setState({ goal: '', unit: '' })
-                                    }
+                                    console.
+                                    log('goal' + this.state.goal)
+                                    // CORRECT FOR UPDATE
+                                    // if (!checked) {
+                                    //   this.setState({ goal: '', unit: '' })
+                                    // }
                                     this.setState({
                                         includeMeasurementsChecked: checked,
                                         includeSubtasksChecked: false,
@@ -466,8 +451,8 @@ class EditHabitScreen extends React.Component {
                                         this.setState({
                                             includeSubtasksChecked: !this.state.includeSubtasksChecked,
                                             includeMeasurementsChecked: false,
-                                            goal: '',
-                                            unit: ''
+                                            // goal: '',
+                                            // unit: ''
                                         })
                                     }}
                                     containerStyle={styles.checkboxContainer}
@@ -566,7 +551,7 @@ class EditHabitScreen extends React.Component {
                         { backgroundColor: Colors.calendarBlue }]}
                         // Add code for deleting past information
                         onPress={() => 
-                            this.updateHabit()
+                            this.addHabit()
                             // this.deletePast()
                         }
                     >

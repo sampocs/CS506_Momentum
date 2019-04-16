@@ -51,7 +51,7 @@ class SettingsEditableHabitComponent extends React.Component {
             <View style={styles.metricContainer}>
                 <Button  
                    onPress={() => {
-                    this.props.navigation.navigate('EditHabit', {habitName: item, habitObject: this.props.currentHabits[item] })
+                    this.props.navigation.navigate('EditHabit', {habitName: item, habitObject: this.props.currentHabits[item], habits: this.props.currentHabits })
                     console.log('item:' + item)
                     }}
                     title='Edit'
