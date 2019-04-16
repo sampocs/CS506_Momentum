@@ -23,6 +23,7 @@ const mapStateToProps = (state, ownProps) => {
     let date = ownProps.date
     let settings = state.settings.habitSettings[habitName]
     return {
+         // errors when delete from the future
         iconName: settings.icon,
         dataOnDate: state.history[date][habitName],
         habitType: settings.type

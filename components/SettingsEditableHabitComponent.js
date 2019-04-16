@@ -24,10 +24,7 @@ import { withNavigation } from 'react-navigation'
 const mapStateToProps = (state) => {
     return {
         currentHabits: state.settings.habitSettings,
-        // iconName: settings.icon,
-        // dataOnDate: state.history[date][habitName],
-        // habitType: settings.type
-      //  settings: state.settings.habitSettings[1]
+        startDate: state.settings.user.startDate,
     }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -83,7 +80,7 @@ class SettingsEditableHabitComponent extends React.Component {
                                 text: 'Yes, delete all history of this habit', 
                                 onPress: () => {
                                     this.props.deleteHabitFromFuture(item)
-                                    //this.props.deleteHabitFromPast(item) // how to get the date?
+                                    this.props.deleteHabitFromPast(item, this.props.startDate) // how to get the date?
                                     this.props.deleteHabitFromSettings(item)
                                 }
                             },

@@ -491,7 +491,6 @@ class EditHabitScreen extends React.Component {
                             style={[styles.addButton, { backgroundColor: Colors.calendarBlue }]}
                             onPress={() => {
                                 this.setState({ modalVisible: true })
-                                console.log(this.props.habit.icon)
                                 }}
                         >
                             {
