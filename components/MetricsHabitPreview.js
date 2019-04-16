@@ -42,7 +42,7 @@ class MetricsHabitPreview extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.history != this.props.history) {
             this.setState({
-                metrics: getPreviewMetrics(this.props.history, this.props.habitName),
+                metrics: getPreviewMetrics(this.props.history, this.props.habitName)
             })
         }
     }
@@ -58,7 +58,6 @@ class MetricsHabitPreview extends React.Component {
         else {
             metrics = this.state.metrics.yearly
         }
-
         return (
             <TouchableOpacity
                 style={styles.container}
