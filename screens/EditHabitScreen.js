@@ -229,8 +229,9 @@ class EditHabitScreen extends React.Component {
         }
         // first remove old habit
         console.log("HERE____________")
-        this.props.deleteHabitFromFuture(this.state.habitName) // not working - still on calendar
-        this.props.deleteHabitFromSettings(this.state.habitName)
+        // using props.habitName so the original habit name is removed, not the newly edited habitName(if changed)
+        this.props.deleteHabitFromFuture(this.props.habitName) // past habtis are erroring out, 
+        this.props.deleteHabitFromSettings(this.props.habitName)
         // add updated habit
         this.props.addHabitToSettings(this.state.habitName, habitSettings)
         this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
