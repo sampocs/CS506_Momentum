@@ -13,9 +13,9 @@ const getAverage = (daysCompleted, totalDays) => {
     let avg = (daysCompleted / totalDays) * 100
     return `${Math.round(avg)}%`
 }
-export const getPreviewMetrics = (history, habitName, date=null) => {
+export const getPreviewMetrics = (history, habitName) => {
 
-    let currentDate = currentDate === null ? getCurrentDate() : date
+    let currentDate = getCurrentDate() 
     let startDate = getPreviousDay(currentDate)
 
     let weekAgo = getWeekAgo(startDate)
