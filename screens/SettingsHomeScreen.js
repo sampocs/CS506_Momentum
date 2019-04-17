@@ -3,29 +3,43 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    SafeAreaView,
+    ScrollView
 } from 'react-native'
 import { connect } from 'react-redux';
-import { clearUserData } from '../actions/actions'
+import { clearUserData, changeHabitOrder } from '../actions/actions'
 import Colors from '../constants/Colors';
+import Layout from '../constants/Layout'
+import ModifyHabitComponent from '../components/ModifyHabitComponent'
+import SortableList from 'react-native-sortable-list';
 import firebase from '@firebase/app';
 import '@firebase/auth'
+import Fonts from '../constants/Fonts';
 
 const mapStateToProps = (state) => {
     return {
-
+        habitOrder: state.settings.habitOrder
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        clearUserData: () => dispatch(clearUserData())
+        clearUserData: () => dispatch(clearUserData()),
+        changeHabitOrder: (prevOrder, nextOrder) => dispatch(changeHabitOrder(prevOrder, nextOrder))
     }
 }
-
+ 
 class SettingsHomeScreen extends React.Component {
     static navigationOptions = {
         title: 'Settings'
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            order: Array(props.habitOrder.length).fill().map((x, i) => i.toString())
+        }
     }
 
     signOut() {
@@ -35,7 +49,7 @@ class SettingsHomeScreen extends React.Component {
 
                 //Reset data in redux
                 this.props.clearUserData()
-        
+
                 this.props.navigation.navigate('Auth')
             },
             (error) => {
@@ -49,8 +63,20 @@ class SettingsHomeScreen extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <View style={styles.logoutButtonContainer}>
+            <SafeAreaView style={styles.container}>
+                <SortableList
+                    style={styles.sortableList}
+                    contentContainerStyle={styles.sortableListContent}
+                    data={this.props.habitOrder}
+                    onReleaseRow={(key, nextOrder) => {
+                        this.props.changeHabitOrder(this.state.order, nextOrder)
+                        this.setState({ order: nextOrder })
+                    }}
+                    renderRow={({ data, active }) => {
+                        return <ModifyHabitComponent habitName={data} active={active} />
+                    }}
+                />
+                <View style={styles.authContainer}>
                     <TouchableOpacity
                         onPress={() => {
                             if (firebase.auth().currentUser) {
@@ -61,12 +87,12 @@ class SettingsHomeScreen extends React.Component {
                             }
                         }}
                     >
-                        <Text style={styles.logoutButtonText}>
-                        {firebase.auth().currentUser ? 'Sign Out' : 'Link Account'}
+                        <Text style={styles.authText}>
+                            {firebase.auth().currentUser ? 'Sign Out' : 'Link Account'}
                         </Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </SafeAreaView>
         )
     }
 }
@@ -74,17 +100,30 @@ class SettingsHomeScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    logoutButtonContainer: {
-        position: 'absolute',
         alignItems: 'center',
-        width: '100%',
-        bottom: 20,
-        marginTop: 10
     },
-    logoutButtonText: {
+    sortableList: {
+        flex: 1,
+    },
+    sortableListContent: {
+        flex: 1,
+        width: Layout.window.width,
+        paddingTop: 5
+    },
+    authContainer: {
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        backgroundColor: '#fff',
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.1,
+        shadowColor: '#444'
+    },
+    authText: {
         color: Colors.darkBlue,
-        fontSize: 40
+        fontSize: 25,
+        fontFamily: Fonts.AvenirNext
     }
 })
 

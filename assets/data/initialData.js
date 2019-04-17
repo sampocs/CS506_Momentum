@@ -25,6 +25,7 @@ initialData.settings.user = {
     startDate: currentDate,
     lastDate: lastDate
 }
+initialData.settings.habitOrder = []
 initialData.settings.habitSettings = {}
 
 export default initialData;

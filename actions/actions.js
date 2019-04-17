@@ -18,7 +18,9 @@ export const RESTORE_SETTINGS_FROM_FIREBASE = 'RESTORE_SETTINGS_FROM_FIREBASE'
 export const CLEAR_USER_DATA = 'CLEAR_USER_DATA'
 export const DELETE_HABIT_FROM_PAST = 'DELETE_HABIT_FROM_PAST'
 export const DELETE_HABIT_FROM_FUTURE = 'DELETE_HABIT_FROM_FUTURE'
-export const DELETE_HABIT_FROM_SETTINGS = 'DELETE_HABIT_FROM_SETTINGS'
+export const DELETE_HABIT_FROM_HABIT_SETTINGS = 'DELETE_HABIT_FROM_HABIT_SETTINGS'
+export const DELETE_HABIT_FROM_HABIT_ORDER = 'DELETE_HABIT_FROM_HABIT_ORDER'
+export const CHANGE_HABIT_ORDER = 'CHANGE_HABIT_ORDER'
 
 
 //Action Creators
@@ -123,7 +125,18 @@ export const deleteHabitFromFuture = (habitName) => ({
     currentDate: getCurrentDate()
 })
 
-export const deleteHabitFromSettings = (habitName) => ({
-    type: DELETE_HABIT_FROM_SETTINGS,
+export const deleteHabitFromHabitSettings = (habitName) => ({
+    type: DELETE_HABIT_FROM_HABIT_SETTINGS,
+    habitName
+})
+
+export const changeHabitOrder = (prevOrder, nextOrder) => ({
+    type: CHANGE_HABIT_ORDER,
+    prevOrder,
+    nextOrder
+})
+
+export const deleteHabitFromHabitOrder = (habitName) => ({
+    type: DELETE_HABIT_FROM_HABIT_ORDER,
     habitName
 })

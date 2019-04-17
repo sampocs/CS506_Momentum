@@ -21,7 +21,8 @@ import DualToggle from '../components/DualToggle'
 import DaysOfWeekToggle from '../components/DaysOfWeekToggle';
 import {
     addHabitToHistory,
-    addHabitToSettings
+    addHabitToSettings,
+    deleteHabitFromFuture
 } from '../actions/actions'
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -33,20 +34,24 @@ import HabitIcon from '../components/HabitIcon';
 const NUM_COLUMNS = 4;
 const { width } = Dimensions.get('window');
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
+    let props = ownProps.navigation.state.params
     return {
-        currentHabits: state.settings.habitOrder
+        habitName: props.habitName,
+        currentHabits: state.settings.habitOrder,
+        settings: state.settings.habitSettings[props.habitName]
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         addHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
-        addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
+        addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek)),
+        deleteHabitFromFuture: (habitName) => dispatch(deleteHabitFromFuture(habitName))
     }
 }
 
-class AddHabitScreen extends React.Component {
+class EditHabitScreen extends React.Component {
     static navigationOptions = {
         header: null
     }
@@ -54,21 +59,19 @@ class AddHabitScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            habitName: '',
-            frequencyToggle: Constants.DAILY,
-            daysOfWeek: [true, true, true, true, true, true, true],
-            timeRangeChecked: false,
-            beginTime: new Date(),
-            endTime: new Date(),
-            goal: '',
-            unit: '',
-            includeMeasurementsChecked: false,
-            includeSubtasksChecked: false,
-            disappearWhenCompleted: false,
-            subtasks: [],
-            icon: 'spinner',
+            habitName: props.habitName,
+            frequencyToggle: Constants.WEEKLY,
+            daysOfWeek: props.settings.daysOfWeek,
+            goal: props.settings.type === Constants.PROGRESS ? props.settings.habitInfo.goal : '',
+            unit: props.settings.type === Constants.PROGRESS ? props.settings.habitInfo.unit : '',
+            includeMeasurementsChecked: props.settings.type === Constants.PROGRESS,
+            includeSubtasksChecked: props.settings.type === Constants.SUBTASK,
+            disappearWhenCompleted: props.settings.disappearWhenCompleted,
+            subtasks: props.settings.type === Constants.SUBTASK 
+                ? props.settings.habitInfo.subtasks.map((subtask) => subtask[0]) : [],
+            icon: props.settings.icon,
             modalVisible: false,
-            iconChosen: false,
+            iconChosen: true,
             addingHabit: false
         }
     }
@@ -116,7 +119,7 @@ class AddHabitScreen extends React.Component {
                     <TouchableOpacity
                         onPress={() => this.removeSubtask(i)}
                     >
-                        <Ionicons size={30} color={Colors.calendarBlue} name={'ios-trash'} />
+                        <Ionicons size={30} color={Colors.darkBlue} name={'ios-trash'} />
                     </TouchableOpacity>
                 </View>
             )
@@ -131,7 +134,7 @@ class AddHabitScreen extends React.Component {
         });
     }
 
-    addHabit = () => {
+    editHabit = () => {
         this.setState({addingHabit: true})
         if (!this.fieldsCompleted(alertUser = true)) {
             return;
@@ -177,6 +180,7 @@ class AddHabitScreen extends React.Component {
             habitHistory.type = Constants.COMPLETE
             habitHistory.habitInfo = {}
         }
+        this.props.deleteHabitFromFuture(this.state.habitName)
         this.props.addHabitToSettings(this.state.habitName, habitSettings)
         this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
         this.props.navigation.navigate('CalendarHome')
@@ -209,18 +213,6 @@ class AddHabitScreen extends React.Component {
                 )
             }
             return false
-        }
-        for (i in this.props.currentHabits) {
-            let habit = this.props.currentHabits[i]
-            if (this.state.habitName.toLowerCase() === habit.toLowerCase()) {
-                if (alertUser) {
-                    AlertIOS.alert(
-                        "Duplicate Habit",
-                        "You've already added this habit!"
-                    )
-                }
-                return false
-            }
         }
         return true;
     }
@@ -257,13 +249,14 @@ class AddHabitScreen extends React.Component {
                             returnKeyType={'done'}
                             selectTextOnFocus={true}
                             value={this.state.habitName}
+                            editable={false}
                         />
                     </View>
 
                     {/*|||||||||||||||||||   DAYS     |||||||||||||||||*/}
                     <View style={styles.dailyWeeklyToggle}>
                         <DualToggle
-                            color={Colors.calendarBlue}
+                            color={Colors.darkBlue}
                             labels={['Daily', 'Weekly']}
                             setParentState={this.setFrequencyToggle.bind(this)}
                         />
@@ -275,7 +268,7 @@ class AddHabitScreen extends React.Component {
                             frequencyToggle={this.state.frequencyToggle}
                             setParentState={this.setDaysOfWeekToggle.bind(this)}
                             clickable={this.state.frequencyToggle != Constants.DAILY}
-                            color={Colors.calendarBlue}
+                            color={Colors.darkBlue}
                         />
                     </View>
 
@@ -295,8 +288,8 @@ class AddHabitScreen extends React.Component {
                                     }}
                                     containerStyle={styles.checkboxContainer}
                                     textStyle={styles.checkboxText}
-                                    uncheckedColor={Colors.calendarBlue}
-                                    checkedColor={Colors.calendarBlue}
+                                    uncheckedColor={Colors.darkBlue}
+                                    checkedColor={Colors.darkBlue}
                                     size={40}
                                 >
                                 </CheckBox>
@@ -344,8 +337,8 @@ class AddHabitScreen extends React.Component {
                                 }}
                                 containerStyle={styles.checkboxContainer}
                                 textStyle={styles.checkboxText}
-                                uncheckedColor={Colors.calendarBlue}
-                                checkedColor={Colors.calendarBlue}
+                                uncheckedColor={Colors.darkBlue}
+                                checkedColor={Colors.darkBlue}
                                 size={40}
                             >
                             </CheckBox>
@@ -405,8 +398,8 @@ class AddHabitScreen extends React.Component {
                                     }}
                                     containerStyle={styles.checkboxContainer}
                                     textStyle={styles.checkboxText}
-                                    uncheckedColor={Colors.calendarBlue}
-                                    checkedColor={Colors.calendarBlue}
+                                    uncheckedColor={Colors.darkBlue}
+                                    checkedColor={Colors.darkBlue}
                                     size={40}
                                 />
                                 {
@@ -414,7 +407,7 @@ class AddHabitScreen extends React.Component {
                                     <TouchableOpacity
                                         onPress={() => this.addSubtask()}
                                     >
-                                        <Octicons name={'plus'} color={Colors.calendarBlue} size={35} />
+                                        <Octicons name={'plus'} color={Colors.darkBlue} size={35} />
                                     </TouchableOpacity>
                                 }
                             </View>
@@ -425,7 +418,7 @@ class AddHabitScreen extends React.Component {
                     {/*||||||||||||   COMPLETE ACTION   |||||||||||||||*/}
                     <View style={styles.completionActionToggle}>
                         <DualToggle
-                            color={Colors.calendarBlue}
+                            color={Colors.darkBlue}
                             labels={['Change Color', 'Disappear']}
                             setParentState={this.setCompletionActionToggle.bind(this)}
                         />
@@ -434,7 +427,7 @@ class AddHabitScreen extends React.Component {
                     {/*||||||||||||   ICON MODAL SCREEN   |||||||||||||||*/}
                     <View style={styles.chooseIconButtonContainer}>
                         <TouchableOpacity
-                            style={[styles.addButton, { backgroundColor: Colors.calendarBlue }]}
+                            style={[styles.addButton, { backgroundColor: Colors.darkBlue }]}
                             onPress={() => this.setState({ modalVisible: true })}
                         >
                             {
@@ -466,13 +459,13 @@ class AddHabitScreen extends React.Component {
                                     <FlatList
                                         data={Object.keys(Icons)}
                                         renderItem={({ item, separators, index }) => (
-                                            <View style={[styles.iconContainer, (index % NUM_COLUMNS != NUM_COLUMNS - 1) ? { borderRightColor: Colors.calendarBlue, borderRightWidth: 1 } : {}]}>
+                                            <View style={[styles.iconContainer, (index % NUM_COLUMNS != NUM_COLUMNS - 1) ? { borderRightColor: Colors.darkBlue, borderRightWidth: 1 } : {}]}>
                                                 <TouchableOpacity
                                                     onShowUnderlay={separators.highlight}
                                                     onHideUnderlay={separators.unhighlight}
                                                     onPress={() => { this.setState({ icon: item }); this.setState({ modalVisible: false }); this.setState({ iconChosen: true }) }}
                                                 >
-                                                    <HabitIcon icon={item} completed={false} color={(this.state.icon == item) ? Colors.calendarBlue : 'black'} />
+                                                    <HabitIcon icon={item} completed={false} color={(this.state.icon == item) ? Colors.darkBlue : 'black'} />
                                                 </TouchableOpacity>
                                             </View>
                                         )}
@@ -492,10 +485,10 @@ class AddHabitScreen extends React.Component {
                 <View style={styles.addButtonContainer}>
                     <TouchableOpacity
                         style={[styles.addButton,
-                        { backgroundColor: this.fieldsCompleted() ? Colors.calendarBlue : Colors.lightGreyText }]}
-                        onPress={() => this.addHabit()}
+                        { backgroundColor: this.fieldsCompleted() ? Colors.darkBlue : Colors.lightGreyText }]}
+                        onPress={() => this.editHabit()}
                     >
-                        <Text style={styles.addButtonText}>Add Habit</Text>
+                        <Text style={styles.addButtonText}>Save</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -513,7 +506,7 @@ const styles = StyleSheet.create({
     },
     cancelButtonText: {
         fontSize: 18,
-        color: Colors.calendarBlue
+        color: Colors.darkBlue
     },
     scrollviewContainer: {
         flex: 1,
@@ -522,12 +515,12 @@ const styles = StyleSheet.create({
     habitNameContainer: {
         margin: 20,
         alignItems: 'center',
-        borderBottomColor: Colors.calendarBlue,
+        borderBottomColor: Colors.darkBlue,
         borderBottomWidth: 3,
         paddingBottom: 3
     },
     habitName: {
-        color: Colors.calendarBlue,
+        color: Colors.darkBlue,
         fontSize: 27,
         fontFamily: Fonts.AvenirNext,
         textAlign: 'center',
@@ -543,7 +536,7 @@ const styles = StyleSheet.create({
         padding: 0,
     },
     checkboxText: {
-        color: Colors.calendarBlue,
+        color: Colors.darkBlue,
         fontFamily: Fonts.AvenirNext,
         fontSize: 20
     },
@@ -564,7 +557,7 @@ const styles = StyleSheet.create({
     },
     timeRangeFieldsText: {
         fontSize: 18,
-        color: Colors.calendarBlue
+        color: Colors.darkBlue
     },
     measurementFieldsContainer: {
         flexDirection: 'row',
@@ -572,13 +565,13 @@ const styles = StyleSheet.create({
     },
     measurementFields: {
         alignItems: 'center',
-        borderBottomColor: Colors.calendarBlue,
+        borderBottomColor: Colors.darkBlue,
         borderBottomWidth: 3,
         paddingBottom: 3,
         marginRight: 10
     },
     fieldText: {
-        color: Colors.calendarBlue,
+        color: Colors.darkBlue,
         fontSize: 20,
         fontFamily: Fonts.AvenirNext,
         textAlign: 'center',
@@ -599,7 +592,7 @@ const styles = StyleSheet.create({
     subtaskTitleText: {
         fontSize: 20,
         fontWeight: '500',
-        color: Colors.calendarBlue
+        color: Colors.darkBlue
     },
     completionActionToggle: {
         alignSelf: 'center'
@@ -654,7 +647,7 @@ const styles = StyleSheet.create({
     },
     separatorComponent: {
         height: 1,
-        backgroundColor: Colors.calendarBlue,
+        backgroundColor: Colors.darkBlue,
         marginHorizontal: 5
     },
     iconScrollView: {
@@ -673,4 +666,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddHabitScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(EditHabitScreen);
