@@ -1,8 +1,9 @@
 import {
     ADD_HABIT_TO_SETTINGS, 
     RESTORE_SETTINGS_FROM_FIREBASE, 
-    DELETE_HABIT_FROM_SETTINGS,
-    CHANGE_HABIT_ORDER
+    DELETE_HABIT_FROM_HABIT_SETTINGS,
+    CHANGE_HABIT_ORDER,
+    DELETE_HABIT_FROM_HABIT_ORDER
 } from '../actions/actions'
 
 const settingsReducer = (state = {}, action) => {
@@ -12,17 +13,24 @@ const settingsReducer = (state = {}, action) => {
             let newState = {...state}
             newState.habitSettings = {...state.habitSettings}
             newState.habitSettings[habitName] = habitSettings
+            newState.habitOrder = [...state.habitOrder, habitName]
             return newState
         }
         case RESTORE_SETTINGS_FROM_FIREBASE: {
             let { settings } = action
             return settings
         }
-        case DELETE_HABIT_FROM_SETTINGS: {
+        case DELETE_HABIT_FROM_HABIT_SETTINGS: {
             let { habitName } = action
             let newState = {...state}
             newState.habitSettings = {...state.habitSettings}
             delete newState.habitSettings[habitName]
+            return newState
+        }
+        case DELETE_HABIT_FROM_HABIT_ORDER: {
+            let { habitName } = action
+            let newState = {...state}
+            newState.habitOrder = state.habitOrder.filter((habit) => habit != habitName)
             return newState
         }
         case CHANGE_HABIT_ORDER: {

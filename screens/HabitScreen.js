@@ -28,7 +28,7 @@ const mapStateToProps = (state, ownProps) => {
         date: props.date,
         habitName: props.habitName,
         dataOnDate: state.history[props.date][props.habitName],
-        habitType: state.settings.habitSettings[props.habitName].type,
+        habitType: state.history[props.date][props.habitName].type
     }
 }
 

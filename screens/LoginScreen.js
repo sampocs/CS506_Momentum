@@ -82,6 +82,7 @@ class LoginScreen extends React.Component {
                         }
 
                         settings.habitSettings = settings.hasOwnProperty('habitSettings') ? settings.habitSettings : {}
+                        settings.habitOrder = settings.hasOwnProperty('habitOrder') ? settings.habitOrde : []
 
                         this.props.restoreData(history, settings)
                         console.log('Data restored.')

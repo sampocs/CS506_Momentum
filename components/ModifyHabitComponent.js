@@ -6,9 +6,14 @@ import {
     StyleSheet,
     Animated,
     Easing,
-    Platform,
-    Image,
+    Alert,
 } from 'react-native'
+import {
+    deleteHabitFromFuture,
+    deleteHabitFromPast,
+    deleteHabitFromHabitOrder,
+    deleteHabitFromHabitSettings
+} from '../actions/actions'
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation'
 import Colors from '../constants/Colors';
@@ -17,13 +22,16 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const mapStateToProps = (state) => {
     return {
-
+        startDate: state.settings.user.startDate
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        deleteHabitFromFuture: (habitName) => dispatch(deleteHabitFromFuture(habitName)),
+        deleteHabitFromPast: (habitName, startDate) => dispatch(deleteHabitFromPast(habitName, startDate)),
+        deleteHabitFromHabitOrder: (habitName) => dispatch(deleteHabitFromHabitOrder(habitName)),
+        deleteHabitFromHabitSettings: (habitName) => dispatch(deleteHabitFromHabitSettings(habitName))
     }
 }
 
@@ -57,6 +65,36 @@ class ModifyHabitComponent extends React.Component {
         }
     }
 
+    deleteHabit() {
+        Alert.alert(
+            'Delete Habit',
+            'Are you sure you want to delete this habit?',
+            [
+            {
+                text: 'Yes, stop future tracking of this habit',
+                onPress: () => { 
+                    this.props.deleteHabitFromFuture(this.props.habitName)
+                    this.props.deleteHabitFromHabitOrder(this.props.habitName)
+                    },
+                style: 'cancel',
+            },
+            {   
+                text: 'Yes, delete all history of this habit', 
+                onPress: () => {
+                    this.props.deleteHabitFromFuture(this.props.habitName)
+                    this.props.deleteHabitFromPast(this.props.habitName, this.props.startDate) 
+                    this.props.deleteHabitFromHabitSettings(this.props.habitName)
+                    this.props.deleteHabitFromHabitOrder(this.props.habitName)
+                }
+            },
+            {
+                text: 'Cancel',
+                style: 'cancel',
+            },
+            ],
+        );
+    }
+
     render() {
         const { habitName, active } = this.props;
 
@@ -71,12 +109,15 @@ class ModifyHabitComponent extends React.Component {
                     </Text>
                 </View>
                 <View style={styles.editContainer}>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => this.props.navigation.push('EditHabit', { habitName: habitName })}
+                    >
                         <Text style={styles.editText}>
                             Edit
                     </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => this.deleteHabit()}>
                         <Text style={styles.editText}>
                             Delete
                     </Text>

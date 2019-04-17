@@ -17,7 +17,7 @@ import Constants from '../constants/Constants'
 
 const mapStateToProps = (state) => {
     return {
-        habits: state.settings.habitSettings
+        habits: state.settings.habitOrder
     }
 }
 
@@ -50,7 +50,7 @@ class MetricsHomeScreen extends React.Component {
 
     render() {
         let index = 0
-        let habits = Object.keys(this.props.habits).map((habit) => {
+        let habits = this.props.habits.map((habit) => {
             return (
                 <MetricsHabitPreview key={index++} habitName={habit} currentToggleSection={this.state.currentToggleSection}/>
             )
