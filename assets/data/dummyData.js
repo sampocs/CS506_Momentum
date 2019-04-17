@@ -122,6 +122,7 @@ dummyData.settings.habitSettings = {
         icon: 'broom'
     }
 }
+dummyData.settings.habitOrder = ['workout', 'chores', 'read']
 dummyData.settings.user = {
     startDate: '2019-03-01',
     lastDate: '2021-01-01'

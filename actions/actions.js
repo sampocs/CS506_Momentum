@@ -19,6 +19,7 @@ export const CLEAR_USER_DATA = 'CLEAR_USER_DATA'
 export const DELETE_HABIT_FROM_PAST = 'DELETE_HABIT_FROM_PAST'
 export const DELETE_HABIT_FROM_FUTURE = 'DELETE_HABIT_FROM_FUTURE'
 export const DELETE_HABIT_FROM_SETTINGS = 'DELETE_HABIT_FROM_SETTINGS'
+export const CHANGE_HABIT_ORDER = 'CHANGE_HABIT_ORDER'
 
 
 //Action Creators
@@ -126,4 +127,10 @@ export const deleteHabitFromFuture = (habitName) => ({
 export const deleteHabitFromSettings = (habitName) => ({
     type: DELETE_HABIT_FROM_SETTINGS,
     habitName
+})
+
+export const changeHabitOrder = (prevOrder, nextOrder) => ({
+    type: CHANGE_HABIT_ORDER,
+    prevOrder,
+    nextOrder
 })

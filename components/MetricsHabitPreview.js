@@ -80,7 +80,7 @@ class MetricsHabitPreview extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        height: 90,
+        height: 80,
         flexDirection: 'row',
         marginHorizontal: 10,
         borderColor: Colors.aqua,
