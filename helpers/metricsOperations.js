@@ -15,7 +15,7 @@ const getAverage = (daysCompleted, totalDays) => {
 }
 export const getPreviewMetrics = (history, habitName) => {
 
-    let currentDate = getCurrentDate() 
+    let currentDate = getCurrentDate()
     let startDate = getPreviousDay(currentDate)
 
     let weekAgo = getWeekAgo(startDate)
@@ -69,5 +69,43 @@ export const getPreviewMetrics = (history, habitName) => {
             daysCompleted: yearlyCompletedDays,
             percentage: yearlyPercentage
         }
+    }
+}
+
+export const getCompletedDates = (history, habitName) => {
+    let completedWeekly = []
+    let completedMonthly = []
+    let completedYearly = []
+
+    let currentDate = getCurrentDate()
+    let startDate = getPreviousDay(currentDate)
+
+    let weekAgo = getWeekAgo(startDate)
+    let monthAgo = getMonthAgo(startDate)
+    let yearAgo = getYearAgo(startDate)
+
+    let allDates = Object.keys(history).filter((date) => ((date >= yearAgo) && (date < currentDate)));
+    for (d in allDates) {
+        let specDate = allDates[d]
+        if (history.hasOwnProperty(specDate) && history[specDate].hasOwnProperty(habitName)) {
+            if (history[specDate][habitName].completed) {
+                let completedDate = {
+                    date: specDate,
+                    count: 10
+                }
+                if (specDate >= monthAgo) {
+                    completedMonthly.push(completedDate)
+                    if (specDate >= weekAgo) {
+                        completedWeekly.push(completedDate)
+                    }
+                }
+                completedYearly.push(completedDate)
+            }
+        }
+    }
+    return {
+        weekly: completedWeekly,
+        monthly: completedMonthly,
+        yearly: completedYearly
     }
 }

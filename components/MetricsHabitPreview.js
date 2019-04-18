@@ -8,7 +8,6 @@ import {
 import Fonts from '../constants/Fonts';
 import Colors from '../constants/Colors';
 import { connect } from 'react-redux';
-import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import { withNavigation } from 'react-navigation'
 import { getPreviewMetrics } from '../helpers/metricsOperations'
 import Constants from '../constants/Constants'
@@ -61,7 +60,7 @@ class MetricsHabitPreview extends React.Component {
         return (
             <TouchableOpacity
                 style={styles.container}
-                onPress={() => this.props.navigation.push('MetricsSpecificHabit')}
+                onPress={() => this.props.navigation.push('MetricsSpecificHabit', { habitName: this.props.habitName })}
             >
                 <View style={styles.habitTextContainer}>
                     <Text style={styles.habitText}>{this.props.habitName}</Text>
@@ -86,7 +85,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.aqua,
         borderWidth: 5,
         borderRadius: 10,
-        marginVertical: 4
+        marginVertical: 4,
     },
     habitTextContainer: {
         width: '70%',
@@ -101,7 +100,8 @@ const styles = StyleSheet.create({
         width: '30%',
         backgroundColor: 'white',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderRadius: 10
     },
     habitText: {
         fontFamily: Fonts.AvenirNext,

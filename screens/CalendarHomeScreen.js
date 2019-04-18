@@ -43,7 +43,8 @@ class CalendarHomeScreen extends React.Component {
                     <ScrollView
                         style={styles.scrollContainer}
                         scrollEnabled={habits.length != 0}
-                        >
+                        overScrollMode={'always'}
+                    >
                         {habits.length != 0 ?
                             habits :
                             <View style={styles.noHabitContainer}>
@@ -66,7 +67,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         width: '100%',
-        paddingVertical: 2,
+        paddingTop: 2,
+        paddingBottom: 100
     },
     outsideScrollContainer: {
         shadowOffset: { width: 0, height: -3 },

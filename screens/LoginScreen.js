@@ -40,7 +40,7 @@ class LoginScreen extends React.Component {
     static navigationOptions = {
         header: null
     }
-    
+
     constructor(props) {
         super(props);
         this.state = {
@@ -82,7 +82,7 @@ class LoginScreen extends React.Component {
                         }
 
                         settings.habitSettings = settings.hasOwnProperty('habitSettings') ? settings.habitSettings : {}
-                        settings.habitOrder = settings.hasOwnProperty('habitOrder') ? settings.habitOrde : []
+                        settings.habitOrder = settings.hasOwnProperty('habitOrder') ? settings.habitOrder : []
 
                         this.props.restoreData(history, settings)
                         console.log('Data restored.')
@@ -122,10 +122,10 @@ class LoginScreen extends React.Component {
 
     clearFields(passwordsOnly = false) {
         if (passwordsOnly) {
-            this.setState({ password: ''})
+            this.setState({ password: '' })
         }
         else {
-            this.setState({ email: '', password: ''})
+            this.setState({ email: '', password: '' })
         }
     }
 
