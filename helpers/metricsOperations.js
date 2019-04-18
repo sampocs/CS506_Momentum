@@ -16,7 +16,14 @@ const getAverage = (daysCompleted, totalDays) => {
 export const getPreviewMetrics = (history, habitName) => {
 
     let currentDate = getCurrentDate() 
-    let startDate = getPreviousDay(currentDate)
+    
+    let startDate;
+    if (history[currentDate].hasOwnProperty(habitName) && history[currentDate][habitName].completed) {
+        startDate = currentDate;
+    }
+    else {
+        startDate = getPreviousDay(currentDate)
+    }
 
     let weekAgo = getWeekAgo(startDate)
     let monthAgo = getMonthAgo(startDate)
@@ -30,17 +37,17 @@ export const getPreviewMetrics = (history, habitName) => {
     let monthlyCompletedDays = 0
     let yearlyCompletedDays = 0
 
-    let allDates = Object.keys(history).filter((date) => ((date >= yearAgo) && (date < currentDate)))
+    let allDates = Object.keys(history).filter((date) => ((date > yearAgo) && (date <= startDate)))
     for (d in allDates) {
         let date = allDates[d]
         if (history.hasOwnProperty(date) && history[date].hasOwnProperty(habitName)) {
             let dataOnDate = history[date][habitName]
 
-            if (date >= weekAgo) {
+            if (date > weekAgo) {
                 weeklyTotalDays++
                 weeklyCompletedDays += (dataOnDate.completed ? 1 : 0)
             }
-            if (date >= monthAgo) {
+            if (date > monthAgo) {
                 monthlyTotalDays++
                 monthlyCompletedDays += (dataOnDate.completed ? 1 : 0)
             }
@@ -70,4 +77,28 @@ export const getPreviewMetrics = (history, habitName) => {
             percentage: yearlyPercentage
         }
     }
+}
+
+export const getCurrentStreak = (history, habitName) => {
+    let currentDate = getCurrentDate() 
+
+    let streak = 0
+    if (history[currentDate].hasOwnProperty(habitName) && history[currentDate][habitName].completed) {
+        streak++
+    }
+
+    let allDates = Object.keys(history).filter((date) => (date < currentDate)).sort().reverse()
+    for (i in allDates) {
+        let date = allDates[i]
+        if (!history[date].hasOwnProperty(habitName)) {
+            continue;
+        }
+
+        let dataOnDate = history[date][habitName]
+        if (!dataOnDate.completed) {
+            return streak
+        }
+        streak++
+    }
+    return streak
 }

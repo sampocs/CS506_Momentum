@@ -7,7 +7,8 @@ import {
     TextInput,
     Keyboard,
     TouchableWithoutFeedback,
-    TouchableOpacity
+    TouchableOpacity,
+    SafeAreaView
 } from 'react-native'
 import { connect } from 'react-redux';
 import Subtask from '../components/Subtask';
