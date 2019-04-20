@@ -61,7 +61,7 @@ class MetricsHabitPreview extends React.Component {
         return (
             <TouchableOpacity
                 style={styles.container}
-                onPress={() => this.props.navigation.push('MetricsSpecificHabit')}
+                onPress={() => this.props.navigation.push('MetricsSpecificHabit', {habitName: this.props.habitName})}
             >
                 <View style={styles.habitTextContainer}>
                     <Text style={styles.habitText}>{this.props.habitName}</Text>

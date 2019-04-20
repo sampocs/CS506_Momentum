@@ -32,7 +32,7 @@ const mapDispatchToProps = (dispatch) => {
  
 class SettingsHomeScreen extends React.Component {
     static navigationOptions = {
-        title: 'Settings'
+        header: null
     }
 
     constructor(props) {

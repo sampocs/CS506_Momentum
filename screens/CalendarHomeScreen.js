@@ -17,7 +17,8 @@ const mapStateToProps = (state) => {
     let currentSelectedDate = state.calendarState.currentSelectedDate
     return {
         currentSelectedDate: currentSelectedDate,
-        dataOnDate: state.history.hasOwnProperty(currentSelectedDate) ? state.history[currentSelectedDate] : {}
+        dataOnDate: state.history.hasOwnProperty(currentSelectedDate) ? state.history[currentSelectedDate] : {},
+        habitOrder: state.settings.habitOrder
     }
 }
 
@@ -28,7 +29,8 @@ class CalendarHomeScreen extends React.Component {
 
     render() {
         let index = 0;
-        let habits = Object.keys(this.props.dataOnDate).map((habit) => {
+        let habitsOnDate = Object.keys(this.props.dataOnDate)
+        let habits = this.props.habitOrder.filter((habit) => habitsOnDate.includes(habit)).map((habit) => {
             return (
                 <HabitComponent key={index++} habitName={habit} date={this.props.currentSelectedDate} />
             )
