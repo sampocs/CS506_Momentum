@@ -8,7 +8,7 @@ import {
 import initialData from "../assets/data/initialData";
 import testingDataWeekMonth from "../assets/data/testingDataWeekMonth";
 
-const initialState = testingDataWeekMonth
+const initialState = initialData
 
 function mainReducer(state = initialState, action) {
     if (action.type === CLEAR_USER_DATA) {

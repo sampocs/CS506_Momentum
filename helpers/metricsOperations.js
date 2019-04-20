@@ -275,25 +275,6 @@ export const getBarChart = (history, type, habitName) => {
         return (monthPoints.reduce((sum_, i) => sum_ + i, 0) / monthPoints.length)
     })
 
-    // if (weekData.length < 7) {
-    //     for (i = 0; i < 7 - weekData.length; i++) {
-    //         weekData = [0, ...weekData]
-    //         xLabelsWeek = [, ...xLabelsWeek]
-    //     }
-    // }
-    // if (monthData.length < 31) {
-    //     for (i = 0; i < 31 - monthData.length; i++) {
-    //         monthData = [0, ...monthData]
-    //         xLabelsMonth = [, ...xLabelsMonth]
-    //     }
-    // }
-    // if (yearData.length < 365) {
-    //     for (i = 0; i < 365 - yearData.length; i++) {
-    //         yearData = [0, ...yearData]
-    //         xLabelsYear = [, ...xLabelsYear]
-    //     }
-    // }
-
     return {
         weekly: {
             data: weekData,

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
-
 import { createStore } from 'redux'
 import { Provider } from 'react-redux';
 import mainReducer from './reducers/mainReducer.js'
