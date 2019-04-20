@@ -1,5 +1,6 @@
 import {
-    ADD_HABIT_TO_SETTINGS, 
+    ADD_HABIT_TO_HABIT_SETTINGS, 
+    ADD_HABIT_TO_HABIT_ORDER,
     RESTORE_SETTINGS_FROM_FIREBASE, 
     DELETE_HABIT_FROM_HABIT_SETTINGS,
     CHANGE_HABIT_ORDER,
@@ -8,11 +9,16 @@ import {
 
 const settingsReducer = (state = {}, action) => {
     switch (action.type) {
-        case ADD_HABIT_TO_SETTINGS: {
-            let {habitName, habitSettings} = action
+        case ADD_HABIT_TO_HABIT_SETTINGS: {
+            let { habitName, habitSettings } = action
             let newState = {...state}
             newState.habitSettings = {...state.habitSettings}
             newState.habitSettings[habitName] = habitSettings
+            return newState
+        }
+        case ADD_HABIT_TO_HABIT_ORDER: {
+            let { habitName } = action
+            let newState = {...state}
             newState.habitOrder = [...state.habitOrder, habitName]
             return newState
         }

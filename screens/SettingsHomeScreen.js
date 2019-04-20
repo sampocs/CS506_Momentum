@@ -29,7 +29,7 @@ const mapDispatchToProps = (dispatch) => {
         changeHabitOrder: (prevOrder, nextOrder) => dispatch(changeHabitOrder(prevOrder, nextOrder))
     }
 }
- 
+
 class SettingsHomeScreen extends React.Component {
     static navigationOptions = {
         header: null
@@ -64,18 +64,27 @@ class SettingsHomeScreen extends React.Component {
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <SortableList
-                    style={styles.sortableList}
-                    contentContainerStyle={styles.sortableListContent}
-                    data={this.props.habitOrder}
-                    onReleaseRow={(key, nextOrder) => {
-                        this.props.changeHabitOrder(this.state.order, nextOrder)
-                        this.setState({ order: nextOrder })
-                    }}
-                    renderRow={({ data, active }) => {
-                        return <ModifyHabitComponent habitName={data} active={active} />
-                    }}
-                />
+                {this.props.habitOrder.length != 0 ?
+                    <SortableList
+                        style={styles.sortableList}
+                        contentContainerStyle={styles.sortableListContent}
+                        data={this.props.habitOrder}
+                        onReleaseRow={(key, nextOrder) => {
+                            this.props.changeHabitOrder(this.state.order, nextOrder)
+                            this.setState({ order: nextOrder })
+                        }}
+                        renderRow={({ data, active }) => {
+                            return <ModifyHabitComponent habitName={data} active={active} />
+                        }}
+                    />
+                    :
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity
+                            style={styles.addHabitButton}
+                            onPress={() => this.props.navigation.navigate('AddHabit')}>
+                            <Text style={styles.addHabitText}> Add Habit </Text>
+                        </TouchableOpacity>
+                    </View>}
                 <View style={styles.authContainer}>
                     <TouchableOpacity
                         onPress={() => {
@@ -124,6 +133,19 @@ const styles = StyleSheet.create({
         color: Colors.darkBlue,
         fontSize: 25,
         fontFamily: Fonts.AvenirNext
+    },
+    addHabitButton: {
+        height: 60,
+        width: 200,
+        borderRadius: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.darkBlue
+    },
+    addHabitText: {
+        color: 'white',
+        fontFamily: Fonts.AvenirMedium,
+        fontSize: 18
     }
 })
 

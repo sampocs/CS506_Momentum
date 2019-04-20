@@ -1,15 +1,16 @@
 import settingsReducer from '../settingsReducer'
 import {
-    ADD_HABIT_TO_SETTINGS,
+    ADD_HABIT_TO_HABIT_SETTINGS,
     RESTORE_SETTINGS_FROM_FIREBASE,
     DELETE_HABIT_FROM_HABIT_SETTINGS,
     DELETE_HABIT_FROM_HABIT_ORDER,
-    CHANGE_HABIT_ORDER
+    CHANGE_HABIT_ORDER,
+    ADD_HABIT_TO_HABIT_ORDER
 } from '../../actions/actions'
 import Constants from '../../constants/Constants'
 
 describe('Settings Reducer', () => {
-    test('ADD_HABIT_TO_SETTINGS', () => {
+    test('ADD_HABIT_TO_HABIT_SETTINGS', () => {
         expect(settingsReducer({
             habitSettings: {
                 workout: {
@@ -30,7 +31,7 @@ describe('Settings Reducer', () => {
             },
             habitOrder: ['workout']
         }, {
-            type: ADD_HABIT_TO_SETTINGS,
+            type: ADD_HABIT_TO_HABIT_SETTINGS,
             habitName: 'read',
             habitSettings: {
                 disappearWhenCompleted: false,
@@ -87,6 +88,17 @@ describe('Settings Reducer', () => {
                     icon: 'book'
                 }
             },
+            habitOrder: ['workout']
+        })
+    })
+
+    test('ADD_HABIT_TO_HABIT_ORDER', () => {
+        expect(settingsReducer({
+            habitOrder: ['workout']
+        }, {
+            type: ADD_HABIT_TO_HABIT_ORDER,
+            habitName: 'read'
+        })).toEqual({
             habitOrder: ['workout', 'read']
         })
     })

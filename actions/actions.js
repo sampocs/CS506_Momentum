@@ -10,7 +10,8 @@ export const UPDATE_PROGRESS_AMOUNT = 'UPDATE_PROGRESS_AMOUNT'
 export const INCREMENT_PROGRESS_AMOUNT = 'INCREMENT_PROGRESS_AMOUNT'
 export const SELECT_DATE = 'SELECT_DATE'
 export const SELECT_TODAY = 'SELECT_TODAY'
-export const ADD_HABIT_TO_SETTINGS = 'ADD_HABIT_TO_SETTINGS'
+export const ADD_HABIT_TO_HABIT_SETTINGS = 'ADD_HABIT_TO_HABIT_SETTINGS'
+export const ADD_HABIT_TO_HABIT_ORDER = 'ADD_HABIT_TO_HABIT_ORDER'
 export const ADD_HABIT_TO_HISTORY = 'ADD_HABIT_TO_HISTORY'
 export const UPDATE_NOTES = 'UPDATE_NOTES'
 export const RESTORE_HISTORY_FROM_FIREBASE = 'RESTORE_HISTORY_FROM_FIREBASE'
@@ -77,10 +78,15 @@ export const selectToday = () => ({
     date: getCurrentDate()
 })
 
-export const addHabitToSettings = (habitName, habitSettings) => ({
-    type: ADD_HABIT_TO_SETTINGS,
+export const addHabitToHabitSettings = (habitName, habitSettings) => ({
+    type: ADD_HABIT_TO_HABIT_SETTINGS,
     habitName,
     habitSettings
+})
+
+export const addHabitToHabitOrder = (habitName) => ({
+    type: ADD_HABIT_TO_HABIT_ORDER,
+    habitName
 })
 
 export const addHabitToHistory = (habitName, habitHistory, daysOfWeek) => ({

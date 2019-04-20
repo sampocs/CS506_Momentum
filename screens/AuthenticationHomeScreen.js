@@ -7,10 +7,13 @@ import {
     ActivityIndicator
 } from 'react-native'
 import {
-
+    restoreHistoryFromFirebase,
+    restoreSettingsFromFirebase
 } from '../actions/actions'
 import { connect } from 'react-redux';
 import Colors from '../constants/Colors.js'
+import { ALL_DATES_LIST } from '../constants/Constants'
+import { emailToFirebaseRef } from '../helpers/miscHelpers'
 import firebase from '@firebase/app';
 import '@firebase/auth'
 
@@ -22,7 +25,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        restoreData: (history, settings) => {
+            dispatch(restoreHistoryFromFirebase(history));
+            dispatch(restoreSettingsFromFirebase(settings))
+        }
     }
 }
 
@@ -49,6 +55,30 @@ class AuthenticationHomeScreen extends React.Component {
         this.unsubscribe = firebase.auth().onAuthStateChanged(
             (user) => {
                 if (user) {
+                    let emailRef = emailToFirebaseRef(user.email)
+
+                    firebase.database().ref('users/' + emailRef).once('value').then(
+                        (snapshot) => {
+                            let userData = snapshot.val()
+                            let history = userData.hasOwnProperty('history') ? userData.history : {}
+                            let settings = userData.hasOwnProperty('settings') ? userData.settings : {}
+
+                            let startDate = settings.user.startDate
+                            let lastDate = settings.user.lastDate
+                            let dateRange = ALL_DATES_LIST.filter((date) => (date >= startDate && date <= lastDate))
+
+                            for (i in dateRange) {
+                                let date = dateRange[i]
+                                history[date] = history.hasOwnProperty(date) ? history[date] : {}
+                            }
+
+                            settings.habitSettings = settings.hasOwnProperty('habitSettings') ? settings.habitSettings : {}
+                            settings.habitOrder = settings.hasOwnProperty('habitOrder') ? settings.habitOrder : []
+
+                            this.props.restoreData(history, settings)
+                            console.log('Data restored.')
+                        }
+                    )
                     this.props.navigation.navigate('Main')
                 }
                 else {
@@ -60,11 +90,11 @@ class AuthenticationHomeScreen extends React.Component {
 
     render() {
         if (this.state.checkingLoggedIn) {
-                return (
-                    <View style={{ flex: 1, justifyContent: 'center' }}>
-                        <ActivityIndicator size="large" />
-                    </View>
-                )
+            return (
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <ActivityIndicator size="large" />
+                </View>
+            )
         }
         return (
             <View style={styles.container}>
