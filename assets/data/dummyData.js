@@ -117,7 +117,7 @@ dummyData.settings.habitSettings = {
         ],
         type: Constants.SUBTASK,
         habitInfo: {
-            subtasks: [['laundry', false], ['dishes', false]]
+            subtasks: ['laundry', 'dishes']
         },
         icon: 'broom'
     }

@@ -68,7 +68,7 @@ class EditHabitScreen extends React.Component {
             includeSubtasksChecked: props.settings.type === Constants.SUBTASK,
             disappearWhenCompleted: props.settings.disappearWhenCompleted,
             subtasks: props.settings.type === Constants.SUBTASK 
-                ? props.settings.habitInfo.subtasks.map((subtask) => subtask[0]) : [],
+                ? props.settings.habitInfo.subtasks : [], 
             icon: props.settings.icon,
             modalVisible: false,
             iconChosen: true,

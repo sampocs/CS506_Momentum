@@ -11,13 +11,18 @@ import Constants from '../constants/Constants'
 import Colors from '../constants/Colors'
 import TriToggle from '../components/TriToggle'
 import ProgressCircle from 'react-native-progress-circle'
-import { getPreviewMetrics, getCurrentStreak } from '../helpers/metricsOperations'
+import { getPreviewMetrics, getCurrentStreak, getBarChart } from '../helpers/metricsOperations'
 import Fonts from '../constants/Fonts';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { BarChart, Grid, XAxis, YAxis } from 'react-native-svg-charts'
+import * as scale from 'd3-scale'
+
 
 const mapStateToProps = (state, ownProps) => {
+    let habitName = ownProps.navigation.state.params.habitName
     return {
-        habitName: ownProps.navigation.state.params.habitName,
+        habitName: habitName,
+        habitType: state.settings.habitSettings[habitName].type,
         history: state.history
     }
 }
@@ -27,6 +32,15 @@ const mapDispatchToProps = (dispatch) => {
 
     }
 }
+
+const data = [50, 10, 40, 100, 4,
+    50, 10, 40, 100, 4,
+    50, 10, 40, 100, 4,
+    50, 10, 40, 100, 4,
+    50, 10, 40, 100, 4,
+    50, 10, 40, 100, 4,
+    50, 10,
+]
 
 class MetricsSpecificHabitScreen extends React.Component {
     static navigationOptions = {
@@ -45,7 +59,8 @@ class MetricsSpecificHabitScreen extends React.Component {
     componentWillMount() {
         this.setState({
             previewMetrics: getPreviewMetrics(this.props.history, this.props.habitName),
-            currentStreak: getCurrentStreak(this.props.history, this.props.habitName)
+            currentStreak: getCurrentStreak(this.props.history, this.props.habitName),
+            barChart: getBarChart(this.props.history, this.props.habitType, this.props.habitName)
         })
     }
 
@@ -53,7 +68,8 @@ class MetricsSpecificHabitScreen extends React.Component {
         if (prevProps.history != this.props.history) {
             this.setState({
                 previewMetrics: getPreviewMetrics(this.props.history, this.props.habitName),
-                currentStreak: getCurrentStreak(this.props.history, this.props.habitName)
+                currentStreak: getCurrentStreak(this.props.history, this.props.habitName),
+                barChart: getBarChart(this.props.history, this.props.habitType, this.props.habitName)
             })
         }
     }
@@ -69,14 +85,18 @@ class MetricsSpecificHabitScreen extends React.Component {
 
     render() {
         let previewMetrics = {}
+        let barChart = {}
         if (this.state.currentToggleSection === Constants.WEEKLY) {
             previewMetrics = this.state.previewMetrics.weekly
+            barChart = this.state.barChart.weekly
         }
         else if (this.state.currentToggleSection === Constants.MONTHLY) {
             previewMetrics = this.state.previewMetrics.monthly
+            barChart = this.state.barChart.monthly
         }
         else {
             previewMetrics = this.state.previewMetrics.yearly
+            barChart = this.state.barChart.yearly
         }
         return (
             <SafeAreaView style={styles.container}>
@@ -119,7 +139,47 @@ class MetricsSpecificHabitScreen extends React.Component {
                     </View>
                 </View>
 
-
+                <View style={styles.barChartContainer}>
+                    <YAxis
+                        style={{ marginBottom: 12 }}
+                        data={data}
+                        svg={{
+                            fill: 'grey',
+                            fontSize: 10,
+                        }}
+                        numberOfTicks={this.props.habitType === Constants.COMPLETE 
+                            ? 1 : (this.props.habitType === Constants.SUBTASK ? 5 : 10)}
+                        contentInset={{ top: 5, bottom: 5}}
+                        formatLabel={value => `${value}`}
+                        min={0}
+                        max={barChart.yMax}
+                    />
+                    <View style={styles.barChartNoYAxis}>
+                        <BarChart
+                            style={{ height: 170, width: '100%' }}
+                            data={barChart.data}
+                            gridMin={0}
+                            gridMax={barChart.yMax}
+                            svg={{ fill: Colors.aqua }}
+                            contentInset={{ top: 5, bottom: 5, left: 5, right: 5}}
+                        >
+                            <Grid />
+                        </BarChart>
+                        <XAxis
+                            style={{ marginTop: 2, width: '100%', height: 10 }}
+                            data={barChart.data}
+                            scale={scale.scaleBand}
+                            formatLabel={(value, index) => {
+                                if (this.state.currentToggleSection === Constants.MONTHLY) {
+                                    return index % 5 === 0 ? barChart.xLabels[index] : null
+                                }
+                                return barChart.xLabels[index]
+                            }}
+                            contentInset={{left: 5, right: 5}}
+                            svg={{ fontSize: 10, fill: 'grey'}}
+                        />
+                    </View>
+                </View>
 
             </SafeAreaView>
         )
@@ -178,6 +238,13 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.AvenirNext,
         fontSize: 20,
         color: Colors.aqua
+    },
+    barChartContainer: {
+        width: '90%',
+        flexDirection: 'row'
+    },
+    barChartNoYAxis: {
+        width: '100%'
     }
 })
 
