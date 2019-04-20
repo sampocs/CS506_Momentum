@@ -98,8 +98,8 @@ const roundYAxis = (maxValue) => {
 
 export const getPreviewMetrics = (history, habitName) => {
 
-    let currentDate = getCurrentDate() 
-    
+    let currentDate = getCurrentDate()
+
     let startDate;
     if (history[currentDate].hasOwnProperty(habitName) && history[currentDate][habitName].completed) {
         startDate = currentDate;
@@ -163,7 +163,7 @@ export const getPreviewMetrics = (history, habitName) => {
 }
 
 export const getCurrentStreak = (history, habitName) => {
-    let currentDate = getCurrentDate() 
+    let currentDate = getCurrentDate()
 
     let streak = 0
     if (history[currentDate].hasOwnProperty(habitName) && history[currentDate][habitName].completed) {
@@ -187,8 +187,8 @@ export const getCurrentStreak = (history, habitName) => {
 }
 
 export const getBarChart = (history, type, habitName) => {
-    let currentDate = getCurrentDate() 
-    
+    let currentDate = getCurrentDate()
+
     let startDate;
     if (history[currentDate].hasOwnProperty(habitName) && history[currentDate][habitName].completed) {
         startDate = currentDate;
@@ -217,7 +217,7 @@ export const getBarChart = (history, type, habitName) => {
     let currMonth = null;
 
     let allDates = HISTORICAL_DATES.filter((date) => ((date > yearAgo) && (date <= startDate))).sort().reverse()
-    
+
     for (d in allDates) {
         let date = allDates[d]
 
@@ -292,4 +292,32 @@ export const getBarChart = (history, type, habitName) => {
             yMax: roundYAxis(yMaxYear)
         }
     }
+}
+
+export const getHistory = (history, habitName) => {
+    let dateLists = {
+        weekly: [],
+        monthly: [],
+        yearly: []
+    }
+    let currentDate = getCurrentDate()
+
+    let weekAgo = getWeekAgo(currentDate)
+    let monthAgo = getMonthAgo(currentDate)
+    let yearAgo = getYearAgo(currentDate)
+
+    let allDates = Object.keys(history).filter((date) => ((date > yearAgo) && (date <= currentDate)))
+    for (d in allDates) {
+        let date = allDates[d]
+        if (history.hasOwnProperty(date) && history[date].hasOwnProperty(habitName)) {
+            if (date > weekAgo) {
+                dateLists.weekly.push(date)
+            }
+            if (date > monthAgo) {
+                dateLists.monthly.push(date)
+            }
+            dateLists.yearly.push(date)
+        }
+    }
+    return dateLists
 }

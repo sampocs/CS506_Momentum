@@ -134,7 +134,7 @@ class AddHabitScreen extends React.Component {
     }
 
     addHabit = () => {
-        this.setState({addingHabit: true})
+        this.setState({ addingHabit: true })
         if (!this.fieldsCompleted(alertUser = true)) {
             return;
         }
@@ -484,7 +484,6 @@ class AddHabitScreen extends React.Component {
                                         horizontal={false}
                                         numColumns={NUM_COLUMNS}
                                         ItemSeparatorComponent={this.renderSeparator}
-
                                     />
                                 </ScrollView>
                             </View>

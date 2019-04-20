@@ -4,26 +4,28 @@ import {
     Text,
     StyleSheet,
     SafeAreaView,
-    TouchableOpacity
+    TouchableOpacity,
+    FlatList
 } from 'react-native'
 import { connect } from 'react-redux';
 import Constants from '../constants/Constants'
 import Colors from '../constants/Colors'
 import TriToggle from '../components/TriToggle'
 import ProgressCircle from 'react-native-progress-circle'
-import { getPreviewMetrics, getCurrentStreak, getBarChart } from '../helpers/metricsOperations'
+import { getPreviewMetrics, getCurrentStreak, getBarChart, getHistory } from '../helpers/metricsOperations'
 import Fonts from '../constants/Fonts';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { BarChart, Grid, XAxis, YAxis } from 'react-native-svg-charts'
 import * as scale from 'd3-scale'
-
+import { formatDate } from '../helpers/dateOperations';
 
 const mapStateToProps = (state, ownProps) => {
     let habitName = ownProps.navigation.state.params.habitName
     return {
         habitName: habitName,
         habitType: state.settings.habitSettings[habitName].type,
-        history: state.history
+        history: state.history,
+        settings: state.settings
     }
 }
 
@@ -60,8 +62,12 @@ class MetricsSpecificHabitScreen extends React.Component {
         this.setState({
             previewMetrics: getPreviewMetrics(this.props.history, this.props.habitName),
             currentStreak: getCurrentStreak(this.props.history, this.props.habitName),
-            barChart: getBarChart(this.props.history, this.props.habitType, this.props.habitName)
+            barChart: getBarChart(this.props.history, this.props.habitType, this.props.habitName),
+            history: getHistory(this.props.history, this.props.habitName)
         })
+        if (this.props.settings.habitSettings[this.props.habitName].hasOwnProperty("habitInfo")) {
+            this.setState({ habitUnit: this.props.settings.habitSettings[this.props.habitName].habitInfo.unit })
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -69,7 +75,8 @@ class MetricsSpecificHabitScreen extends React.Component {
             this.setState({
                 previewMetrics: getPreviewMetrics(this.props.history, this.props.habitName),
                 currentStreak: getCurrentStreak(this.props.history, this.props.habitName),
-                barChart: getBarChart(this.props.history, this.props.habitType, this.props.habitName)
+                barChart: getBarChart(this.props.history, this.props.habitType, this.props.habitName),
+                history: getHistory(this.props.history, this.props.habitName)
             })
         }
     }
@@ -83,20 +90,59 @@ class MetricsSpecificHabitScreen extends React.Component {
         this.setState({ currentToggleSection: mapping[section] })
     }
 
+    renderItem = ({ item, separators, index }) => {
+        return (
+            <View key={index} style={styles.habitPreview}>
+                <TouchableOpacity
+                    onPress={() => {
+                        this.props.navigation.navigate('Habit', {
+                            date: item,
+                            habitName: this.props.habitName
+                        })
+                    }}
+                    style={[styles.habitPreviewButton, { backgroundColor: this.props.history[item][this.props.habitName].completed ? Colors.aqua : Colors.lightRed }]}
+                >
+                    <View style={styles.habitPreviewTopRow}>
+                        <Text style={styles.habitPreviewText}>{formatDate(item, "MMM D")}</Text>
+                        {
+                            (this.props.history[item][this.props.habitName].type == Constants.PROGRESS) &&
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={styles.habitPreviewText}>{this.props.history[item][this.props.habitName].habitInfo.progress}</Text>
+                                <Text style={{ color: 'white' }}>/{this.props.history[item][this.props.habitName].habitInfo.goal}</Text>
+                                <Text style={{ color: 'white' }}>{' ' + this.state.habitUnit}</Text>
+                            </View>
+                        }
+                    </View>
+                    <Text
+                        style={styles.habitPreviewNotesText}
+                        numberOfLines={2}
+                        ellipsizeMode={'tail'}
+                    >
+                        {this.props.history[item][this.props.habitName].notes}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
     render() {
         let previewMetrics = {}
         let barChart = {}
+        let history = []
         if (this.state.currentToggleSection === Constants.WEEKLY) {
             previewMetrics = this.state.previewMetrics.weekly
             barChart = this.state.barChart.weekly
+            history = this.state.history.weekly.reverse()
         }
         else if (this.state.currentToggleSection === Constants.MONTHLY) {
             previewMetrics = this.state.previewMetrics.monthly
             barChart = this.state.barChart.monthly
+            history = this.state.history.monthly.reverse()
         }
         else {
             previewMetrics = this.state.previewMetrics.yearly
             barChart = this.state.barChart.yearly
+            history = this.state.history.yearly.reverse()
         }
         return (
             <SafeAreaView style={styles.container}>
@@ -147,9 +193,9 @@ class MetricsSpecificHabitScreen extends React.Component {
                             fill: 'grey',
                             fontSize: 10,
                         }}
-                        numberOfTicks={this.props.habitType === Constants.COMPLETE 
+                        numberOfTicks={this.props.habitType === Constants.COMPLETE
                             ? 1 : (this.props.habitType === Constants.SUBTASK ? 5 : 10)}
-                        contentInset={{ top: 5, bottom: 5}}
+                        contentInset={{ top: 5, bottom: 5 }}
                         formatLabel={value => `${value}`}
                         min={0}
                         max={barChart.yMax}
@@ -161,7 +207,7 @@ class MetricsSpecificHabitScreen extends React.Component {
                             gridMin={0}
                             gridMax={barChart.yMax}
                             svg={{ fill: Colors.aqua }}
-                            contentInset={{ top: 5, bottom: 5, left: 5, right: 5}}
+                            contentInset={{ top: 5, bottom: 5, left: 5, right: 5 }}
                         >
                             <Grid />
                         </BarChart>
@@ -175,10 +221,17 @@ class MetricsSpecificHabitScreen extends React.Component {
                                 }
                                 return barChart.xLabels[index]
                             }}
-                            contentInset={{left: 5, right: 5}}
-                            svg={{ fontSize: 10, fill: 'grey'}}
+                            contentInset={{ left: 5, right: 5 }}
+                            svg={{ fontSize: 10, fill: 'grey' }}
                         />
                     </View>
+                </View>
+                <View style={styles.habitPreviewContainer}>
+                    <FlatList
+                        data={history}
+                        renderItem={this.renderItem}
+                        keyExtractor={(key) => key}
+                    />
                 </View>
 
             </SafeAreaView>
@@ -245,6 +298,35 @@ const styles = StyleSheet.create({
     },
     barChartNoYAxis: {
         width: '100%'
+    },
+    habitPreviewContainer: {
+        width: '100%',
+        marginTop: 10,
+        marginHorizontal: 5,
+        flex: 1
+    },
+    habitPreview: {
+        marginVertical: 2,
+    },
+    habitPreviewText: {
+        color: 'white',
+        fontSize: 20,
+        fontFamily: Fonts.AvenirNext
+    },
+    habitPreviewButton: {
+        justifyContent: 'center',
+        borderRadius: 5,
+        marginHorizontal: 7,
+        paddingHorizontal: 10
+    },
+    habitPreviewTopRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end'
+    },
+    habitPreviewNotesText: {
+        color: 'white',
+        marginBottom: 5
     }
 })
 
