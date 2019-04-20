@@ -422,14 +422,15 @@ class AddHabitScreen extends React.Component {
                         </View>
                     </View>
 
-                    {/*||||||||||||   COMPLETE ACTION   |||||||||||||||*/}
+                    {/*||||||||||||   COMPLETE ACTION   |||||||||||||||
                     <View style={styles.completionActionToggle}>
                         <DualToggle
                             color={Colors.calendarBlue}
                             labels={['Change Color', 'Disappear']}
                             setParentState={this.setCompletionActionToggle.bind(this)}
                         />
-                    </View>
+                    </View> 
+*/}
 
                     {/*||||||||||||   ICON MODAL SCREEN   |||||||||||||||*/}
                     <View style={styles.chooseIconButtonContainer}>

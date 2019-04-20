@@ -1,76 +1,76 @@
 import {
-    getPreviewMetrics
+    getPreviewMetrics,
+    getCurrentStreak
 } from '../../helpers/metricsOperations'
-import { getYearAgo } from '../../helpers/dateOperations';
+import { getCurrentDate, getWeekAgo } from '../../helpers/dateOperations';
 import { ALL_DATES_LIST } from '../../constants/Constants'
+import testingDataWeekMonth from '../../assets/data/testingDataWeekMonth';
 
-let completedIndex = [0, 1, 7, 9, 10, 11, 14, 18, 20, 21, 25]
+let previewHistory = testingDataWeekMonth.history
 
-let today = "2019-04-01"
-let end = "2019-03-31"
-let older = "2019-02-31"
-let dateRange = ALL_DATES_LIST.filter((date) => (date >= older && date <= end)).sort().reverse()
-let habitName = 'read'
-let history = {}
-let history2 = {}
-let dow = 0
-for (i in dateRange) {
-    let date = dateRange[i]
-    history[date] = {}
-    history2[date] = {}
-    dow = (dow + 1) % 7
-    if (dow != 5 && dow != 6) {
-        history[date][habitName] = {}
-        i = parseInt(i)
-        if (i === 0 || i === 1 || i === 7 || i === 9 ||
-            i === 10 || i === 11 || i === 14 || i === 18 ||
-            i === 20 || i === 11 || i === 25) {
-            history[date][habitName].completed = true
-        }
-        else {
-            history[date][habitName].completed = false
-        }
+let streak1 = {}
+let streak2 = {}
+let streak3 = {}
+let streak4 = {}
+let streakDates = ALL_DATES_LIST.filter((date) => (date > getWeekAgo(getCurrentDate())) && (date <= getCurrentDate())).sort().reverse()
+for (i in streakDates) {
+    let date = streakDates[i]
+    if (i === "0") {
+        streak1[date] = {workout: {completed: true}}
+        streak2[date] = {workout: {completed: true}}
+        streak3[date] = {workout: {completed: false}} 
+        streak4[date] = {workout: {completed: false}} 
+    }
+    else if (i === "1") {
+        streak1[date] = {workout: {completed: false}} 
+        streak2[date] = {workout: {completed: true}}
+        streak3[date] = {workout: {completed: true}}
+        streak4[date] = {workout: {completed: false}} 
+    }
+    else if (i === "2") {
+        streak1[date] = {workout: {completed: false}} 
+        streak2[date] = {workout: {completed: false}} 
+        streak3[date] = {workout: {completed: true}}
+        streak4[date] = {workout: {completed: true}} 
+    }
+    else {
+        streak1[date] = {workout: {completed: false}} 
+        streak2[date] = {workout: {completed: false}} 
+        streak3[date] = {workout: {completed: false}} 
+        streak4[date] = {workout: {completed: false}} 
     }
 }
-console.log(history)
 
-let yearAgo = getYearAgo()
 describe('Metrics', () => {
-    test('Metrics', () => {
-        expect(getPreviewMetrics(history, habitName, date=today)).toEqual({
+    test('PreviewMetrics', () => {
+        expect(getPreviewMetrics(previewHistory, 'workout')).toEqual({
             weekly: {
-                totalDays: 6,
-                daysCompleted: 3,
-                percentage: '50%'
+                totalDays: 7,
+                daysCompleted: 5,
+                percentage: '71%'
             },
             monthly: {
-                totalDays: 23,
-                daysCompleted: 7,
-                percentage: '30%'
+                totalDays: 31,
+                daysCompleted: 22,
+                percentage: '71%'
             },
             yearly: {
-                totalDays: 23,
-                daysCompleted: 7,
-                percentage: '30%'
+                totalDays: 31,
+                daysCompleted: 22,
+                percentage: '71%'
             }
         })
+    })
 
-        expect(getPreviewMetrics(history2, habitName, date=today)).toEqual({
-            weekly: {
-                totalDays: 0,
-                daysCompleted: 0,
-                percentage: '0%'
-            },
-            monthly: {
-                totalDays: 0,
-                daysCompleted: 0,
-                percentage: '0%'
-            },
-            yearly: {
-                totalDays: 0,
-                daysCompleted: 0,
-                percentage: '0%'
-            }
-        })
+    test('CurrentStreak', () => {
+
+        expect(getCurrentStreak(streak1, 'workout')).toEqual(1)
+
+        expect(getCurrentStreak(streak2, 'workout')).toEqual(2)
+
+        expect(getCurrentStreak(streak3, 'workout')).toEqual(2)
+
+        expect(getCurrentStreak(streak4, 'workout')).toEqual(0)
+
     })
 })
