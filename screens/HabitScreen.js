@@ -28,7 +28,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         date: props.date,
         habitName: props.habitName,
-        dataOnDate: state.history[props.date][props.habitName],
+        notes: state.history[props.date][props.habitName].notes,
         habitType: state.history[props.date][props.habitName].type
     }
 }
@@ -44,7 +44,7 @@ class HabitScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataOnDate: props.dataOnDate
+            notes: props.notes,
         }
     }
 
@@ -72,8 +72,8 @@ class HabitScreen extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.dataOnDate != this.props.dataOnDate) {
-            this.setState({ dataOnDate: this.props.dataOnDate })
+        if (prevProps.notes != this.props.notes) {
+            this.setState({ notes: this.props.notes })
         }
     }
 
@@ -122,10 +122,10 @@ class HabitScreen extends React.Component {
                                 spellCheck={false}
                                 value={this.state.notes}
                                 onEndEditing={() => {
-                                    this.props.updateNote(this.props.habitName, this.props.date, this.state.dataOnDate.notes)
+                                    this.props.updateNote(this.props.habitName, this.props.date, this.state.notes)
                                 }}
                                 onSubmitEditing={() => {
-                                    this.props.updateNote(this.props.habitName, this.props.date, this.state.dataOnDate.notes)
+                                    this.props.updateNote(this.props.habitName, this.props.date, this.state.notes)
                                 }}
                                 onFocus={() => this.scrollUp()}
                             />

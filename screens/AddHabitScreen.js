@@ -21,7 +21,8 @@ import DualToggle from '../components/DualToggle'
 import DaysOfWeekToggle from '../components/DaysOfWeekToggle';
 import {
     addHabitToHistory,
-    addHabitToSettings
+    addHabitToHabitSettings,
+    addHabitToHabitOrder
 } from '../actions/actions'
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -41,8 +42,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
-        addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek))
+        addHabitToHabitSettings: (habitName, habitSettings) => dispatch(addHabitToHabitSettings(habitName, habitSettings)),
+        addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek)),
+        addHabitToHabitOrder: (habitName) => dispatch(addHabitToHabitOrder(habitName))
     }
 }
 
@@ -177,7 +179,8 @@ class AddHabitScreen extends React.Component {
             habitHistory.type = Constants.COMPLETE
             habitHistory.habitInfo = {}
         }
-        this.props.addHabitToSettings(this.state.habitName, habitSettings)
+        this.props.addHabitToHabitSettings(this.state.habitName, habitSettings)
+        this.props.addHabitToHabitOrder(this.state.habitName)
         this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
         this.props.navigation.navigate('CalendarHome')
     }

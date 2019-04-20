@@ -21,8 +21,9 @@ import DualToggle from '../components/DualToggle'
 import DaysOfWeekToggle from '../components/DaysOfWeekToggle';
 import {
     addHabitToHistory,
-    addHabitToSettings,
-    deleteHabitFromFuture
+    addHabitToHabitSettings,
+    deleteHabitFromFuture,
+    deleteHabitFromHabitOrder
 } from '../actions/actions'
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -45,9 +46,10 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addHabitToSettings: (habitName, habitSettings) => dispatch(addHabitToSettings(habitName, habitSettings)),
+        addHabitToHabitSettings: (habitName, habitSettings) => dispatch(addHabitToHabitSettings(habitName, habitSettings)),
         addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek)),
-        deleteHabitFromFuture: (habitName) => dispatch(deleteHabitFromFuture(habitName))
+        deleteHabitFromFuture: (habitName) => dispatch(deleteHabitFromFuture(habitName)),
+        deleteHabitFromHabitOrder: (habitName) => dispatch(deleteHabitFromHabitOrder(habitName))
     }
 }
 
@@ -181,7 +183,7 @@ class EditHabitScreen extends React.Component {
             habitHistory.habitInfo = {}
         }
         this.props.deleteHabitFromFuture(this.state.habitName)
-        this.props.addHabitToSettings(this.state.habitName, habitSettings)
+        this.props.addHabitToHabitSettings(this.state.habitName, habitSettings)
         this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
         this.props.navigation.navigate('CalendarHome')
     }
