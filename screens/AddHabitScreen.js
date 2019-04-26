@@ -139,13 +139,13 @@ class AddHabitScreen extends React.Component {
             habitSettings.type = Constants.PROGRESS
             habitSettings.habitInfo = {
                 unit: this.state.unit,
-                goal: this.state.goal === '.' ? 0 : parseInt(this.state.goal)
+                goal: this.state.goal.indexOf('.') === 0 ? 0 : parseInt(this.state.goal)
             }
 
             habitHistory.type = Constants.PROGRESS
             habitHistory.habitInfo = {
                 progress: 0,
-                goal: this.state.goal === '.' ? 0 : parseInt(this.state.goal)
+                goal: this.state.goal.indexOf('.') === 0 ? 0 : parseInt(this.state.goal)
             }
         }
         else if (this.state.includeSubtasksChecked) {
@@ -180,11 +180,21 @@ class AddHabitScreen extends React.Component {
             }
             return false
         }
-        if (this.state.includeMeasurementsChecked && (this.state.goal === '' || this.state.goal === '.')) {
+        if (this.state.includeMeasurementsChecked && 
+            (this.state.goal === '' || this.state.goal === '.' || this.state.goal.indexOf('.') === 0)) {
             if (alertUser) {
                 AlertIOS.alert(
                     '',
                     'Please enter a measurable goal amount!'
+                )
+            }
+            return false
+        }
+        if (this.state.includeMeasurementsChecked && this.state.goal.replace(/[^.]/g, "").length > 1) {
+            if (alertUser) {
+                AlertIOS.alert(
+                    '',
+                    'Please enter a valid goal amount!'
                 )
             }
             return false
