@@ -145,13 +145,13 @@ class EditHabitScreen extends React.Component {
             habitSettings.type = Constants.PROGRESS
             habitSettings.habitInfo = {
                 unit: this.state.unit,
-                goal: parseInt(this.state.goal)
+                goal: this.state.goal === '.' ? 0 : parseInt(this.state.goal)
             }
 
             habitHistory.type = Constants.PROGRESS
             habitHistory.habitInfo = {
                 progress: 0,
-                goal: parseInt(this.state.goal)
+                goal: this.state.goal === '.' ? 0 : parseInt(this.state.goal)
             }
         }
         else if (this.state.includeSubtasksChecked) {
@@ -187,7 +187,7 @@ class EditHabitScreen extends React.Component {
             }
             return false
         }
-        if (this.state.includeMeasurementsChecked && this.state.goal === '') {
+        if (this.state.includeMeasurementsChecked && (this.state.goal === '' || this.state.goal === '.')) {
             if (alertUser) {
                 AlertIOS.alert(
                     '',
@@ -239,6 +239,7 @@ class EditHabitScreen extends React.Component {
                             }}
                             returnKeyType={'done'}
                             selectTextOnFocus={true}
+                            keyboardType={'ascii-capable'}
                             value={this.state.habitName}
                             editable={false}
                         />
@@ -341,6 +342,7 @@ class EditHabitScreen extends React.Component {
                                         autoCapitalize={'none'}
                                         selectTextOnFocus={true}
                                         value={this.state.unit}
+                                        keyboardType={'ascii-capable'}
                                         editable={this.state.includeMeasurementsChecked}
                                     />
                                 </View>

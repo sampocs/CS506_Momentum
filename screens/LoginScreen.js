@@ -148,6 +148,7 @@ class LoginScreen extends React.Component {
                         style={styles.textInput}
                         placeholder="Email"
                         textContentType="emailAddress"
+                        keyboardType={'ascii-capable'}
                         autoCapitalize="none"
                         autoCorrect={false}
                         returnKeyType="next"
