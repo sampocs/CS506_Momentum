@@ -41,7 +41,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         habitName: props.habitName,
         currentHabits: state.settings.habitOrder,
-        settings: state.settings.habitSettings[props.habitName]
+        settings: state.settings.habitSettings[props.habitName],
     }
 }
 
@@ -65,7 +65,7 @@ class EditHabitScreen extends React.Component {
         this.state = {
             habitName: props.habitName,
             daysOfWeek: props.settings.daysOfWeek,
-            goal: props.settings.type === Constants.PROGRESS ? props.settings.habitInfo.goal : '',
+            goal: props.settings.type === Constants.PROGRESS ? props.settings.habitInfo.goal.toString() : '',
             unit: props.settings.type === Constants.PROGRESS ? props.settings.habitInfo.unit : '',
             includeMeasurementsChecked: props.settings.type === Constants.PROGRESS,
             includeSubtasksChecked: props.settings.type === Constants.SUBTASK,
@@ -75,7 +75,8 @@ class EditHabitScreen extends React.Component {
             icon: props.settings.icon,
             modalVisible: false,
             iconChosen: true,
-            addingHabit: false
+            addingHabit: false,
+            type: props.settings.type
         }
     }
 
@@ -300,29 +301,13 @@ class EditHabitScreen extends React.Component {
                         }
 
                         {/* ||||||||||||||    MEASUREMENTS   ||||||||||||||*/}
-                        <View style={styles.measurementsCheckbox}>
-                            <CheckBox
-                                title={'Include a Measurements'}
-                                checked={this.state.includeMeasurementsChecked}
-                                onPress={() => {
-                                    let checked = !this.state.includeMeasurementsChecked
-                                    if (!checked) {
-                                        this.setState({ goal: '', unit: '' })
-                                    }
-                                    this.setState({
-                                        includeMeasurementsChecked: checked,
-                                        includeSubtasksChecked: false,
-                                        subtasks: []
-                                    })
-                                }}
-                                containerStyle={styles.checkboxContainer}
-                                textStyle={styles.checkboxText}
-                                uncheckedColor={Colors.darkBlue}
-                                checkedColor={Colors.darkBlue}
-                                size={40}
-                            >
-                            </CheckBox>
-                        </View>
+                        {this.state.type === Constants.PROGRESS &&
+                            <View style={styles.measurementsCheckbox}>
+                                    <View style={styles.checkboxContainer}>
+                                        <Text style={styles.checkboxText}> Measurements </Text>
+                                    </View>
+                            </View>
+                        }
 
                         {
                             this.state.includeMeasurementsChecked &&
@@ -363,36 +348,23 @@ class EditHabitScreen extends React.Component {
                         }
 
                         {/*||||||||||||||||   SUBTASKS   |||||||||||||||||*/}
-                        <View style={styles.subtasksContainer}>
-                            <View style={styles.subtasksCheckbox}>
-                                <CheckBox
-                                    title={'Include Subtasks'}
-                                    checked={this.state.includeSubtasksChecked}
-                                    onPress={() => {
-                                        this.setState({
-                                            includeSubtasksChecked: !this.state.includeSubtasksChecked,
-                                            includeMeasurementsChecked: false,
-                                            goal: '',
-                                            unit: ''
-                                        })
-                                    }}
-                                    containerStyle={styles.checkboxContainer}
-                                    textStyle={styles.checkboxText}
-                                    uncheckedColor={Colors.darkBlue}
-                                    checkedColor={Colors.darkBlue}
-                                    size={40}
-                                />
-                                {
-                                    this.state.includeSubtasksChecked &&
-                                    <TouchableOpacity
-                                        onPress={() => this.addSubtask()}
-                                    >
-                                        <Octicons name={'plus'} color={Colors.darkBlue} size={35} />
-                                    </TouchableOpacity>
-                                }
-                            </View>
-                            {this.state.includeSubtasksChecked && this.subtasks()}
-                        </View>
+                        {this.state.type === Constants.SUBTASK &&
+                            <View style={styles.subtasksContainer}>
+                                <View style={styles.subtasksCheckbox}>
+                                    <View style={styles.checkboxContainer}>
+                                        <Text style={styles.checkboxText}> Subtasks </Text>
+                                    </View>
+                                    {
+                                        this.state.includeSubtasksChecked &&
+                                        <TouchableOpacity
+                                            onPress={() => this.addSubtask()}
+                                        >
+                                            <Octicons name={'plus'} color={Colors.darkBlue} size={35} />
+                                        </TouchableOpacity>
+                                    }
+                                </View>
+                                {this.state.includeSubtasksChecked && this.subtasks()}
+                            </View>}
                     </View>
 
                     {/*||||||||||||   COMPLETE ACTION   |||||||||||||||*/}
@@ -517,7 +489,7 @@ const styles = StyleSheet.create({
     checkboxText: {
         color: Colors.darkBlue,
         fontFamily: Fonts.AvenirNext,
-        fontSize: 20
+        fontSize: 25
     },
     daysOfWeekToggle: {
         marginVertical: 10,
@@ -555,7 +527,8 @@ const styles = StyleSheet.create({
     subtasksCheckbox: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingRight: 25
     },
     subtaskContainer: {
         marginHorizontal: 30,

@@ -559,7 +559,8 @@ const styles = StyleSheet.create({
     subtasksCheckbox: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingRight: 25
     },
     subtaskContainer: {
         marginHorizontal: 30,

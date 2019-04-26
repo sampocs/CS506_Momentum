@@ -76,7 +76,7 @@ class MetricsHomeScreen extends React.Component {
                 }
                 {
                     habits.length == 0 &&
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingBottom: 160 }}>
                         <TouchableOpacity
                             style={styles.addHabitButton}
                             onPress={() => this.props.navigation.navigate('AddHabit')}>
