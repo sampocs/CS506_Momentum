@@ -166,8 +166,9 @@ class MetricsSpecificHabitScreen extends React.Component {
                 <View style={styles.backButtonContainer}>
                     <TouchableOpacity
                         onPress={() => this.props.navigation.pop()}
+                        style={styles.backButtonTouch}
                     >
-                        <Ionicons name='ios-arrow-back' size={30} />
+                        <Ionicons name='ios-arrow-back' size={40} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ alignItems: 'center', paddingVertical: 5 }}>
@@ -262,8 +263,13 @@ const styles = StyleSheet.create({
     },
     backButtonContainer: {
         position: 'absolute',
-        top: 70,
-        left: 20
+        top: 60,
+        left: 10,
+    },
+    backButtonTouch: {
+        alignItems: 'center',
+        width: 50,
+        height: 50
     },
     habitNameText: {
         fontFamily: Fonts.AvenirNext,
