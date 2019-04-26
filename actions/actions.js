@@ -1,4 +1,4 @@
-import { getCurrentDate } from '../helpers/dateOperations'
+import { getCurrentDate, getNextDate } from '../helpers/dateOperations'
 
 //Actions
 export const TOGGLE_MINIMIZE_CAL = 'TOGGLE_MINIMIZE_CAL'
@@ -22,6 +22,7 @@ export const DELETE_HABIT_FROM_FUTURE = 'DELETE_HABIT_FROM_FUTURE'
 export const DELETE_HABIT_FROM_HABIT_SETTINGS = 'DELETE_HABIT_FROM_HABIT_SETTINGS'
 export const DELETE_HABIT_FROM_HABIT_ORDER = 'DELETE_HABIT_FROM_HABIT_ORDER'
 export const CHANGE_HABIT_ORDER = 'CHANGE_HABIT_ORDER'
+export const EDIT_HISTORY_TODAY = 'EDIT_HISTORY_TODAY'
 
 
 //Action Creators
@@ -31,11 +32,11 @@ export const toggleMinimizeCal = () => ({
 
 export const toggleCompleteCompletion = (date, habitName) => ({
     type: TOGGLE_COMPLETE_COMPLETION,
-    date, 
+    date,
     habitName
 })
 
-export const toggleSubtaskCompletion = (date, habitName, index ) => ({
+export const toggleSubtaskCompletion = (date, habitName, index) => ({
     type: TOGGLE_SUBTASK_COMPLETION,
     date,
     habitName,
@@ -44,26 +45,26 @@ export const toggleSubtaskCompletion = (date, habitName, index ) => ({
 
 export const toggleNextSubtaskCompletion = (date, habitName) => ({
     type: TOGGLE_NEXT_SUBTASK_COMPLETION,
-    date, 
+    date,
     habitName
 })
 
 export const updateProgressAmount = (date, habitName, amount) => ({
     type: UPDATE_PROGRESS_AMOUNT,
-    date, 
+    date,
     habitName,
     amount
 })
 
 export const toggleProgressCompletion = (date, habitName) => ({
     type: TOGGLE_PROGRESS_COMPLETION,
-    date, 
+    date,
     habitName
 })
 
 export const incrementProgressAmount = (date, habitName, amount) => ({
     type: UPDATE_PROGRESS_AMOUNT,
-    date, 
+    date,
     habitName,
     amount
 })
@@ -74,7 +75,7 @@ export const selectDate = (date) => ({
 })
 
 export const selectToday = () => ({
-    type: SELECT_TODAY,  
+    type: SELECT_TODAY,
     date: getCurrentDate()
 })
 
@@ -89,13 +90,19 @@ export const addHabitToHabitOrder = (habitName) => ({
     habitName
 })
 
-export const addHabitToHistory = (habitName, habitHistory, daysOfWeek) => ({
-    type: ADD_HABIT_TO_HISTORY,
-    habitName,
-    habitHistory,
-    daysOfWeek,
-    currentDate: getCurrentDate()
-})
+export const addHabitToHistory = (habitName, habitHistory, daysOfWeek, startTomorrow) => {
+    let currentDate = getCurrentDate()
+    if (startTomorrow) {
+        currentDate = getNextDate(currentDate)
+    }
+    return {
+        type: ADD_HABIT_TO_HISTORY,
+        habitName,
+        habitHistory,
+        daysOfWeek,
+        currentDate: currentDate
+    }
+}
 
 export const updateNote = (habitName, date, notes) => ({
     type: UPDATE_NOTES,
@@ -128,7 +135,7 @@ export const deleteHabitFromPast = (habitName, startDate) => ({
 export const deleteHabitFromFuture = (habitName) => ({
     type: DELETE_HABIT_FROM_FUTURE,
     habitName,
-    currentDate: getCurrentDate()
+    currentDate: getNextDate(getCurrentDate())
 })
 
 export const deleteHabitFromHabitSettings = (habitName) => ({
@@ -145,4 +152,12 @@ export const changeHabitOrder = (prevOrder, nextOrder) => ({
 export const deleteHabitFromHabitOrder = (habitName) => ({
     type: DELETE_HABIT_FROM_HABIT_ORDER,
     habitName
+})
+
+export const editHistoryToday = (habitName, habitHistory, daysOfWeek) => ({
+    type: EDIT_HISTORY_TODAY,
+    habitName,
+    habitHistory,
+    daysOfWeek,
+    currentDate: getCurrentDate()
 })

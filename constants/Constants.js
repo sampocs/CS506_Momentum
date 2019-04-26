@@ -5,7 +5,10 @@ export default {
     DAILY: 'DAILY',
     WEEKLY: 'WEEKLY',
     MONTHLY: 'MONTLY',
-    YEARLY: 'YEARLY'
+    YEARLY: 'YEARLY',
+    LEFT: 'LEFT',
+    MIDDLE: 'MIDDLE',
+    RIGHT: 'RIGHT'
 }
 export const HISTORY_FUTURE_DAYS = 400;
 let allDatesJSON = require('../assets/data/dates.json')

@@ -5,17 +5,16 @@ import {
     StyleSheet,
     Text
 } from 'react-native'
-import Colors from '../constants/Colors'
+import Constants from '../constants/Constants'
 import Layout from '../constants/Layout'
 import Fonts from '../constants/Fonts';
 
-const LEFT = 'LEFT'
-const RIGHT = 'RIGHT'
-export default class DayMonthYearToggle extends React.Component {
+
+export default class DualToggle extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPosition: LEFT
+            currentPosition: props.hasOwnProperty('currentPosition') ? props.currentPosition : Constants.LEFT
         }
     }
     render() {
@@ -26,7 +25,7 @@ export default class DayMonthYearToggle extends React.Component {
                 <TouchableOpacity style={[
                     styles.halfContainer,
                     styles.leftContainer,
-                    this.state.currentPosition === LEFT ? {
+                    this.state.currentPosition === Constants.LEFT ? {
                         backgroundColor: this.props.color,
                         borderColor: this.props.color
                     } : {
@@ -35,13 +34,13 @@ export default class DayMonthYearToggle extends React.Component {
                     },
                 ]}
                     onPress={() => {
-                        this.setState({ currentPosition: LEFT })
-                        this.props.setParentState(LEFT)
+                        this.setState({ currentPosition: Constants.LEFT })
+                        this.props.setParentState(Constants.LEFT)
                     }}
                 >
                     <Text style={[
                         styles.text,
-                        this.state.currentPosition === LEFT ? {
+                        this.state.currentPosition === Constants.LEFT ? {
                             color: 'white'
                         } : {
                             color: this.props.color
@@ -54,7 +53,7 @@ export default class DayMonthYearToggle extends React.Component {
                 <TouchableOpacity style={[
                     styles.halfContainer,
                     styles.rightContainer,
-                    this.state.currentPosition === RIGHT ? {
+                    this.state.currentPosition === Constants.RIGHT ? {
                         backgroundColor: this.props.color,
                         borderColor: this.props.color
                     } : {
@@ -63,12 +62,12 @@ export default class DayMonthYearToggle extends React.Component {
                     },
                 ]}
                     onPress={() => {
-                        this.setState({ currentPosition: RIGHT })
-                        this.props.setParentState(RIGHT)
+                        this.setState({ currentPosition: Constants.RIGHT })
+                        this.props.setParentState(Constants.RIGHT)
                     }}>
                     <Text style={[
                         styles.text,
-                        this.state.currentPosition === RIGHT ? {
+                        this.state.currentPosition === Constants.RIGHT ? {
                             color: 'white'
                         } : {
                             color: this.props.color

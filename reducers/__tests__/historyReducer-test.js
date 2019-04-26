@@ -8,9 +8,13 @@ import {
     INCREMENT_PROGRESS_AMOUNT,
     UPDATE_NOTES,
     DELETE_HABIT_FROM_PAST,
-    RESTORE_HISTORY_FROM_FIREBASE
+    DELETE_HABIT_FROM_FUTURE,
+    RESTORE_HISTORY_FROM_FIREBASE,
+    ADD_HABIT_TO_HISTORY,
+    EDIT_HISTORY_TODAY
 } from '../../actions/actions'
 import Constants from '../../constants/Constants';
+import { buildFailureTestResult } from '@jest/test-result';
 
 describe('History Reducer', () => {
 
@@ -953,5 +957,545 @@ describe('History Reducer', () => {
                 }
             }
         })
+    })
+
+    test('DELETE_HABIT_FROM_FUTURE', () => {
+        expect(historyReducer({
+            "2019-01-01": {
+                Read: {
+                    completed: true
+                },
+                Write: {}
+            },
+            "2019-01-02": {
+                Read: {
+                    completed: false
+                },
+            },
+            "2019-01-03": {
+                Write: {}
+            },
+            "2019-01-04": {
+                Read: {
+                    completed: false
+                },
+                Write: {}
+            },
+        }, {
+            type: DELETE_HABIT_FROM_FUTURE,
+            habitName: 'Read',
+            currentDate: '2019-01-02',
+        })).toEqual({
+            "2019-01-01": {
+                Read: {
+                    completed: true
+                },
+                Write: {}
+            },
+            "2019-01-02": {},
+            "2019-01-03": {
+                Write: {}
+            },
+            "2019-01-04": {
+                Write: {}
+            },
+        })
+    })
+
+    test('EDIT_HISTORY_TODAY', () => {
+        expect(historyReducer({
+            "2019-01-01": {
+                Workout: {
+                    completed: true,
+                    notes: 'I worked out',
+                    type: Constants.COMPLETE,
+                    habitInfo: {}
+                },
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Workout',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.COMPLETE,
+                habitInfo: {}
+            },
+            daysOfWeek: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Workout: {
+                    completed: true,
+                    notes: 'I worked out',
+                    type: Constants.COMPLETE,
+                    habitInfo: {}
+                },
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Workout: {
+                    completed: true,
+                    notes: 'I worked out',
+                    type: Constants.COMPLETE,
+                    habitInfo: {}
+                },
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Workout',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.COMPLETE,
+                habitInfo: {}
+            },
+            daysOfWeek: [
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Workout',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.COMPLETE,
+                habitInfo: {}
+            },
+            daysOfWeek: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Workout: {
+                    completed: false,
+                    notes: '',
+                    type: Constants.COMPLETE,
+                    habitInfo: {}
+                },
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Workout',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.COMPLETE,
+                habitInfo: {}
+            },
+            daysOfWeek: [
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Read: {
+                    completed: false,
+                    notes: 'I read',
+                    type: Constants.PROGRESS,
+                    habitInfo: {
+                        progress: 10,
+                        goal: 60
+                    }
+                },
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Read',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.PROGRESS,
+                habitInfo: {
+                    progress: 0,
+                    goal: 100
+                }
+            },
+            daysOfWeek: [
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Read: {
+                    completed: false,
+                    notes: 'I read',
+                    type: Constants.PROGRESS,
+                    habitInfo: {
+                        progress: 10,
+                        goal: 60
+                    }
+                },
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Read',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.PROGRESS,
+                habitInfo: {
+                    progress: 0,
+                    goal: 100
+                }
+            },
+            daysOfWeek: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Read: {
+                    completed: false,
+                    notes: 'I read',
+                    type: Constants.PROGRESS,
+                    habitInfo: {
+                        progress: 10,
+                        goal: 100
+                    }
+                },
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Read: {
+                    completed: false,
+                    notes: 'I read',
+                    type: Constants.PROGRESS,
+                    habitInfo: {
+                        progress: 10,
+                        goal: 60
+                    }
+                },
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Read',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.PROGRESS,
+                habitInfo: {
+                    progress: 0,
+                    goal: 5
+                }
+            },
+            daysOfWeek: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Read: {
+                    completed: true,
+                    notes: 'I read',
+                    type: Constants.PROGRESS,
+                    habitInfo: {
+                        progress: 10,
+                        goal: 5
+                    }
+                },
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Read',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.PROGRESS,
+                habitInfo: {
+                    progress: 0,
+                    goal: 5
+                }
+            },
+            daysOfWeek: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Read: {
+                    completed: false,
+                    notes: '',
+                    type: Constants.PROGRESS,
+                    habitInfo: {
+                        progress: 0,
+                        goal: 5
+                    }
+                },
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Chores: {
+                    completed: false,
+                    notes: 'I did them',
+                    type: Constants.SUBTASK,
+                    habitInfo: {
+                        subtasks: [['laundry', false], ['chores', true], ['garbage', false]]
+                    }
+                },
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Chores',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.SUBTASK,
+                habitInfo: {
+                    subtasks: [['laundry', false], ['chores', false], ['garbage', false]]
+                }
+            },
+            daysOfWeek: [
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Chores',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.SUBTASK,
+                habitInfo: {
+                    subtasks: [['laundry', false], ['chores', false], ['garbage', false]]
+                }
+            },
+            daysOfWeek: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Chores: {
+                    completed: false,
+                    notes: '',
+                    type: Constants.SUBTASK,
+                    habitInfo: {
+                        subtasks: [['laundry', false], ['chores', false], ['garbage', false]]
+                    }
+                },
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Chores: {
+                    completed: false,
+                    notes: 'I did them',
+                    type: Constants.SUBTASK,
+                    habitInfo: {
+                        subtasks: [['laundry', false], ['chores', true], ['garbage', false]]
+                    }
+                },
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Chores',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.SUBTASK,
+                habitInfo: {
+                    subtasks: [['laundry', false], ['chores', false], ['garbage', false]]
+                }
+            },
+            daysOfWeek: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Chores: {
+                    completed: false,
+                    notes: 'I did them',
+                    type: Constants.SUBTASK,
+                    habitInfo: {
+                        subtasks: [['laundry', false], ['chores', true], ['garbage', false]]
+                    }
+                },
+                Write: {}
+            }
+        })
+
+        expect(historyReducer({
+            "2019-01-01": {
+                Chores: {
+                    completed: false,
+                    notes: 'I did them',
+                    type: Constants.SUBTASK,
+                    habitInfo: {
+                        subtasks: [['laundry', false], ['chores', true], ['garbage', false]]
+                    }
+                },
+                Write: {}
+            }
+        }, {
+            type: EDIT_HISTORY_TODAY,
+            habitName: 'Chores',
+            currentDate: '2019-01-01',
+            habitHistory: {
+                completed: false,
+                notes: '',
+                type: Constants.SUBTASK,
+                habitInfo: {
+                    subtasks: [['laundry', false], ['chores', false], ['garbage', false], ['other thing', false]]
+                }
+            },
+            daysOfWeek: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
+        })).toEqual({
+            "2019-01-01": {
+                Chores: {
+                    completed: false,
+                    notes: 'I did them',
+                    type: Constants.SUBTASK,
+                    habitInfo: {
+                        subtasks: [['laundry', false], ['chores', false], ['garbage', false], ['other thing', false]]
+                    }
+                },
+                Write: {}
+            }
+        })
+
     })
 })
