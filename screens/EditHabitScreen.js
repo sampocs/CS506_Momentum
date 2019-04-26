@@ -23,7 +23,8 @@ import {
     addHabitToHistory,
     addHabitToHabitSettings,
     deleteHabitFromFuture,
-    deleteHabitFromHabitOrder
+    deleteHabitFromHabitOrder,
+    editHistoryToday
 } from '../actions/actions'
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -47,9 +48,10 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addHabitToHabitSettings: (habitName, habitSettings) => dispatch(addHabitToHabitSettings(habitName, habitSettings)),
-        addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek)),
+        addHabitToHistory: (habitName, habitHistory, daysOfWeek, startTomorrow) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek, startTomorrow)),
         deleteHabitFromFuture: (habitName) => dispatch(deleteHabitFromFuture(habitName)),
-        deleteHabitFromHabitOrder: (habitName) => dispatch(deleteHabitFromHabitOrder(habitName))
+        deleteHabitFromHabitOrder: (habitName) => dispatch(deleteHabitFromHabitOrder(habitName)),
+        editHistoryToday: (habitName, habitHistory, daysOfWeek) => dispatch(editHistoryToday(habitName, habitHistory, daysOfWeek))
     }
 }
 
@@ -62,7 +64,6 @@ class EditHabitScreen extends React.Component {
         super(props);
         this.state = {
             habitName: props.habitName,
-            frequencyToggle: Constants.WEEKLY,
             daysOfWeek: props.settings.daysOfWeek,
             goal: props.settings.type === Constants.PROGRESS ? props.settings.habitInfo.goal : '',
             unit: props.settings.type === Constants.PROGRESS ? props.settings.habitInfo.unit : '',
@@ -75,20 +76,6 @@ class EditHabitScreen extends React.Component {
             modalVisible: false,
             iconChosen: true,
             addingHabit: false
-        }
-    }
-
-    setFrequencyToggle(section) {
-        const sectionMapping = {
-            LEFT: Constants.DAILY,
-            RIGHT: Constants.WEEKLY
-        }
-        this.setState({ frequencyToggle: sectionMapping[section] })
-        if (sectionMapping[section] === Constants.DAILY) {
-            this.setState({ daysOfWeek: [true, true, true, true, true, true, true] })
-        }
-        if (sectionMapping[section] === Constants.WEEKLY) {
-            this.setState({ daysOfWeek: [false, false, false, false, false, false, false] })
         }
     }
 
@@ -184,7 +171,8 @@ class EditHabitScreen extends React.Component {
         }
         this.props.deleteHabitFromFuture(this.state.habitName)
         this.props.addHabitToHabitSettings(this.state.habitName, habitSettings)
-        this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
+        this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek, true)
+        this.props.editHistoryToday(this.state.habitName, habitHistory, this.state.daysOfWeek)
         this.props.navigation.navigate('CalendarHome')
     }
 
@@ -255,21 +243,11 @@ class EditHabitScreen extends React.Component {
                         />
                     </View>
 
-                    {/*|||||||||||||||||||   DAYS     |||||||||||||||||*/}
-                    <View style={styles.dailyWeeklyToggle}>
-                        <DualToggle
-                            color={Colors.darkBlue}
-                            labels={['Daily', 'Weekly']}
-                            setParentState={this.setFrequencyToggle.bind(this)}
-                        />
-                    </View>
-
+                    {/*|||||||||||||||||||   DAYS OF WEEK    |||||||||||||||||*/}
                     <View style={styles.daysOfWeekToggle}>
                         <DaysOfWeekToggle
                             daysOfWeek={this.state.daysOfWeek}
-                            frequencyToggle={this.state.frequencyToggle}
                             setParentState={this.setDaysOfWeekToggle.bind(this)}
-                            clickable={this.state.frequencyToggle != Constants.DAILY}
                             color={Colors.darkBlue}
                         />
                     </View>
@@ -422,6 +400,7 @@ class EditHabitScreen extends React.Component {
                         <DualToggle
                             color={Colors.darkBlue}
                             labels={['Change Color', 'Disappear']}
+                            currentPosition={this.state.disappearWhenCompleted ? Constants.RIGHT : Constants.LEFT}
                             setParentState={this.setCompletionActionToggle.bind(this)}
                         />
                     </View>
@@ -541,10 +520,6 @@ const styles = StyleSheet.create({
         color: Colors.darkBlue,
         fontFamily: Fonts.AvenirNext,
         fontSize: 20
-    },
-    dailyWeeklyToggle: {
-        marginVertical: 10,
-        alignSelf: 'center'
     },
     daysOfWeekToggle: {
         marginVertical: 10,

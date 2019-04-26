@@ -9,10 +9,11 @@ import {
     UPDATE_NOTES,
     RESTORE_HISTORY_FROM_FIREBASE,
     DELETE_HABIT_FROM_FUTURE,
-    DELETE_HABIT_FROM_PAST
+    DELETE_HABIT_FROM_PAST,
+    EDIT_HISTORY_TODAY
 } from '../actions/actions'
 import { getNextDate, getDayOfWeek, getEndDate } from '../helpers/dateOperations';
-import { HISTORY_FUTURE_DAYS, ALL_DATES_LIST } from '../constants/Constants';
+import Constants, { HISTORY_FUTURE_DAYS, ALL_DATES_LIST } from '../constants/Constants';
 
 const historyReducer = (state = {}, action) => {
     switch (action.type) {
@@ -121,9 +122,11 @@ const historyReducer = (state = {}, action) => {
             let dateRange = ALL_DATES_LIST.filter((date) => (date >= currentDate && date <= endDate))
             for (i in dateRange) {
                 let date = dateRange[i]
-                newState[date] = {...state[date]}
-                if (newState[date].hasOwnProperty(habitName)) {
-                    delete newState[date][habitName]
+                if (state.hasOwnProperty(date)) {
+                    newState[date] = {...state[date]}
+                    if (newState[date].hasOwnProperty(habitName)) {
+                        delete newState[date][habitName]
+                    }
                 }
             }
             return newState
@@ -140,6 +143,57 @@ const historyReducer = (state = {}, action) => {
                 }
             }
             return newState
+        }
+        case EDIT_HISTORY_TODAY: {
+            let { habitName, habitHistory, daysOfWeek, currentDate } = action 
+            let newState = {...state}
+            newState[currentDate] = {...state[currentDate]}
+
+            let dow = getDayOfWeek(currentDate)
+
+            if (!daysOfWeek[dow]) {
+                delete newState[currentDate][habitName]
+                return newState
+            }
+            else {
+                if (state[currentDate].hasOwnProperty(habitName)) {
+                    newState[currentDate][habitName] = {...state[currentDate][habitName]}
+
+                    let type = habitHistory.type 
+                    if (type === Constants.PROGRESS) {
+                        newState[currentDate][habitName].habitInfo = {...state[currentDate][habitName].habitInfo}
+                        newState[currentDate][habitName].habitInfo.goal = habitHistory.habitInfo.goal
+                        newState[currentDate][habitName].completed = (
+                            state[currentDate][habitName].habitInfo.progress >= habitHistory.habitInfo.goal
+                        )
+                    }
+                    else if (type === Constants.SUBTASK) {
+                        newState[currentDate][habitName].habitInfo = {...state[currentDate][habitName].habitInfo}
+                        if (state[currentDate][habitName].habitInfo.subtasks.length != habitHistory.habitInfo.subtasks.length) {
+                            newState[currentDate][habitName].habitInfo.subtasks = habitHistory.habitInfo.subtasks
+                        }
+                        else {
+                            let oldSubtasks = state[currentDate][habitName].habitInfo.subtasks
+                            let newSubtasks = habitHistory.habitInfo.subtasks
+                            for (i in oldSubtasks) {
+                                let oldSubtask = oldSubtasks[i]
+                                let newSubtask = newSubtasks[i]
+
+                                if (oldSubtask[0] != newSubtask[0]) {
+                                    newState[currentDate][habitName].habitInfo.subtasks = [...habitHistory.habitInfo.subtasks]
+                                    return newState
+                                }
+                            }
+                            return newState
+                        }
+                    }
+                }
+                else {
+                    newState[currentDate][habitName] = habitHistory
+                }
+                return newState
+            }
+            
         }
     }
     return state

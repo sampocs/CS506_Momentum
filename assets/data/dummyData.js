@@ -33,7 +33,7 @@ dummyData.calendarState = {
 dummyData.history = {}
 let history = dummyData.history
 let date = "2019-03-01";
-for (i = 0; i < 100; i++) {
+for (i = 0; i < 100; i++) { 
     history[date] = {}
 
     let dow = moment(date).day()

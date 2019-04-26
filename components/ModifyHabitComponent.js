@@ -71,7 +71,7 @@ class ModifyHabitComponent extends React.Component {
             'Are you sure you want to delete this habit?',
             [
             {
-                text: 'Yes, stop future tracking of this habit',
+                text: 'Yes, but retain history',
                 onPress: () => { 
                     this.props.deleteHabitFromFuture(this.props.habitName)
                     this.props.deleteHabitFromHabitOrder(this.props.habitName)
@@ -79,7 +79,7 @@ class ModifyHabitComponent extends React.Component {
                 style: 'cancel',
             },
             {   
-                text: 'Yes, delete all history of this habit', 
+                text: 'Yes, and delete all history', 
                 onPress: () => {
                     this.props.deleteHabitFromFuture(this.props.habitName)
                     this.props.deleteHabitFromPast(this.props.habitName, this.props.startDate) 

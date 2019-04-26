@@ -43,7 +43,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addHabitToHabitSettings: (habitName, habitSettings) => dispatch(addHabitToHabitSettings(habitName, habitSettings)),
-        addHabitToHistory: (habitName, habitHistory, daysOfWeek) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek)),
+        addHabitToHistory: (habitName, habitHistory, daysOfWeek, startTomorrow) => dispatch(addHabitToHistory(habitName, habitHistory, daysOfWeek, startTomorrow)),
         addHabitToHabitOrder: (habitName) => dispatch(addHabitToHabitOrder(habitName))
     }
 }
@@ -57,7 +57,6 @@ class AddHabitScreen extends React.Component {
         super(props);
         this.state = {
             habitName: '',
-            frequencyToggle: Constants.DAILY,
             daysOfWeek: [true, true, true, true, true, true, true],
             timeRangeChecked: false,
             beginTime: new Date(),
@@ -72,20 +71,6 @@ class AddHabitScreen extends React.Component {
             modalVisible: false,
             iconChosen: false,
             addingHabit: false
-        }
-    }
-
-    setFrequencyToggle(section) {
-        const sectionMapping = {
-            LEFT: Constants.DAILY,
-            RIGHT: Constants.WEEKLY
-        }
-        this.setState({ frequencyToggle: sectionMapping[section] })
-        if (sectionMapping[section] === Constants.DAILY) {
-            this.setState({ daysOfWeek: [true, true, true, true, true, true, true] })
-        }
-        if (sectionMapping[section] === Constants.WEEKLY) {
-            this.setState({ daysOfWeek: [false, false, false, false, false, false, false] })
         }
     }
 
@@ -181,7 +166,7 @@ class AddHabitScreen extends React.Component {
         }
         this.props.addHabitToHabitSettings(this.state.habitName, habitSettings)
         this.props.addHabitToHabitOrder(this.state.habitName)
-        this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek)
+        this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek, false)
         this.props.navigation.navigate('CalendarHome')
     }
 
@@ -263,21 +248,11 @@ class AddHabitScreen extends React.Component {
                         />
                     </View>
 
-                    {/*|||||||||||||||||||   DAYS     |||||||||||||||||*/}
-                    <View style={styles.dailyWeeklyToggle}>
-                        <DualToggle
-                            color={Colors.calendarBlue}
-                            labels={['Daily', 'Weekly']}
-                            setParentState={this.setFrequencyToggle.bind(this)}
-                        />
-                    </View>
-
+                    {/*|||||||||||||||||||   DAYS OF WEEK    |||||||||||||||||*/}
                     <View style={styles.daysOfWeekToggle}>
                         <DaysOfWeekToggle
                             daysOfWeek={this.state.daysOfWeek}
-                            frequencyToggle={this.state.frequencyToggle}
                             setParentState={this.setDaysOfWeekToggle.bind(this)}
-                            clickable={this.state.frequencyToggle != Constants.DAILY}
                             color={Colors.calendarBlue}
                         />
                     </View>
@@ -425,7 +400,7 @@ class AddHabitScreen extends React.Component {
                         </View>
                     </View>
 
-                    {/*||||||||||||   COMPLETE ACTION   |||||||||||||||
+                    {/*||||||||||||   COMPLETE ACTION   |||||||||||||||*/}
                     <View style={styles.completionActionToggle}>
                         <DualToggle
                             color={Colors.calendarBlue}
@@ -433,7 +408,7 @@ class AddHabitScreen extends React.Component {
                             setParentState={this.setCompletionActionToggle.bind(this)}
                         />
                     </View> 
-*/}
+
 
                     {/*||||||||||||   ICON MODAL SCREEN   |||||||||||||||*/}
                     <View style={styles.chooseIconButtonContainer}>
@@ -549,10 +524,6 @@ const styles = StyleSheet.create({
         color: Colors.calendarBlue,
         fontFamily: Fonts.AvenirNext,
         fontSize: 20
-    },
-    dailyWeeklyToggle: {
-        marginVertical: 10,
-        alignSelf: 'center'
     },
     daysOfWeekToggle: {
         marginVertical: 10,

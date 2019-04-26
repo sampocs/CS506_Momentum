@@ -2,12 +2,8 @@
 import React from 'react';
 import {
     View,
-    Text,
-    FlatList,
     TouchableOpacity,
     StyleSheet,
-    Button,
-    CheckBox,
     Dimensions
 } from 'react-native';
 import { toggleCompleteCompletion } from '../actions/actions';

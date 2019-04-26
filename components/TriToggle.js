@@ -6,17 +6,15 @@ import {
     Text
 } from 'react-native'
 import Colors from '../constants/Colors'
+import Constants from '../constants/Constants'
 import Layout from '../constants/Layout'
 import Fonts from '../constants/Fonts';
 
-const LEFT = 'LEFT'
-const MIDDLE = 'MIDDLE'
-const RIGHT = 'RIGHT'
 export default class DayMonthYearToggle extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPosition: LEFT
+            currentPosition: Constants.LEFT
         }
     }
     render() {
@@ -26,17 +24,17 @@ export default class DayMonthYearToggle extends React.Component {
                 <TouchableOpacity style={[
                     styles.thirdContainer,
                     styles.insideBorderLeft,
-                    this.state.currentPosition === RIGHT ? styles.insideBorderOff : styles.insideBorderOn,
-                    this.state.currentPosition === LEFT ? styles.toggleOnContainer : styles.toggleOffContainer,
+                    this.state.currentPosition === Constants.RIGHT ? styles.insideBorderOff : styles.insideBorderOn,
+                    this.state.currentPosition === Constants.LEFT ? styles.toggleOnContainer : styles.toggleOffContainer,
                 ]}
                     onPress={() => {
-                        this.setState({ currentPosition: LEFT })
-                        this.props.setParentState(LEFT)
+                        this.setState({ currentPosition: Constants.LEFT })
+                        this.props.setParentState(Constants.LEFT)
                     }}
                 >
                     <Text style={[
                         styles.text,
-                        this.state.currentPosition === LEFT ? styles.toggleOnText : styles.toggleOffText
+                        this.state.currentPosition === Constants.LEFT ? styles.toggleOnText : styles.toggleOffText
                     ]}>
                         {this.props.labels[0]}
                     </Text>
@@ -44,15 +42,15 @@ export default class DayMonthYearToggle extends React.Component {
 
                 <TouchableOpacity style={[
                     styles.thirdContainer,
-                    this.state.currentPosition === MIDDLE ? styles.toggleOnContainer : styles.toggleOffContainer
+                    this.state.currentPosition === Constants.MIDDLE ? styles.toggleOnContainer : styles.toggleOffContainer
                 ]}
                     onPress={() => {
-                        this.setState({ currentPosition: MIDDLE })
-                        this.props.setParentState(MIDDLE)
+                        this.setState({ currentPosition: Constants.MIDDLE })
+                        this.props.setParentState(Constants.MIDDLE)
                     }}>
                     <Text style={[
                         styles.text,
-                        this.state.currentPosition === MIDDLE ? styles.toggleOnText : styles.toggleOffText
+                        this.state.currentPosition === Constants.MIDDLE ? styles.toggleOnText : styles.toggleOffText
                     ]}>
                         {this.props.labels[1]}
                     </Text>
@@ -61,16 +59,16 @@ export default class DayMonthYearToggle extends React.Component {
                 <TouchableOpacity style={[
                     styles.thirdContainer,
                     styles.insideBorderRight,
-                    this.state.currentPosition === LEFT ? styles.insideBorderOff : styles.insideBorderOn,
-                    this.state.currentPosition === RIGHT ? styles.toggleOnContainer : styles.toggleOffContainer
+                    this.state.currentPosition === Constants.LEFT ? styles.insideBorderOff : styles.insideBorderOn,
+                    this.state.currentPosition === Constants.RIGHT ? styles.toggleOnContainer : styles.toggleOffContainer
                 ]}
                     onPress={() => {
-                        this.setState({ currentPosition: RIGHT })
-                        this.props.setParentState(RIGHT)
+                        this.setState({ currentPosition: Constants.RIGHT })
+                        this.props.setParentState(Constants.RIGHT)
                     }}>
                     <Text style={[
                         styles.text,
-                        this.state.currentPosition === RIGHT ? styles.toggleOnText : styles.toggleOffText
+                        this.state.currentPosition === Constants.RIGHT ? styles.toggleOnText : styles.toggleOffText
                     ]}>
                         {this.props.labels[2]}
                     </Text>
