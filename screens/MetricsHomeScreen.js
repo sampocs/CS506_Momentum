@@ -52,7 +52,7 @@ class MetricsHomeScreen extends React.Component {
         let index = 0
         let habits = this.props.habits.map((habit) => {
             return (
-                <MetricsHabitPreview key={index++} habitName={habit} currentToggleSection={this.state.currentToggleSection}/>
+                <MetricsHabitPreview key={index++} habitName={habit} currentToggleSection={this.state.currentToggleSection} />
             )
         })
         return (
@@ -63,21 +63,27 @@ class MetricsHomeScreen extends React.Component {
                         setParentState={this.setToggleState.bind(this)}
                     />
                 </View>
-                <View style={styles.previewContainer}>
-                    <ScrollView
-                        style={styles.scrollContainer}
-                        scrollEnabled={habits.length != 0}
-                    >
-                        {habits.length != 0 ?
-                            habits :
-                            <TouchableOpacity
-                                style={styles.noHabitContainer}
-                                onPress={() => this.props.navigation.push('AddHabit')}>
-                                <Text style={styles.noHabitText}>Click Here to Add a Habit! </Text>
-                            </TouchableOpacity>
-                        }
-                    </ScrollView>
-                </View>
+                {
+                    habits.length != 0 &&
+                    <View style={styles.previewContainer}>
+                        <ScrollView
+                            style={styles.scrollContainer}
+                            scrollEnabled={habits.length != 0}
+                        >
+                            {habits.length != 0 && habits}
+                        </ScrollView>
+                    </View>
+                }
+                {
+                    habits.length == 0 &&
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity
+                            style={styles.addHabitButton}
+                            onPress={() => this.props.navigation.navigate('AddHabit')}>
+                            <Text style={styles.addHabitText}> Add Habit </Text>
+                        </TouchableOpacity>
+                    </View>
+                }
             </SafeAreaView>
         )
     }
@@ -105,14 +111,18 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingVertical: 2,
     },
-    noHabitContainer: {
-        marginVertical: 25,
+    addHabitButton: {
+        height: 60,
+        width: 200,
+        borderRadius: 80,
         alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.aqua
     },
-    noHabitText: {
-        color: Colors.aqua,
-        fontFamily: Fonts.AvenirNext,
-        fontSize: 22
+    addHabitText: {
+        color: 'white',
+        fontFamily: Fonts.AvenirMedium,
+        fontSize: 18
     }
 })
 

@@ -70,8 +70,8 @@ class EditHabitScreen extends React.Component {
             includeMeasurementsChecked: props.settings.type === Constants.PROGRESS,
             includeSubtasksChecked: props.settings.type === Constants.SUBTASK,
             disappearWhenCompleted: props.settings.disappearWhenCompleted,
-            subtasks: props.settings.type === Constants.SUBTASK 
-                ? props.settings.habitInfo.subtasks : [], 
+            subtasks: props.settings.type === Constants.SUBTASK
+                ? props.settings.habitInfo.subtasks : [],
             icon: props.settings.icon,
             modalVisible: false,
             iconChosen: true,
@@ -124,7 +124,7 @@ class EditHabitScreen extends React.Component {
     }
 
     editHabit = () => {
-        this.setState({addingHabit: true})
+        this.setState({ addingHabit: true })
         if (!this.fieldsCompleted(alertUser = true)) {
             return;
         }
@@ -173,7 +173,7 @@ class EditHabitScreen extends React.Component {
         this.props.addHabitToHabitSettings(this.state.habitName, habitSettings)
         this.props.addHabitToHistory(this.state.habitName, habitHistory, this.state.daysOfWeek, true)
         this.props.editHistoryToday(this.state.habitName, habitHistory, this.state.daysOfWeek)
-        this.props.navigation.navigate('CalendarHome')
+        this.props.navigation.pop()
     }
 
     fieldsCompleted(alertUser = false) {
@@ -465,11 +465,9 @@ class EditHabitScreen extends React.Component {
                 {/*||||||||||||   ADD HABIT BUTTON   |||||||||||||||*/}
                 <View style={styles.addButtonContainer}>
                     <TouchableOpacity
-                        style={[styles.addButton,
-                        { backgroundColor: this.fieldsCompleted() ? Colors.darkBlue : Colors.lightGreyText }]}
                         onPress={() => this.editHabit()}
                     >
-                        <Text style={styles.addButtonText}>Save</Text>
+                        <Text style={[styles.addButtonText, { color: this.fieldsCompleted() ? Colors.darkBlue : Colors.lightGreyText }]}>Save</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -575,7 +573,9 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     addButtonContainer: {
+        height: 70,
         alignItems: 'center',
+        justifyContent: 'center',
         width: '100%',
         backgroundColor: '#fff',
         shadowOffset: { width: 0, height: -5 },
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     addButtonText: {
         color: 'white',
         fontFamily: Fonts.AvenirNext,
-        fontSize: 20
+        fontSize: 25
     },
     chooseIconButtonContainer: {
         flex: 1,

@@ -91,6 +91,18 @@ class MetricsSpecificHabitScreen extends React.Component {
     }
 
     renderItem = ({ item, separators, index }) => {
+        var completedSubtasks = 0;
+        var totalSubtasks = 0;
+        //get completed amount for subtask habit
+        if (this.props.history[item][this.props.habitName].type == Constants.SUBTASK) {
+            var subtasks = this.props.history[item][this.props.habitName].habitInfo.subtasks;
+            var totalSubtasks = subtasks.length;
+            for (var i = 0; i < totalSubtasks; i++) {
+                if (subtasks[i][1]) {
+                    completedSubtasks += 1;
+                }
+            }
+        }
         return (
             <View key={index} style={styles.habitPreview}>
                 <TouchableOpacity
@@ -112,6 +124,14 @@ class MetricsSpecificHabitScreen extends React.Component {
                                 <Text style={{ color: 'white' }}>{' ' + this.state.habitUnit}</Text>
                             </View>
                         }
+                        {
+                            (this.props.history[item][this.props.habitName].type == Constants.SUBTASK) &&
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={styles.habitPreviewText}>{completedSubtasks}</Text>
+                                <Text style={{ color: 'white' }}>/{totalSubtasks}</Text>
+                                <Text style={{ color: 'white' }}>{' tasks'}</Text>
+                            </View>
+                        }
                     </View>
                     <Text
                         style={styles.habitPreviewNotesText}
@@ -128,21 +148,18 @@ class MetricsSpecificHabitScreen extends React.Component {
     render() {
         let previewMetrics = {}
         let barChart = {}
-        let history = []
+        let history = this.state.history.reverse()
         if (this.state.currentToggleSection === Constants.WEEKLY) {
             previewMetrics = this.state.previewMetrics.weekly
             barChart = this.state.barChart.weekly
-            history = this.state.history.weekly.reverse()
         }
         else if (this.state.currentToggleSection === Constants.MONTHLY) {
             previewMetrics = this.state.previewMetrics.monthly
             barChart = this.state.barChart.monthly
-            history = this.state.history.monthly.reverse()
         }
         else {
             previewMetrics = this.state.previewMetrics.yearly
             barChart = this.state.barChart.yearly
-            history = this.state.history.yearly.reverse()
         }
         return (
             <SafeAreaView style={styles.container}>
@@ -233,7 +250,6 @@ class MetricsSpecificHabitScreen extends React.Component {
                         keyExtractor={(key) => key}
                     />
                 </View>
-
             </SafeAreaView>
         )
     }

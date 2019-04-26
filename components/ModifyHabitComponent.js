@@ -70,27 +70,27 @@ class ModifyHabitComponent extends React.Component {
             'Delete Habit',
             'Are you sure you want to delete this habit?',
             [
-            {
-                text: 'Yes, but retain history',
-                onPress: () => { 
-                    this.props.deleteHabitFromFuture(this.props.habitName)
-                    this.props.deleteHabitFromHabitOrder(this.props.habitName)
+                {
+                    text: 'Yes, stop future tracking of this habit',
+                    onPress: () => {
+                        this.props.deleteHabitFromFuture(this.props.habitName)
+                        this.props.deleteHabitFromHabitOrder(this.props.habitName)
                     },
-                style: 'cancel',
-            },
-            {   
-                text: 'Yes, and delete all history', 
-                onPress: () => {
-                    this.props.deleteHabitFromFuture(this.props.habitName)
-                    this.props.deleteHabitFromPast(this.props.habitName, this.props.startDate) 
-                    this.props.deleteHabitFromHabitSettings(this.props.habitName)
-                    this.props.deleteHabitFromHabitOrder(this.props.habitName)
-                }
-            },
-            {
-                text: 'Cancel',
-                style: 'cancel',
-            },
+                    style: 'cancel',
+                },
+                {
+                    text: 'Yes, delete all history of this habit',
+                    onPress: () => {
+                        this.props.deleteHabitFromFuture(this.props.habitName)
+                        this.props.deleteHabitFromPast(this.props.habitName, this.props.startDate)
+                        this.props.deleteHabitFromHabitSettings(this.props.habitName)
+                        this.props.deleteHabitFromHabitOrder(this.props.habitName)
+                    }
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
             ],
         );
     }
@@ -124,7 +124,7 @@ class ModifyHabitComponent extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.dragContainer}>
-                    <Ionicons name={'ios-menu'} color={'white'} size={30}/>
+                    <Ionicons name={'ios-menu'} color={'white'} size={30} />
                 </View>
             </Animated.View>
         );
@@ -138,8 +138,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         backgroundColor: Colors.darkBlue,
         borderRadius: 10,
-        marginVertical: 5,
-        marginBottom: 7
+        marginVertical: 4,
     },
     nameContainer: {
         width: '65%',

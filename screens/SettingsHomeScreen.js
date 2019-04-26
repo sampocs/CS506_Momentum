@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         paddingTop: 5
     },
     authContainer: {
-        height: 50,
+        height: 70,
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',

@@ -295,29 +295,16 @@ export const getBarChart = (history, type, habitName) => {
 }
 
 export const getHistory = (history, habitName) => {
-    let dateLists = {
-        weekly: [],
-        monthly: [],
-        yearly: []
-    }
+    let dateList = []
     let currentDate = getCurrentDate()
-
-    let weekAgo = getWeekAgo(currentDate)
-    let monthAgo = getMonthAgo(currentDate)
     let yearAgo = getYearAgo(currentDate)
 
     let allDates = Object.keys(history).filter((date) => ((date > yearAgo) && (date <= currentDate)))
     for (d in allDates) {
         let date = allDates[d]
         if (history.hasOwnProperty(date) && history[date].hasOwnProperty(habitName)) {
-            if (date > weekAgo) {
-                dateLists.weekly.push(date)
-            }
-            if (date > monthAgo) {
-                dateLists.monthly.push(date)
-            }
-            dateLists.yearly.push(date)
+            dateList.push(date)
         }
     }
-    return dateLists
+    return dateList
 }

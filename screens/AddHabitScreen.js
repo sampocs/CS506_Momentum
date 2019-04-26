@@ -407,20 +407,20 @@ class AddHabitScreen extends React.Component {
                             labels={['Change Color', 'Disappear']}
                             setParentState={this.setCompletionActionToggle.bind(this)}
                         />
-                    </View> 
+                    </View>
 
 
                     {/*||||||||||||   ICON MODAL SCREEN   |||||||||||||||*/}
                     <View style={styles.chooseIconButtonContainer}>
                         <TouchableOpacity
-                            style={[styles.addButton, { backgroundColor: Colors.calendarBlue }]}
+                            style={styles.chooseIconButton}
                             onPress={() => this.setState({ modalVisible: true })}
                         >
                             {
                                 this.state.iconChosen && <HabitIcon icon={this.state.icon} completed={false} color={'white'} />
                             }
                             {
-                                !this.state.iconChosen && <Text style={styles.addButtonText}>Choose Icon</Text>
+                                !this.state.iconChosen && <Text style={styles.chooseIconText}>Choose Icon</Text>
                             }
                         </TouchableOpacity>
                     </View>
@@ -469,11 +469,9 @@ class AddHabitScreen extends React.Component {
                 {/*||||||||||||   ADD HABIT BUTTON   |||||||||||||||*/}
                 <View style={styles.addButtonContainer}>
                     <TouchableOpacity
-                        style={[styles.addButton,
-                        { backgroundColor: this.fieldsCompleted() ? Colors.calendarBlue : Colors.lightGreyText }]}
                         onPress={() => this.addHabit()}
                     >
-                        <Text style={styles.addButtonText}>Add Habit</Text>
+                        <Text style={[styles.addButtonText, { color: this.fieldsCompleted() ? Colors.calendarBlue : Colors.lightGreyText }]}>Add Habit</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -579,25 +577,27 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     addButtonContainer: {
+        height: 70,
         alignItems: 'center',
+        justifyContent: 'center',
         width: '100%',
         backgroundColor: '#fff',
         shadowOffset: { width: 0, height: -5 },
         shadowOpacity: 0.1,
         shadowColor: '#444'
     },
-    addButton: {
+    chooseIconButton: {
         marginVertical: 15,
         height: 60,
         width: 200,
         borderRadius: 80,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: Colors.calendarBlue
     },
     addButtonText: {
-        color: 'white',
         fontFamily: Fonts.AvenirNext,
-        fontSize: 20
+        fontSize: 25
     },
     chooseIconButtonContainer: {
         flex: 1,
@@ -605,15 +605,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 10
     },
-    chooseIconButton: {
-        marginVertical: 15,
-        borderWidth: 3,
-        borderColor: Colors.aqua,
-        height: 60,
-        width: 200,
-        borderRadius: 80,
-        alignItems: 'center',
-        justifyContent: 'center',
+    chooseIconText: {
+        color: 'white',
+        fontFamily: Fonts.AvenirNext,
+        fontSize: 20
     },
     modalContainer: {
         flex: 1,
