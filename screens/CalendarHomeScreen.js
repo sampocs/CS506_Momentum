@@ -106,10 +106,11 @@ const styles = StyleSheet.create({
         paddingVertical: 2,
     },
     outsideScrollContainer: {
+        flex: 1,
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.3,
         shadowColor: '#444',
-        marginVertical: 5,
+        marginTop: 5,
         width: '100%',
         height: '100%',
     },

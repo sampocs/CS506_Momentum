@@ -112,12 +112,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     sortableList: {
-        flex: 1,
+        flex: 1
     },
     sortableListContent: {
-        flex: 1,
         width: Layout.window.width,
         paddingTop: 5
+    },
+    innerScrollContainer: {
+        flex: 1
     },
     authContainer: {
         height: 70,
